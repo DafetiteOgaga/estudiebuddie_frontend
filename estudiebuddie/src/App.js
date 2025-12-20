@@ -16,7 +16,7 @@ import { GameResult } from './components/animationComps/confettiAnime';
 import { CoinsRain } from './components/animationComps/framerAnime';
 import { DancingLion, TalkingAnimal } from './components/animationComps/lottieAnime';
 import { LionDance } from './components/animationComps/spriteAnime';
-import '@fortawesome/fontawesome-free/css/all.min.css';
+// import '@fortawesome/fontawesome-free/css/all.min.css';
 import './assets/css/glossy-style.css';
 
 function App() {
