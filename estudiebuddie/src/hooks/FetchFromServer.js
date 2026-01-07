@@ -15,7 +15,7 @@ const originUrl = (api=false) => {
 		return 'http://127.0.0.1:8000/';
 	}
 	console.log('Running in production mode');
-	return 'https://estudiebuddie.pythonanywhere.com/';
+	return 'https://estudiebuddieremake.pythonanywhere.com/';
 };
 const serverOrigin = originUrl()
 
