@@ -1,0 +1,122 @@
+so with my QuizAnswers model i can calculate for leadership board or whatever it is called right?
+
+Exactly — your QuizAnswer model is perfect for generating a leaderboard (or scoring/ranking users). Let me explain clearly.
+
+1️⃣ What you need in a leaderboard
+
+For each user (or email), you typically want:
+
+Total points / score
+
+Number of correct answers
+
+Number of attempts (optional)
+
+Quiz/session info (optional)
+
+Ranking relative to other users
+
+2️⃣ Using your QuizAnswer model
+
+Assuming your model looks like this (or similar):
+
+class QuizAnswer(models.Model):
+    quiz_session = models.ForeignKey(QuizSession, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    selected_option = models.CharField(max_length=1)
+    is_correct = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+You already have all the info needed:
+
+quiz_session → links user/email and quiz
+
+is_correct → gives the score
+
+question → if you want per-question stats
+
+3️⃣ Example: Leaderboard per quiz session
+from django.db.models import Count, Sum
+
+leaderboard = (
+    QuizAnswer.objects
+    .values('quiz_session__email', 'quiz_session__name')  # group by user
+    .annotate(
+        total_correct=Sum('is_correct'),   # sum of correct answers
+        total_attempts=Count('id'),        # total questions answered
+    )
+    .order_by('-total_correct', 'quiz_session__created_at')  # rank
+)
+
+
+total_correct → how many questions the user got right
+
+Sorted descending → highest scorers first
+
+4️⃣ Example: Global leaderboard across multiple quizzes
+leaderboard = (
+    QuizAnswer.objects
+    .values('quiz_session__email', 'quiz_session__name')
+    .annotate(
+        total_correct=Sum('is_correct'),
+        total_attempts=Count('id'),
+        quizzes_taken=Count('quiz_session', distinct=True)
+    )
+    .order_by('-total_correct', '-quizzes_taken')
+)
+
+
+quizzes_taken → number of quizzes attempted
+
+Rank users by score first, then by activity if tie
+
+5️⃣ Optional: Calculate percentage score
+leaderboard = leaderboard.annotate(
+    score_percent=F('total_correct') * 100.0 / F('total_attempts')
+)
+
+
+Gives a normalized score for users who took different numbers of questions
+
+6️⃣ Things to consider
+
+Tie-breaking rules
+
+Earlier submission wins
+
+Fewer attempts wins
+
+Scope
+
+Per quiz / category / global
+
+Caching
+
+If leaderboard is displayed often, cache it (Redis, Django cache)
+
+Leaderboard visibility
+
+Some apps show only top N users, or delay showing scores to prevent cheating
+
+✅ TL;DR
+
+Yes, your QuizAnswer model is perfect for a leaderboard. You just need to:
+
+Group by user/email
+
+Aggregate is_correct or points
+
+Order by score
+
+If you want, I can write a full Django ORM query + serializer that returns a ready-to-display leaderboard JSON for your frontend.
+
+Do you want me to do that?
+
+
+
+
+
+
+protect route: contribute-questions
+handle updating and deleting images on the BE for profile picture edit
