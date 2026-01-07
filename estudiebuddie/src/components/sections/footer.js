@@ -1,12 +1,14 @@
 // import { showPage } from "../../hooks/templatemo-glossy-touch";
 
+import { DafetiteFooter } from "../../hooks/dafetiteFooter/dafetiteFooter";
+
 function Footer() {
 	return (
 		<div id="footer">
 			<div className="container">
 				<footer className="glass">
 					<div className="footer-content">
-						<div className="footer-links">
+						{/* <div className="footer-links">
 							<a href="##"
 							// onClick={()=>showPage('about')}
 							>About Us</a>
@@ -16,10 +18,11 @@ function Footer() {
 							<a href="##"
 							// onClick={()=>showPage('contact')}
 							>Contact</a>
-						</div>
+						</div> */}
 						<div className="copyright">
-							&copy; 2025 Glossy Touch. All rights reserved. Crafted with modern web technologies. 
-							Provided by <a rel="noreferrer" href="https://templatemo.com" target="_blank">TemplateMo</a>
+							<DafetiteFooter />
+							{/* &copy; 2025 Glossy Touch. All rights reserved. Crafted with modern web technologies. 
+							Provided by <a rel="noreferrer" href="https://templatemo.com" target="_blank">TemplateMo</a> */}
 						</div>
 					</div>
 				</footer>
