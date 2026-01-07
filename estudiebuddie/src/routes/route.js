@@ -13,8 +13,14 @@ import { Home } from '../components/home';
 import { About } from '../components/sections/about'
 import { Services } from '../components/sections/services';
 import { Contact } from '../components/sections/contact';
-import { PageNotFound } from '../components/dynamicPages/pageNotFound';
-import { ScrambleQuestionsComponent } from '../components/sections/scrambleQuestions';
+import { PageNotFound } from '../components/sections/pageNotFound';
+import { ScrambleQuestionsComponent } from '../components/scrambleQuestions/scrambleQuestions';
+import { ContributeQuestionsComponent } from '../components/contributeQuestions/contribute';
+import { Quiz } from '../components/quiz/quiz';
+import { Login } from '../components/authentication/login';
+import { SignUp } from '../components/sections/signUp';
+import { Leaderboard } from '../components/sections/leaderboard';
+import { Profile } from '../components/sections/profile';
 // import { ScrambleQuestions } from '../components/scrambleQuestions/ScrambleQUestions';
 
 function AppRoutes() {
@@ -52,6 +58,12 @@ function AppRoutes() {
 				<Route path="services" element={<Services />} />
 				<Route path="contact" element={<Contact />} />
 				<Route path="scramble-questions" element={<ScrambleQuestionsComponent />} />
+				<Route path="profile/:id/contribute-questions" element={<ContributeQuestionsComponent />} />
+				<Route path="quiz" element={<Quiz />} />
+				<Route path="login" element={<Login />} />
+				<Route path="signup" element={<SignUp />} />
+				<Route path="leaderboard" element={<Leaderboard />} />
+				<Route path="profile" element={<Profile />} />
 				{/* <Route path="courses" element={<Courses />} />
 				<Route path="news" element={<Blog />} />
 				<Route path="contact" element={<Contact />} />
