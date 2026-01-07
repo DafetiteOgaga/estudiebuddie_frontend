@@ -7,13 +7,20 @@ function shuffleArray(array) {
 		.map(({ value }) => value);
 }
 
-function generateUniqueId() {
-	// Get date & time down to seconds
-	const now = new Date();
-	const timestamp = now.toISOString().replace(/[-:.TZ]/g, '').slice(0, 14);
-	// Generate 6–8 random alphanumeric characters
-	const randomPart = Math.random().toString(36).substring(2, 10);
-	return `${timestamp}${randomPart}`;
-}
+const removeWhiteSpace = (str = '') => {
+	return str.replace(/\s+/g, '');
+};
 
-export { shuffleArray, generateUniqueId };
+const justNumbers = (str) => {
+	if (!str) return '';
+	return str.replace(/\D+/g, '');
+};
+
+const generateUniqueId = () => crypto.randomUUID();
+
+export {
+	shuffleArray,
+	generateUniqueId,
+	justNumbers,
+	removeWhiteSpace
+};

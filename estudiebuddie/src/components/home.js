@@ -1,11 +1,4 @@
-import { SignUp } from "./dynamicPages/signup";
-import { CourseSection } from "./dynamicPages/courseSection";
-import { Search } from "./dynamicPages/search";
-import { Categories } from "./dynamicPages/categories";
-import { Hero } from "./dynamicPages/hero";
-import { Banner } from "./dynamicPages/banner";
-// import { showPage } from "../hooks/templatemo-glossy-touch";
-import { useOutletContext } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 function Home() {
 	// const { showPage } = useOutletContext();
@@ -19,11 +12,16 @@ function Home() {
 								<img src={require("../assets/images/templatemo-futuristic-girl.jpg")} alt="Modern Technology Interaction" />
 							</div>
 							<div className="hero-content">
-								<h1>Welcome to the Future</h1>
-								<p>Experience cutting-edge glass morphism design that brings depth and elegance to modern web interfaces. Clean, translucent, and beautifully interactive.</p>
-								<a href="##" className="cta-button"
-								// onClick={()=>showPage('about')}
-								>Learn More</a>
+								<h1>eStudieBuddie</h1>
+								<p>Your Study Buddy for Every Stage of Learning.</p>
+								<p>Learn concepts, take quizzes, and build confidence for exams from Basic to SSS, WAEC & JAMB – <strong>because success starts with smart practice!</strong></p>
+								<p><strong>Study. Practice. Excel.</strong></p>
+								<div className='d-flex gap-1'>
+									<Link to={"/quiz"}
+									className="cta-button">Take a Test!</Link>
+									<Link to={"/signup"}
+									className="cta-button">Register for Free!</Link>
+								</div>
 							</div>
 						</section>
 

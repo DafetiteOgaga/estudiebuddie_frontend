@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Shapes } from './sections/shapes';
 import { Header } from './sections/header';
 import { Footer } from './sections/footer';
 
 function Index() {
+	const page = useLocation().pathname.split('/')[1]
+	const centerWrapper = page==='login' || page==='signup' || page==='leaderboard'
+	// console.log({centerWrapper})
 	const [isSticky, setIsSticky] = useState(false);
     const [scrollY, setScrollY] = useState(window.scrollY);
 	useEffect(() => {
@@ -39,8 +42,8 @@ function Index() {
 			<Header isSticky={isSticky} scrollY={scrollY}/>
 
 			<div className="page">
-				<div className="container">
-					<div className={`content-wrapper ${isSticky?'dy-scroll-top':''}`}>
+				<div className={`container`}>
+					<div className={`content-wrapper ${isSticky?'dy-scroll-top':''} ${centerWrapper?'center-login':''}`}>
 						{/* children pages */}
 						<Outlet context={{}} />
 					</div>
@@ -49,6 +52,7 @@ function Index() {
 
 			{/* footer */}
 			<Footer />
+			{/* {centerWrapper?null:<Footer />} */}
 		</>
 		// // <section className="set-bg" data-setbg="img/bg.jpg"
 		// // 	style={{

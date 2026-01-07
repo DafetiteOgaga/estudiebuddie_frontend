@@ -13,13 +13,15 @@ function titleCase(str) {
 		.join(slash?'/':' ');
 }
 
+// for currency values
 function digitSeparator(num) {
-	if (!num) return
+	if (!num) return num
 	// if (typeof num!=='number') return
 	// return num.toLocaleString()
 	return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
+// for phone numbers
 function formatPhoneNumber(num) {
 	if (!num) return num;
 
