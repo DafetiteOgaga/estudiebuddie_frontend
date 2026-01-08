@@ -207,6 +207,24 @@ h1, h2, h3, h4, h5, h6, p {
 .pl-color {
     color: var(--placeholder) !important;
 }
+.font-gold {
+    color: var(--accent-warn) !important;
+}
+.font-gold1 {
+    color: var(--info) !important;
+}
+.font-gold2 {
+    color: var(--correct-answer) !important;
+}
+.font-gold3 {
+    color: var(--accent-warn-soft) !important;
+}
+.font-white {
+    color: white !important;
+}
+.font-light-white {
+    color: var(--placeholder) !important;
+}
 .font-green {
     color: green !important;
 }
@@ -218,9 +236,6 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .bg-red {
     background-color: red !important;
-}
-.font-white {
-    color: white !important;
 }
 .text-underline {
     text-decoration: underline !important;
@@ -666,9 +681,10 @@ nav.sticky {
 .hero p {
     font-size: 1.2rem;
     color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 30px;
-    line-height: 1.6;
+    margin-bottom: 15px;
+    line-height: 1.3;
 }
+/* .hero .lh */
 .cta-button {
     display: inline-block;
     padding: 13px 20px;
