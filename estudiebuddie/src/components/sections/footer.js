@@ -1,5 +1,3 @@
-// import { showPage } from "../../hooks/templatemo-glossy-touch";
-
 import { DafetiteFooter } from "../../hooks/dafetiteFooter/dafetiteFooter";
 
 function Footer() {
