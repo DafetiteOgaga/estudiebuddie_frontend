@@ -10,7 +10,7 @@ function Home() {
 					<>
 						<section className="hero glass">
 							<div className="hero-image">
-								<img src={require("../assets/images/eStudieBuddie .png")} alt="Modern Technology Interaction" />
+								<img src={require("../assets/images/eStudieBuddie.png")} alt="Modern Technology Interaction" />
 							</div>
 							<div className="hero-content">
 								<p className='font-bold'
