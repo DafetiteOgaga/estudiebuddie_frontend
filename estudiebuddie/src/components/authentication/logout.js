@@ -3,7 +3,7 @@ import { toast } from "react-toastify"
 import { useAuth } from "../../hooks/authContext";
 
 function useLogout() {
-	console.log('trying to logout')
+	// console.log('trying to logout')
 	const { setLoggedIn } = useAuth();
 	const { lStorage } = useCreateStorage();
 
