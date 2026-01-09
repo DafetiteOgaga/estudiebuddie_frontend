@@ -10,7 +10,7 @@ function Header({isSticky, scrollY}) {
 	const { lStorage, sStorage } = useCreateStorage()
 	const userData = lStorage.getItem('user')
 	const { role, contributor, points } = userData||{}
-	console.log({loggedIn, userData, role, contributor})
+	// console.log({loggedIn, userData, role, contributor})
 
 	const headerMenu = [];
 	// Login / Logout
@@ -61,7 +61,7 @@ function Header({isSticky, scrollY}) {
 						<div className="logo-icon">
 							<AppLogo />
 						</div>
-						{/* <span>eStudieBuddie</span> */}
+						<AppName />
 					</div>
 					<div className="nav-links">
 						{headerMenu.map((header, hIdx) => {
@@ -88,4 +88,22 @@ function Header({isSticky, scrollY}) {
 		</header>
 	)
 }
-export { Header };
+
+function AppName({size='lg', color1=null, color2=null}) {
+	const sizes = {
+		"2x": "30px",
+		"lg": "25px",
+		"md": "20px",
+		"sm": "16px",
+		"vs": "14px",
+	}
+	const style = sizes[size]
+	return (
+		<span style={{fontSize: style}}>
+			<span className="font-gold">e</span>
+			<span className={`font-${color1?color1:'light-white'}`}>Studie</span>
+			<span className={color2?color2:'font-gold1'}>Buddie</span>
+		</span>
+	)
+}
+export { Header, AppName };
