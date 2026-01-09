@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { AppName } from './sections/header';
 
 function Home() {
 	// const { showPage } = useOutletContext();
@@ -9,13 +10,22 @@ function Home() {
 					<>
 						<section className="hero glass">
 							<div className="hero-image">
-								<img src={require("../assets/images/templatemo-futuristic-girl.jpg")} alt="Modern Technology Interaction" />
+								<img src={require("../assets/images/eStudieBuddie.png")} alt="Modern Technology Interaction" />
 							</div>
 							<div className="hero-content">
-								<h1>eStudieBuddie</h1>
-								<p>Your Study Buddy for Every Stage of Learning.</p>
-								<p>Learn concepts, take quizzes, and build confidence for exams from Basic to SSS, WAEC & JAMB – <strong>because success starts with smart practice!</strong></p>
-								<p><strong>Study. Practice. Excel.</strong></p>
+								<p className='font-bold'
+								style={{fontSize: 23}}>Learning just got smarter, simpler, and more fun.</p>
+								<p>
+									<AppName size='md' color1='white' color2="font-gold" /> is an all-in-one study and practice platform designed for students
+									from <strong>Basic 1-5, JSS 1-3, SSS 1-3</strong>, and candidates preparing for <strong>WAEC</strong> and <strong>JAMB</strong>. Whether
+									you're revising for a class test, practicing past questions, or getting exam-ready, we've
+									got you covered.
+								</p>
+								<p>
+									With interactive quizzes, timed practice sessions, smart feedback, and exam-focused
+									questions, <AppName size='md' color1='white' color2="font-gold" /> helps you <strong>learn better, track your progress, and build
+									confidence</strong>, one question at a time.
+								</p>
 								<div className='d-flex gap-1'>
 									<Link to={"/quiz"}
 									className="cta-button">Take a Test!</Link>

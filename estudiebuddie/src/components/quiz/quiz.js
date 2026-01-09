@@ -31,6 +31,7 @@ const sssSubjectArray = ["physics", "chemistry"]
 // const durationArray = ["1hr"]
 const durationArray = Array.from({length: 4}).map((_, idx) => {
 	const fraction = 0.5
+	// const fraction = 0.003
 	return fraction * (idx + 1)
 })
 const noOfQsArray = [0, 30, 70].map((increment, idx) => {
@@ -132,7 +133,8 @@ function Quiz() {
 	const [isTimeUp, setIsTimeUp] = useState(false);
 	const startButtonRef = useRef(null);
 	const modalRef = useRef(null);
-	const [startTime, setStartTime] = useState(null)
+	const [quizStarting, setQuizStarting] = useState(null)
+	const [userStartTime, setUserStartTime] = useState(null)
 	const fetchStartTime = useGetStartTime()
 	const [showReadyModal, setShowReadyModal] = useState(false);
 	const [feedback, setFeedback] = useState(null)
@@ -313,7 +315,7 @@ function Quiz() {
 		setSession(blankSession);
 		setSelectedAnswers([]);
 		setIsPreQuiz(true)
-		setStartTime(null)
+		setUserStartTime(null)
 	}
 
 
@@ -396,10 +398,20 @@ function Quiz() {
 
 	const loadStartTime = async (sessionID) => {
 		if (!sessionID) return
-		const start = await fetchStartTime(sessionID);
-		setStartTime(start);
+		const queryString = new URLSearchParams({ session: !activeSession }).toString();
+		console.log('getting user start time')
+		console.log({activeSession})
+
+		// const actualStartTime = Date.now(); // or Date.now()
+		const endpoint = `${sessionID}?${queryString}`
+		const actualStartTime = await fetchStartTime(endpoint);
+
+		setUserStartTime(actualStartTime);
 		setShowReadyModal(false);
 		setIsPreQuiz(false); // SAME action alert was guarding
+		console.log('setting beginning time')
+		const startTime = new Date(actualStartTime).getTime(); // ms
+		setQuizStarting(startTime)
 	};
 	// console.log({QuestionNumber})
 	// console.log({selectedAnswers})
@@ -432,20 +444,20 @@ function Quiz() {
 	// return cols;
 	// }, []);
 
-	console.log({
-		formData,
-		// duration,
-		isPreQuiz,
-		selectedAnswers,
-		// quizQuestions,
-		session,
-	})
-	console.log({
-		// totalPointsScored,
-		totalQuestionsAnswered,
-		totalQuestions,
-		selectedAnswersRef: selectedAnswersRef.current,
-	})
+	// console.log({
+	// 	formData,
+	// 	// duration,
+	// 	isPreQuiz,
+	// 	selectedAnswers,
+	// 	// quizQuestions,
+	// 	session,
+	// })
+	// console.log({
+	// 	// totalPointsScored,
+	// 	totalQuestionsAnswered,
+	// 	totalQuestions,
+	// 	selectedAnswersRef: selectedAnswersRef.current,
+	// })
 	// console.log({selectedAnswers})
 	// console.log({answers: session.quizAnswers})
 	// console.log({
@@ -458,15 +470,15 @@ function Quiz() {
 	// 	ansObject: session?.quizAnswers?.find(ans=>ans.question_id===currentQuestionId),
 	// 	answerObject
 	// })
-	console.log({
-		isSubmitted,
-		localSelectedAnswers,
-		activeSession,
-		localSession,
-		feedback,
-		startTime,
-		isTimeUp,
-	})
+	// console.log({
+	// 	isSubmitted,
+	// 	localSelectedAnswers,
+	// 	activeSession,
+	// 	localSession,
+	// 	feedback,
+	// 	userStartTime,
+	// 	isTimeUp,
+	// })
 
 	return (
 			<>
@@ -742,15 +754,10 @@ function Quiz() {
 						<div className="align-self-baseline mb-0">
 							<div className="stat-card glass">
 								{/* <div className="stat-number">150+</div> */}
-								{/* {
-									console.log({
-										startTime,
-										durationHR: session?.duration,
-										durationSEC: Number(session?.duration)*60*60
-									})
-								} */}
 								<QuizTimer
-									start={startTime}
+									isStartTime={quizStarting}
+									setIsStarting={setQuizStarting}
+									start={userStartTime}
 									duration={Number(session?.duration) * 60 * 60} // 2 hrs in seconds
 									onWarning={() => setFeedback("warning")}
 									onTimeUp={() => setFeedback("timeup")}
@@ -786,68 +793,128 @@ function Quiz() {
 
 
 function QuizTimer({
-	start, duration, onTimeUp,
+	start, duration, isStartTime, setIsStarting, onTimeUp,
 	onWarning, onTabLeave, onTimeUpChange, } = {}) {
 	const [timeLeft, setTimeLeft] = useState(0); // seconds
 	const warnedRef = useRef(false);
 	const _10percent = Math.ceil(0.1 * duration)
 	const isTimeUp = timeLeft <= 0;
-	console.log({
-		timeLeft,
-		isTimeUp,
-		start,
-		startStatus: !!start,
-		duration,
-		onTimeUp,
-		onWarning,
-		onTabLeave,
-		onTimeUpChange,
-	})
-	// console.log({_10percent})
+	const expiredReportedRef = useRef(false);
+	const hasStartedRef = useRef(false);
+	const intervalRef = useRef(null);
 
 	// expose isTimeUp to parent
+	console.log('outside', {
+		start,
+		duration,
+		timeLeft,
+		isStartTime,
+		expiredReportedRef: expiredReportedRef.current,
+		hasStartedRef: hasStartedRef.current,
+	})
 	useEffect(() => {
-		onTimeUpChange?.(start?isTimeUp:!!start);
-	}, [isTimeUp, onTimeUpChange]);
-
-	useEffect(() => {
+		console.log('yyyyy')
+		console.log('in effect', {
+			start,
+			duration,
+			timeLeft,
+			isStartTime,
+			expiredReportedRef: expiredReportedRef.current,
+			hasStartedRef: hasStartedRef.current,
+		})
 		if (!start) {
+			console.log('no start')
 			setTimeLeft(0);
 			warnedRef.current = false;
+			hasStartedRef.current = false;
+			expiredReportedRef.current = false;
 		}
-		if (!duration) {
+		if (!duration||!isStartTime) {
 			const durationErr = "Error: Duration not set properly"
 			console.error(durationErr)
 			// toast.error(durationErr)
+			clearInterval(intervalRef.current);
+			intervalRef.current = null;
+			setTimeLeft(0);
 			return;
 		}
-	
+
 		const startTime = new Date(start).getTime(); // ms
 		const endTime = startTime + duration * 1000;
-	
+
 		const tick = () => {
 			const now = Date.now();
 			const diff = Math.floor((endTime - now) / 1000);
-	
+
+			console.log({
+				diff,
+				gt0: diff>0,
+				ltm1: diff<-1,
+				start,
+				duration,
+				timeLeft,
+				startTime,
+				expiredReportedRef: expiredReportedRef.current,
+				hasStartedRef: hasStartedRef.current,
+			})
+			// gt0 and start
+			if (diff > 0 || (start && diff < -1)) {
+				console.log('setting has started to true')
+				hasStartedRef.current = true;
+				if (diff > 0) {
+					expiredReportedRef.current = false
+				}
+			}
+
 			if (diff <= 0) {
+				console.log('time may be up or just starting')
+				if (!expiredReportedRef.current
+					&& hasStartedRef.current
+				) {
+					console.log('bulls eye'.repeat(5))
+					expiredReportedRef.current = true;
+					// STOP tick interval
+					if (intervalRef.current) {
+						console.log('clearing interval triggered')
+						clearInterval(intervalRef.current);
+						intervalRef.current = null;
+						// setIsStarting(null)
+					}
+					setIsStarting(null)
+					onTimeUp?.();
+					onTimeUpChange?.(true);
+				}
 				setTimeLeft(0);
-				onTimeUp?.();
+				// setIsExpired(hasExpired)
+				// onTimeUp?.();
 				return;
 			}
 	
 			setTimeLeft(diff);
 	
 			if (diff <= _10percent && !warnedRef.current) {
+				console.log('warning phase')
 				warnedRef.current = true;
 				onWarning?.();
 			}
 		};
 	
-		tick(); // sync immediately
-		const interval = setInterval(tick, 1000);
-	
-		return () => clearInterval(interval);
-	}, [start, duration, onTimeUp, onWarning]);
+		// tick(); // sync immediately
+		if (!intervalRef.current) {
+			console.log('ticking started')
+			// setIsStarting(true)
+			intervalRef.current = setInterval(tick, 1000);
+		}
+
+		return () => {
+			console.log('in clearing interval return')
+				// if (intervalRef.current) {
+					console.log('actually clearing interval')
+					clearInterval(intervalRef.current);
+					intervalRef.current = null;
+				// }
+			};
+	}, [start, duration, isStartTime]);
 
 	// detect tab switching (kids cheating)
 	useEffect(() => {
