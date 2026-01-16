@@ -37,39 +37,39 @@ function Home() {
 
 						<section className="features">
 							<div className="feature-card glass">
-								<div className="feature-icon">✨</div>
-								<h3>Modern Design</h3>
-								<p>Beautiful glass morphism effects with backdrop blur and translucent elements that create depth and visual hierarchy.</p>
+								<div className="feature-icon">📚</div>
+								<h3>Interactive Quizzes</h3>
+								<p>Take engaging quizzes across different topics to test understanding and strengthen knowledge.</p>
 							</div>
 							
 							<div className="feature-card glass">
-								<div className="feature-icon">⚡</div>
-								<h3>Fast Performance</h3>
-								<p>Optimized animations and effects that maintain smooth 60fps performance across all modern browsers and devices.</p>
+								<div className="feature-icon">⏱️</div>
+								<h3>Timed Challenges</h3>
+								<p>Quizzes are time-based to improve focus, speed, and exam readiness under real conditions.</p>
 							</div>
 							
 							<div className="feature-card glass">
-								<div className="feature-icon">📱</div>
-								<h3>Responsive</h3>
-								<p>Fully responsive design that adapts beautifully to any screen size, from mobile phones to desktop displays.</p>
+								<div className="feature-icon">📈</div>
+								<h3>Progress Tracking</h3>
+								<p>Track scores, improvements, and learning growth over time in one place.</p>
 							</div>
 
 							<div className="feature-card glass">
-								<div className="feature-icon">🎨</div>
-								<h3>Interactive UI</h3>
-								<p>Engaging hover effects, smooth transitions, and micro-animations that create delightful user experiences.</p>
+								<div className="feature-icon">🎯</div>
+								<h3>Performance Insights</h3>
+								<p>Detailed results help students understand strengths, weaknesses, and areas to improve.</p>
 							</div>
 
 							<div className="feature-card glass">
-								<div className="feature-icon">🔒</div>
-								<h3>Secure & Safe</h3>
-								<p>Built with modern security standards and best practices to ensure your data and user privacy are protected.</p>
+								<div className="feature-icon">🏆</div>
+								<h3>Learning Motivation</h3>
+								<p>Achievements and consistent practice to encourage you stay motivated and aim higher.</p>
 							</div>
 
 							<div className="feature-card glass">
-								<div className="feature-icon">🚀</div>
-								<h3>Easy Integration</h3>
-								<p>Simple to implement and customize for any project with clean, well-documented code and flexible components.</p>
+								<div className="feature-icon">🔐</div>
+								<h3>Secure Student Accounts</h3>
+								<p>Your progress, quiz history, and results are safely stored and protected.</p>
 							</div>
 						</section>
 					</>
