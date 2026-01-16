@@ -114,6 +114,8 @@ function QuestionsArrComp({args}) {
 		setQuestionFormData,
 	} = args;
 
+	const currentNumberOfQs = questionFormData?.length
+	console.log({currentNumberOfQs})
 	// const fileInputRef = useRef(null)
 	// const handleButtonClick = () => {
 	// 	fileInputRef.current.click();
@@ -151,7 +153,7 @@ function QuestionsArrComp({args}) {
 				const newForm = {
 					...prev,
 					// questions: updatedQuestions,
-					totalQs: questionFormData.length + 1,
+					totalQs: currentNumberOfQs >= 10 ? currentNumberOfQs : currentNumberOfQs + 1,
 				}
 				// console.log('new form data:', {newForm})
 				return newForm
@@ -434,63 +436,10 @@ function QuestionsArrComp({args}) {
 			<button
 			style={{margin: '0 5rem'}}
 			type="button" onClick={addRemoveQuestion}
-			className={`cta-button mb-xs ${questionFormData?.length?'':'d-none'}`}>
+			className={`cta-button mb-xs ${(currentNumberOfQs > 0 && currentNumberOfQs < 10)?'':'d-none'}`}>
 				Add Another Question
 			</button>
 		</div>
 	)
 }
-
-const styles = {
-	previewImage: {
-		width: '100%',
-		height: 'auto',
-		padding: 5,
-		borderRadius: 10,
-	},
-	previewImagePC: {
-		maxWidth: 300,
-		maxHeight: 300,
-	},
-	createLayout: {
-		margin: '0 5%'
-	},
-	addRemoveQuestionBtnPC: {
-		margin: '10px 5% 0 5%',
-	},
-	addRemoveQuestionBtnMobile: {
-		display: 'flex',
-		justifyContent: 'center'
-	},
-	questionsCompPCwoFile: {
-		margin: '5% 10% 0 10%',
-	},
-	questionsCompPCwFile: {
-		margin: '5% -10% 0 -10%',
-	},
-	questionsCompMobileIndex0: {
-		marginTop: '10%'
-	},
-	questionsCompMobileIndexX: {
-		marginTop: 0,
-	},
-	verticalContainerPCwFile: {
-		margin: '5% -10% 0 -10%'
-	},
-	verticalContainerPCwoFile: {
-		margin: '5% 10% 0 10%'
-	},
-	verticalContainerMobile: {
-		marginTop: 40,
-	},
-	imageUploadContainerPC: {
-		display: 'flex',
-		gap: 3,
-	},
-	imageUploadContainerMobile: {
-		display: 'flex',
-		flexDirection: 'column',
-		// gap: 3,
-	},
-};
 export { QuestionsArrComp };
