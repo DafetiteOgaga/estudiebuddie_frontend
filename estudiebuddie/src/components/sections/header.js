@@ -11,6 +11,7 @@ function Header({isSticky, scrollY}) {
 	const userData = lStorage.getItem('user')
 	const { role, contributor, points } = userData||{}
 	// console.log({loggedIn, userData, role, contributor})
+	// console.log({scrollY, isSticky})
 
 	const headerMenu = [];
 	// Login / Logout
@@ -23,11 +24,11 @@ function Header({isSticky, scrollY}) {
 	headerMenu.push({ name: 'Quiz', link: 'quiz' });
 	// Profile (only when logged in)
 	if (loggedIn) {
-		headerMenu.push({ name: 'Profile', link: 'profile' });
+		headerMenu.push({ name: 'Profile', link: `profile/${userData?.id}` });
 	}
 	// Teacher-specific options
 	if (loggedIn && role?.toLowerCase() === 'teacher') {
-		headerMenu.push({ name: 'Scramble', link: 'scramble-questions' });
+		headerMenu.push({ name: 'Scramble', link: `scramble-questions/${userData?.id}` });
 		// Contributor option for teachers
 		// if (contributor) {
 		// 	headerMenu.push({ name: 'Contribute', link: 'contribute-questions' });
@@ -50,6 +51,7 @@ function Header({isSticky, scrollY}) {
 
 	const navigate = useNavigate()
 	const location = useLocation().pathname.split('/')[1];
+	console.log({location})
 	// console.log({isSticky, scrollY});
 	return (
 		<header className={`header ${isSticky?'sticky':''}`}>
@@ -65,6 +67,14 @@ function Header({isSticky, scrollY}) {
 					</div>
 					<div className="nav-links">
 						{headerMenu.map((header, hIdx) => {
+							console.log({link: header?.link})
+							let linkArr
+							if (typeof(header.link) === "function") {
+								linkArr = ["logout"]
+							} else {
+								linkArr = header?.link?.split?.('/')
+							}
+							console.log({linkArr})
 							return (
 								<Link
 									key={hIdx}
@@ -75,7 +85,7 @@ function Header({isSticky, scrollY}) {
 										}
 									}}
 									to={typeof(header.link)==='string'?header.link:'#'}
-									className={header.link === location ? 'active' : ''}
+									className={linkArr.includes(location) ? 'active' : ''}
 								>
 									{header.name}
 								</Link>
@@ -100,9 +110,9 @@ function AppName({size='lg', color1=null, color2=null}) {
 	const style = sizes[size]
 	return (
 		<span style={{fontSize: style}}>
-			<span className="font-gold">e</span>
+			<span className="font-gold skew-e">e</span>
 			<span className={`font-${color1?color1:'light-white'}`}>Studie</span>
-			<span className={color2?color2:'font-gold1'}>Buddie</span>
+			<span className={color2?color2:'font-gold1'}><span className="skew-b">B</span>uddie</span>
 		</span>
 	)
 }
