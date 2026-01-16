@@ -1,19 +1,13 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-// import { ProtectedRoute } from './ProtectedRoute';
-// import { PublicRoute } from './PublicRoute';
+import { ProtectedRoute, PublicRoute } from './ProtectedRoute';
 import { Index } from '../components';
 import { Home } from '../components/home';
-// import { Blog } from '../components/old/blog';
-// import { Contact } from '../components/old/contact';
-// import { Courses } from '../components/old/courses';
-// import { Element } from '../components/old/elements';
-// import { SingleCourse } from '../components/single-course';
-// import { SignUp } from '../components/dynamicPages/signup';
 import { About } from '../components/sections/about'
 import { Services } from '../components/sections/services';
 import { Contact } from '../components/sections/contact';
 import { PageNotFound } from '../components/sections/pageNotFound';
+import { Unauthorized } from '../components/sections/Unauthorised';
 import { ScrambleQuestionsComponent } from '../components/scrambleQuestions/scrambleQuestions';
 import { ContributeQuestionsComponent } from '../components/contributeQuestions/contribute';
 import { Quiz } from '../components/quiz/quiz';
@@ -21,7 +15,6 @@ import { Login } from '../components/authentication/login';
 import { SignUp } from '../components/sections/signUp';
 import { Leaderboard } from '../components/sections/leaderboard';
 import { Profile } from '../components/sections/profile';
-// import { ScrambleQuestions } from '../components/scrambleQuestions/ScrambleQUestions';
 
 function AppRoutes() {
 	return (
@@ -30,50 +23,36 @@ function AppRoutes() {
 				{/* This makes Home the default route */}
 				<Route index element={<Home />} />
 
+				{/* every other routes are from Outlet in Index */}
 				{/* Protected routes (auth + match check) */}
-				{/* <Route element={<ProtectedRoute requireMatch />}> */}
+				<Route element={<ProtectedRoute requireMatch />}>
+					{/* scramble quetions */}
+					<Route path="scramble-questions/:id" element={<ScrambleQuestionsComponent />} />
 					{/* profile */}
-					{/* <Route path="profile/:userID" element={<Profile />} /> */}
-				{/* </Route> */}
+					<Route path="profile/:id/contribute-questions" element={<ContributeQuestionsComponent />} />
+					<Route path="profile/:id" element={<Profile />} />
+				</Route>
 
 				{/* Protected routes (auth only) */}
-				{/* <Route element={<ProtectedRoute />}> */}
+				<Route element={<ProtectedRoute />}>
 					{/* <Route path="profile" element={<Profile />} /> */}
-				{/* </Route> */}
+				</Route>
 
 				{/* Public routes (login and sign up) */}
-				{/* <Route element={<PublicRoute />}> */}
+				<Route element={<PublicRoute />}>
 					{/* log in */}
-					{/* <Route path="login" element={<LogIn />} /> */}
+					<Route path="login" element={<Login />} />
 					{/* sign up */}
-					{/* <Route path="signup" element={<SignUp />} /> */}
-				{/* </Route> */}
-
-				{/* other Public routes */}
-				{/* products */}
-				{/* <Route path="products/:productname" element={<Products />} /> */}
-
-				{/* temporary */}
-				<Route path="about" element={<About />} />
-				<Route path="services" element={<Services />} />
-				<Route path="contact" element={<Contact />} />
-				<Route path="scramble-questions" element={<ScrambleQuestionsComponent />} />
-				<Route path="profile/:id/contribute-questions" element={<ContributeQuestionsComponent />} />
-				<Route path="quiz" element={<Quiz />} />
-				<Route path="login" element={<Login />} />
-				<Route path="signup" element={<SignUp />} />
-				<Route path="leaderboard" element={<Leaderboard />} />
-				<Route path="profile" element={<Profile />} />
-				{/* <Route path="courses" element={<Courses />} />
-				<Route path="news" element={<Blog />} />
-				<Route path="contact" element={<Contact />} />
-				<Route path="element" element={<Element />} />
-				<Route path="single-course" element={<SingleCourse />} />
-				<Route path="login" element={<SignUp />} />
-				<Route path="scramble-questions" element={<ScrambleQuestions />} /> */}
-				{/* page not found and unauthorised */}
-				{/* <Route path="unauthorised" element={<Unauthorised />} /> */}
-				<Route path="*" element={<PageNotFound />} />
+					<Route path="signup" element={<SignUp />} />
+					{/* quiz */}
+					<Route path="quiz" element={<Quiz />} />
+					{/* leaderboard */}
+					<Route path="leaderboard" element={<Leaderboard />} />
+					{/* unauthorised */}
+					<Route path="unauthorised" element={<Unauthorized />} />
+					{/* page not found */}
+					<Route path="*" element={<PageNotFound />} />
+				</Route>
 			</Route>
 		</Routes>
 	);
