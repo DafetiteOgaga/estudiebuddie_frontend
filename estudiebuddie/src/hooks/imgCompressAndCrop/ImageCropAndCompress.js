@@ -39,7 +39,9 @@ const convertCroppedPixelToJPGImage = (imageSrc, cropPixels) => {
 	});
 };
 
-const ImageCropAndCompress = forwardRef(({onComplete, imgType,
+const ImageCropAndCompress = forwardRef(({onComplete,
+											imgType,
+											onClearSelection=null,
 											initPreview=null,
 											isImagePreview = null,
 											imageId=null,
@@ -48,6 +50,7 @@ const ImageCropAndCompress = forwardRef(({onComplete, imgType,
 										}, ref) => {
 	// console.log('cropping image...')
 	// console.log({imageId})
+	// console.log({onClearSelection})
 	const [imageSrc, setImageSrc] = useState(null);
 	const [crop, setCrop] = useState({ x: 0, y: 0 });
 	const [zoom, setZoom] = useState(1);
@@ -66,6 +69,9 @@ const ImageCropAndCompress = forwardRef(({onComplete, imgType,
 	if (imgType === "question") {
 		targetHeight = 450;
 		targetWidth = 500;
+	} else if (imgType === "sch-logo") {
+		targetHeight = 100;
+		targetWidth = 100;
 	} else if (imgType==="profile"||
 		imgType==='changeProfile') {
 		targetHeight = 200;
@@ -200,7 +206,7 @@ const ImageCropAndCompress = forwardRef(({onComplete, imgType,
 				{/* image preview */}
 				<img src={finalImageUrl}
 				alt="image-preview"
-				className={`image-preview ${imgType==="question"?"question":"profile"}`}
+				className={`image-preview ${imgType==="question"?"question":imgType === "sch-logo"?"sch-logo":"profile"}`}
 				/>
 				{/* remove image button */}
 				<button
@@ -214,15 +220,19 @@ const ImageCropAndCompress = forwardRef(({onComplete, imgType,
 						onComplete(null);
 						setIsFileSelected(false);
 					}
+					if (onClearSelection) {
+						onClearSelection(true)
+					}
 				}}
-				className="cta-button question remove">
-					Remove
+				className={`cta-button question remove ${imgType === "sch-logo"?'x':''}`}>
+					{imgType === "sch-logo"?'X':'Remove'}
 				</button>
 
 				{/* download cropped image button */}
 				{(imgType!=='profile'&&
 					imgType!=='changeProfile'&&
-					imgType!=="question")&&
+					imgType!=="question"&&
+					imgType!=="sch-logo")&&
 				<button
 				onClick={handleDownload}
 				className="download">
@@ -235,9 +245,9 @@ const ImageCropAndCompress = forwardRef(({onComplete, imgType,
 				{/* upload button */}
 				<button
 				type='button'
-				className='cta-button question'
+				className={`cta-button ${imgType === "sch-logo"?'':'question'}`}
 				onClick={()=> document.getElementById(`${imageId?`fileUpload-${imageId}`:'fileUpload'}`).click()}>
-					{isFileSelected?'Change':'Upload'} Image
+					{isFileSelected?'Change':'Upload'} {imgType === "sch-logo"?'Logo':'Image'}
 				</button>
 
 				{/* actual input (hidden) */}
