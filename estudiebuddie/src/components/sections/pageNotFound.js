@@ -3,10 +3,23 @@ import { toast } from 'react-toastify'
 import { Spinner } from '../../hooks/spinner/spinner'
 // import { GameResult } from '../animationComps/confettiAnime'
 // import { CoinsRain } from '../animationComps/framerAnime'
-import { DancingLion, TalkingAnimal } from '../animationComps/lottieAnime'
+import { DancingLion, DancingLion2, TalkingAnimal } from '../animationComps/lottieAnime'
+import { FetchFromServer } from "../../hooks/FetchFromServer";
 
 function PageNotFound() {
 	const [showAnime, setShowAnime] = useState(false)
+
+	const submitHandler = async (e) => {
+		e.preventDefault(); // prevent default page refres
+		const endpoint = 'shufflequestions/get-links'
+		const res = await FetchFromServer(endpoint)
+		console.log('Form submitted with data:');
+		// const alert1 = `\nResponse: \n ${JSON.stringify(res, null, 2)}`
+		alert("Success\nClick 'Download File' to download the shuffled questions");
+		if (res.ok) {
+			console.log({res})
+		}
+	};
 	return (
 		<>
 			<div className="d-flex flex-column justify-content-center align-items-center">
@@ -45,10 +58,20 @@ function PageNotFound() {
 				<div className='d-flex'>
 					<DancingLion />
 				</div>
+				<div className='d-flex'>
+					<DancingLion2 />
+				</div>
 				<div>
 					<TalkingAnimal />
 				</div>
 			</div>:null}
+
+			<button
+			type="submit"
+			onClick={submitHandler}
+			className="cta-button profile-btn">
+				test GET request
+			</button>
 		</>
 	)
 }
