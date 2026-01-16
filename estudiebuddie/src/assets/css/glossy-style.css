@@ -30,6 +30,7 @@ https://templatemo.com/tm-592-glossy-touch
     --darkShadow: rgba(0, 0, 0, 0.1);
     --lightDarkShadow: rgba(0, 0, 0, 0.2);
     --lighterDarkShadow: rgba(0, 0, 0, 0.5);
+    --darkerDarkShadow: rgba(0, 0, 0, 0.8);
     --textShadow: rgba(0, 0, 0, 0.3);
     --shadow: rgba(255, 255, 255, 0.1);
     --shadow2: rgba(255, 255, 255, 0.2);
@@ -85,6 +86,13 @@ h1, h2, h3, h4, h5, h6, p {
     color: white;
     text-shadow: 0 4px 15px var(--lightDarkShadow);
     font-style: italic;
+}
+/* prevent copy */
+.no-copy {
+    user-select: none;          /* Standard */
+    -webkit-user-select: none;  /* Chrome/Safari */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* Old Edge */
 }
 /* Animated background elements */
 .bg-shapes {
@@ -188,6 +196,14 @@ h1, h2, h3, h4, h5, h6, p {
     /* background: var(--border); */
     transform: translateY(-5px);
     box-shadow: 0 15px 45px var(--shadowHover);
+}
+.skew-e {
+    display: inline-block;
+    transform: rotate3d(0, 0, -10, 20deg);
+}
+.skew-b {
+    display: inline-block;
+    transform: rotate3d(0, 0, -10, 10deg);
 }
 /* ########################################### */
 /* button {
@@ -767,6 +783,9 @@ button[type="submit"] {
 .cta-button:disabled:hover {
     background: var(--shadow);
 }
+.cta-button.no-cursor {
+    pointer-events: none;
+}
 
 .features {
     display: grid;
@@ -818,6 +837,46 @@ button[type="submit"] {
     line-height: 1.8;
     color: rgba(255, 255, 255, 0.9);
     margin-bottom: 20px;
+}
+.download-btn-dropdown {
+    position: relative;
+    display: inline-block;
+}
+.download-btn-dropdown-menu {
+    position: absolute;
+    bottom: 102%;
+    left: 0;
+    background: var(--darkerDarkShadow);
+    border-radius: 6px;
+    padding: 0.1rem 0;
+    width: -webkit-fill-available;
+    display: none;
+}
+.download-btn-dropdown:hover .download-btn-dropdown-menu {
+    display: block;
+}
+.download-btn-dropdown-item {
+    display: block;
+    padding: 0.9rem 0.5rem;
+    text-decoration: none;
+    color: white;
+}
+.download-btn-dropdown-item:hover {
+    background: var(--shadow);
+}
+.time-ago {
+    font-size: x-small;
+    font-style: italic;
+    font-weight: bold;
+    color: var(--accent-warn);
+}
+.download-notification-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #facc15;
+    border-radius: 50%;
+    transition: all 0.3s ease;
 }
 
 /* About page styles */
@@ -1035,6 +1094,9 @@ button[type="submit"] {
     color: white;
     text-shadow: 0 2px 10px var(--textShadow);
 	transition: transform 0.2s ease;
+}
+.timer-display .timer-dash {
+    font-weight: normal;
 }
 
 .timer-danger {
