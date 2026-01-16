@@ -182,25 +182,25 @@ function Profile() {
 	const [showOldPassword, setShowOldPassword] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-	console.log({
-		about,
-		email,
-		fileId,
-		image_url,
-		avatar_code,
-		first_name,
-		last_name,
-		is_staff,
-		is_superuser,
-		role,
-		gender,
-		mobile_no,
-		username,
-		contributor,
-		id,
-		points,
-		userData
-	})
+	// console.log({
+	// 	about,
+	// 	email,
+	// 	fileId,
+	// 	image_url,
+	// 	avatar_code,
+	// 	first_name,
+	// 	last_name,
+	// 	is_staff,
+	// 	is_superuser,
+	// 	role,
+	// 	gender,
+	// 	mobile_no,
+	// 	username,
+	// 	contributor,
+	// 	id,
+	// 	points,
+	// 	userData
+	// })
 	const profileArr = [
 		{
 			name: "Email",
@@ -343,14 +343,14 @@ function Profile() {
 		setLoading(false)
 	};
 
-	console.log({
-		formData,
-		selectedAvatar,
-		activeView,
-		// passwordCheckError,
-		// uploadedProfileImg,
-		// isEditing,
-	})
+	// console.log({
+	// 	formData,
+	// 	selectedAvatar,
+	// 	activeView,
+	// 	// passwordCheckError,
+	// 	// uploadedProfileImg,
+	// 	// isEditing,
+	// })
 	return (
 		<>
 			{/* spinner */}
@@ -401,7 +401,7 @@ function Profile() {
 							<button
 							className={`cta-button profile mr-05 ${(activeView==='profile'&&contributor)?'':'d-none'}`}
 							type="button"
-							onClick={(e)=>navigate(`${id}/contribute-questions`)}>
+							onClick={(e)=>navigate(`contribute-questions`)}>
 								{'Contribute Questions'}
 							</button>
 
