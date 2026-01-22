@@ -28,6 +28,7 @@ const sssArray = ["sss-1", "sss-2", "sss-3"]
 const basicSubjectArray = ["mathematics", "english"]
 const jssSubjectArrar = ["science", "computer"]
 const sssSubjectArray = ["physics", "chemistry"]
+const departmentArray = ["art", "commercial", "science"]
 
 // const durationArray = ["1hr"]
 const durationArray = Array.from({length: 5}).map((_, idx) => {
@@ -41,7 +42,7 @@ const noOfQsArray = [0, 30, 70].map((increment, idx) => {
 })
 // console.log({noOfQsArray, durationArray})
 
-let preHeadForm = [
+const preHeadForm = [
 	{
 		name: "name",
 		required: true,
@@ -134,8 +135,9 @@ const STORAGE_KEY = "countdown_seconds_left";
 // - "wrong"
 // - "coin"
 function Quiz() {
+	const [statePreHeadForm, setStatePreHeadForm] = useState(preHeadForm)
 	const deviceInfo = useDeviceInfo()
-	console.log({deviceInfo})
+	// console.log({deviceInfo})
 	const [isTimeUp, setIsTimeUp] = useState(false);
 	const startButtonRef = useRef(null);
 	const modalRef = useRef(null);
@@ -157,15 +159,15 @@ function Quiz() {
 	const selectedQuestionNumberSerialsRef = useRef([])
 	const selectedAnswersRef = useRef([])
 	if (deviceInfo.label === "smallLaptop") {
-		console.log('smallTablet'.repeat(5))
+		// console.log('smallTablet'.repeat(5))
 		dyName.forEach(obj => {
-			let objItem = preHeadForm.find(item => item.name === obj)
+			let objItem = statePreHeadForm.find(item => item.name === obj)
 			if (objItem) objItem.width = '17%'
 		})
 	} else if (deviceInfo.label === "tablet") {
-		console.log('smallTablet'.repeat(5))
+		// console.log('smallTablet'.repeat(5))
 		dyName.forEach(obj => {
-			let objItem = preHeadForm.find(item => item.name === obj)
+			let objItem = statePreHeadForm.find(item => item.name === obj)
 			if (objItem) {
 				if (deviceInfo.width > 800) {
 					objItem.width = '19%'
@@ -175,8 +177,8 @@ function Quiz() {
 			}
 		})
 	} else if (deviceInfo.label === "mobile") {
-		console.log('mobile'.repeat(5))
-		preHeadForm.forEach(obj => {
+		// console.log('mobile'.repeat(5))
+		statePreHeadForm.forEach(obj => {
 			// let objItem = formHead.find(item => item.name === obj)
 			if (obj.name==="name"||obj.name==="email") {
 				obj.width = '100%'
@@ -191,7 +193,64 @@ function Quiz() {
 			}
 		})
 	}
-	console.log(preHeadForm)
+	useEffect(() => {
+		if (formData.type.toLowerCase()==="basic") {
+			console.log('removing department')
+			setStatePreHeadForm(prev => {
+				let  updatedPreForm = [...prev]
+				console.log({updatedPreForm})
+				updatedPreForm = updatedPreForm.filter(obj=>obj.name.toLowerCase()!=="department")
+				return updatedPreForm
+			})
+			setFormData(prev => {
+				return {
+					...prev,
+					class: "",
+					duration: "",
+					noOfQs: "",
+					subject: "",
+					department: "",
+				}
+			})
+		} else if (formData.type.toLowerCase()==="jss"||formData.type.toLowerCase()==="sss") {
+			console.log('ading department')
+			setStatePreHeadForm(prev => {
+				let updatedPreForm = [...prev]
+				const deptExist = updatedPreForm.find(obj=>obj.name.toLowerCase()==="department")
+				if (deptExist) {
+					return updatedPreForm
+				} else {
+					const insertIndex = 4;
+					updatedPreForm = [
+						...updatedPreForm.slice(0, insertIndex),
+						{
+							name: "department",
+							required: true,
+							disabled: false,
+							type: "select",
+							placeholder: "Department",
+							width: "70%",
+							options: departmentArray,
+							case: "title",
+						},
+						...updatedPreForm.slice(insertIndex),
+					]
+					return updatedPreForm
+				}
+			})
+			setFormData(prev => {
+				return {
+					...prev,
+					class: "",
+					duration: "",
+					noOfQs: "",
+					subject: "",
+					department: "",
+				}
+			})
+		}
+	}, [formData.type])
+	// console.log(statePreHeadForm)
 	useEffect(() => {
 		setLoadingPage(false)
 	}, []);
@@ -307,6 +366,7 @@ function Quiz() {
 		lStorage.removeSession()
 		setSession(blankSession)
 		setSelectedAnswers([])
+		isSubmitted = false
 
 		endpoint = 'take-quiz/pre-quiz'
 		res = await FetchFromServer(endpoint, 'POST', cleanedData)
@@ -495,8 +555,8 @@ function Quiz() {
 	const loadStartTime = async (sessionID) => {
 		if (!sessionID) return
 		const queryString = new URLSearchParams({ session: !activeSession }).toString();
-		console.log('getting user start time')
-		console.log({activeSession})
+		// console.log('getting user start time')
+		// console.log({activeSession})
 
 		// const actualStartTime = Date.now(); // or Date.now()
 		const endpoint = `${sessionID}?${queryString}`
@@ -505,7 +565,7 @@ function Quiz() {
 		setUserStartTime(actualStartTime);
 		setShowReadyModal(false);
 		setIsPreQuiz(false); // SAME action alert was guarding
-		console.log('setting beginning time')
+		// console.log('setting beginning time')
 		const startTime = new Date(actualStartTime).getTime(); // ms
 		setQuizStarting(startTime)
 	};
@@ -524,7 +584,7 @@ function Quiz() {
 	const sessionLength = session.quizQuestions.length
 	const totalQuestionsAnswered = selectedAnswers.length
 	const totalQuestions = sessionLength
-	const isSubmitted = session.submitted
+	let isSubmitted = session?.submitted
 	const currentQuestionId = session?.quizQuestions?.[QuestionNumber]?.id
 	const answerObject = {
 		correct_answer: session?.quizAnswers?.find(ans=>ans.question_id===currentQuestionId)?.correct_answer,
@@ -541,14 +601,16 @@ function Quiz() {
 	// return cols;
 	// }, []);
 
-	// console.log({
-	// 	formData,
-	// 	// duration,
-	// 	isPreQuiz,
-	// 	selectedAnswers,
-	// 	// quizQuestions,
-	// 	session,
-	// })
+	console.log({
+		formData,
+		ans: session?.quizAnswers,
+		isSubmitted,
+		// // duration,
+		// isPreQuiz,
+		// selectedAnswers,
+		// // quizQuestions,
+		// session,
+	})
 	// console.log({
 	// 	// totalPointsScored,
 	// 	totalQuestionsAnswered,
@@ -591,14 +653,14 @@ function Quiz() {
 		}
 	}, [QuestionNumber, session]);
 
-	console.log({
-		selectedAnswers,
-		session,
-		isSubmitted,
-		showReadyModal,
-		isTimeUp,
-		formData,
-	})
+	// console.log({
+	// 	selectedAnswers,
+	// 	session,
+	// 	isSubmitted,
+	// 	showReadyModal,
+	// 	isTimeUp,
+	// 	formData,
+	// })
 
 	return (
 			<>
@@ -651,7 +713,7 @@ function Quiz() {
 					className={`quiz-text glass ${(isPreQuiz&&!activeSession)?'':'d-none'}`}>
 						{/* <h2>Pre Tests Page</h2> */}
 						<fieldset className="questions-header">
-						{preHeadForm.map((input, inpIdx) => {
+						{statePreHeadForm.map((input, inpIdx) => {
 							// console.log({input})
 							const isClass = input.name.toLowerCase()==="class"
 							const isSubject = input.name.toLowerCase()==="subject"
@@ -687,7 +749,7 @@ function Quiz() {
 											<select
 											// style={{width: input.width}}
 											// className="text-center"
-											value={formData[input.name]}
+											value={formData[input.name]||''}
 											onChange={handleChange}
 											name={input.name}
 											required={input.required}>
@@ -743,6 +805,7 @@ function Quiz() {
 
 
 					{/* quiz section */}
+					{/* <div className={`${(!isPreQuiz||activeSession)?'quiz':'d-none'} ${isSubmitted ? 'is-flipped' : ''}`}> */}
 					<div className={`${(!isPreQuiz||activeSession)?'quiz':'d-none'}`}>
 						{/* handles quiz test */}
 						<form
@@ -753,16 +816,16 @@ function Quiz() {
 							<p>Tests Page</p> */}
 							<fieldset className="questions-header quiz-questions">
 							
-								<div className="">
-									{/* <div className=""> */}
+								{/* <div className=""> */}
+									<>
 										{/* <div className=''> */}
 											{/* question counter */}
-											<div className="d-flex justify-content-between">
+											<>
 												<h5>
 													Question {sessionLength?(QuestionNumber + 1):0} of {sessionLength}
 												</h5>
 												{deviceInfo.label === "mobile" ?
-												<div className="mr-05">
+												<div className="mr-05 auto-left">
 													<QuizTimer
 													isStartTime={quizStarting}
 													setIsStarting={setQuizStarting}
@@ -776,7 +839,7 @@ function Quiz() {
 													submitHandler={submitHandler}
 												/>
 												</div>:null}
-											</div>
+											</>
 											{/* <div style={styles.rowed}> */}
 											{/* navigation buttons */}
 											<div className="mb-1">
@@ -876,8 +939,8 @@ function Quiz() {
 												null}
 											</p>
 										</div>
-									{/* </div> */}
-								</div>
+									</>
+								{/* </div> */}
 
 							{/* <h2>Take Tests Page</h2> */}
 							{/* <p>We believe in creating digital experiences that feel natural and intuitive. Our glass morphism design philosophy combines transparency, depth, and subtle animations to create interfaces that users love to interact with.</p> */}
@@ -941,7 +1004,7 @@ function Quiz() {
 										key={question.question + qIdx}
 										onClick={(e)=>setQuestionNumber(qIdx)}
 										className={`stat-label number-hover overflow-hidden ${selectedQuestionNumberSerialsRef.current.includes(qIdx)?'glass choices':''} ${isSubmitted?(isCorrect?'question-box-green':isCorrect===false?'question-box-red':''):''}`}>
-										Q{qIdx + 1}
+										{`${String(qIdx + 1).padStart(2, "0")}`}
 										</div>
 									)})}
 								</div>
@@ -986,15 +1049,15 @@ function QuizTimer({
 	// })
 	useEffect(() => {
 		// console.log('yyyyy')
-		console.log('in effect', {
-			isSubmitted,
-			// start,
-			// duration,
-			// timeLeft,
-			// isStartTime,
-			// expiredReportedRef: expiredReportedRef.current,
-			// hasStartedRef: hasStartedRef.current,
-		})
+		// console.log('in effect', {
+		// 	isSubmitted,
+		// 	// start,
+		// 	// duration,
+		// 	// timeLeft,
+		// 	// isStartTime,
+		// 	// expiredReportedRef: expiredReportedRef.current,
+		// 	// hasStartedRef: hasStartedRef.current,
+		// })
 		if (!start) {
 			// console.log('no start')
 			setTimeLeft(0);
@@ -1019,18 +1082,18 @@ function QuizTimer({
 			const now = Date.now();
 			const diff = Math.floor((endTime - now) / 1000);
 
-			console.log({
-				diff,
-				isSubmitted,
-				// gt0: diff>0,
-				// ltm1: diff<-1,
-				// start,
-				// duration,
-				// timeLeft,
-				// startTime,
-				// expiredReportedRef: expiredReportedRef.current,
-				// hasStartedRef: hasStartedRef.current,
-			})
+			// console.log({
+			// 	diff,
+			// 	isSubmitted,
+			// 	// gt0: diff>0,
+			// 	// ltm1: diff<-1,
+			// 	// start,
+			// 	// duration,
+			// 	// timeLeft,
+			// 	// startTime,
+			// 	// expiredReportedRef: expiredReportedRef.current,
+			// 	// hasStartedRef: hasStartedRef.current,
+			// })
 			// gt0 and start
 			if (diff > 0 || (start && diff < -1)) {
 				// console.log('setting has started to true')
@@ -1049,13 +1112,13 @@ function QuizTimer({
 					expiredReportedRef.current = true;
 					// STOP tick interval
 					if (intervalRef.current) {
-						console.log('clearing interval triggered')
+						// console.log('clearing interval triggered')
 						clearInterval(intervalRef.current);
 						intervalRef.current = null;
 						// setIsStarting(null)
 					}
 					if (!isSubmitted) {
-						console.log('trigger time up overlay')
+						// console.log('trigger time up overlay')
 						onTimeUpChange?.(true);
 						submitHandler?.(null, true) // forcefully submit current progress
 					}
@@ -1079,13 +1142,13 @@ function QuizTimer({
 	
 		// tick(); // sync immediately
 		if (!intervalRef.current) {
-			console.log('ticking started')
+			// console.log('ticking started')
 			// setIsStarting(true)
 			intervalRef.current = setInterval(tick, 1000);
 		}
 
 		return () => {
-			console.log('in clearing interval return')
+			// console.log('in clearing interval return')
 			clearInterval(intervalRef.current);
 			intervalRef.current = null;
 		};
