@@ -4,6 +4,7 @@ import { FetchFromServer, buildFormData, serverOrigin } from "../../hooks/FetchF
 import { titleCase, sentenceCase, formatPhoneNumber } from "../../hooks/changeCase";
 import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit";
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
+import { useDeviceInfo } from "../../hooks/deviceType";
 
 const formValues = {
 	type: "",
@@ -38,7 +39,7 @@ const sssArray = ["sss-1", "sss-2", "sss-3"]
 const basicSubjectArray = ["mathematics", "english"]
 const jssSubjectArrar = ["science", "computer"]
 const sssSubjectArray = ["physics", "chemistry"]
-const formHead = [
+let formHead = [
 	{
 		name: "totalQs",
 		required: true,
@@ -79,6 +80,8 @@ const formHead = [
 		case: 'title',
 	},
 ]
+const dyName = ['totalQs']
+// const dyNameMobile = ['totalQs']
 const noType = "no type selected"
 const displayValue = (val, strCase) => {
 	if (strCase === "upper") return val.toUpperCase();
@@ -94,6 +97,8 @@ const justNumbers = (str) => {
 };
 
 function ContributeQuestionsComponent() {
+	const deviceInfo = useDeviceInfo()
+	console.log({deviceInfo})
 	const [loadingPage, setLoadingPage] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const formDataRef = useRef(new FormData())
@@ -117,6 +122,40 @@ function ContributeQuestionsComponent() {
 	useEffect(() => {
 		setLoadingPage(false)
 	}, []);
+
+	if (deviceInfo.label === "smallLaptop") {
+		console.log('smallLaptop'.repeat(5))
+		dyName.forEach(obj => {
+			let objItem = formHead.find(item => item.name === obj)
+			if (objItem) objItem.width = '17%'
+		})
+	} else if (deviceInfo.label === "tablet") {
+		console.log('tablet'.repeat(5))
+		dyName.forEach(obj => {
+			let objItem = formHead.find(item => item.name === obj)
+			if (objItem) {
+				if (deviceInfo.width > 800) {
+					objItem.width = '19%'
+				} else {
+					objItem.width = '22%'
+				}
+			}
+		})
+	} else if (deviceInfo.label === "mobile") {
+		console.log('mobile'.repeat(5))
+		formHead.forEach(obj => {
+			// let objItem = formHead.find(item => item.name === obj)
+			if (obj.name) {
+				// if (deviceInfo.width > 800) {
+				obj.width = '47%'
+				// }
+				// else {
+				// 	objItem.width = '22%'
+				// }
+			}
+		})
+	}
+
 	const handleQuestionChange = (e=null, data=null, index, mode='+') => {
 		console.log('in handle question change fxn...', {data})
 		if (!e && !data?.files?.[0]) return
@@ -395,7 +434,7 @@ function ContributeQuestionsComponent() {
 						<div className="">
 							<button
 							style={{margin: '0 5rem'}}
-							className="cta-button mb-xs"
+							className="cta-button mb-xs q-mx"
 							type="button"
 							disabled={true}
 							onClick={() => null}>
@@ -409,7 +448,7 @@ function ContributeQuestionsComponent() {
 						<button
 						style={{margin: '0 5rem'}}
 						type="submit"
-						className="cta-button">
+						className="cta-button contribute-submit-mobile">
 							{loading ?
 								<Spinner type={'dot'} /> :
 								`Submit Question${lengthOfQs===1?'':'s'}`}
