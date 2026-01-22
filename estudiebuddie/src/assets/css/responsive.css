@@ -16,13 +16,13 @@
         padding: 1px;
     }
     nav.sticky {
-        padding: 0 15px;
+        padding: 8px 15px;
     }
     nav {
         padding: 10px;
     }
     .logo-text {
-        font-size: 26px;
+        font-size: 35px;
     }
     .q-mx {
         margin-left: 3rem !important;
@@ -36,6 +36,12 @@
     }
     .sign-up-form {
         width: 75%;
+    }
+    .quiz-head1,
+    .shuffle-question-head1,
+    .profile-info h2,
+    .profile-form h2 {
+        font-size: large;
     }
 }
 
@@ -70,7 +76,7 @@
         justify-content: center;
     }
     .logo-text {
-        font-size: 21px;
+        font-size: 27px;
     }
     .scramble-question-text {
         padding: 40px 8px;
@@ -96,9 +102,19 @@
     .leaderboard-page {
         margin: 0 0.5rem;
     }
+    .quiz-head1,
+    .shuffle-question-head1,
+    .profile-info h2,
+    .profile-form h2 {
+        font-size: medium;
+        padding-left: 15px;
+    }
 }
 
 @media (max-width: 768px) {
+    .logo-text {
+        font-size: 25px;
+    }
     .glass {
         overflow: visible;
     }
@@ -152,8 +168,13 @@
     .timer-display {
         font-size: 1.5rem;
     }
+    .download-btn-dropdown {
+        display: flex;
+        justify-content: center;
+    }
     .download-btn-dropdown-menu {
         width: fit-content;
+        left: unset;
     }
     .download-btn-dropdown-item {
         padding: 0.9rem 1rem;
@@ -177,7 +198,7 @@
         font-size: 2.5rem;
     }
     nav {
-        padding: 20px 30px;
+        padding: 10px 15px;
     }
     .is-desktop {
         display: none;
@@ -243,15 +264,20 @@
         width: 100%;
         max-width: 200px;
         font-size: 16px;
-        padding: 20px 55px;
+        padding: 20px 30px;
     }
     header {
-        padding: 10px;
+        padding: 4px 10px 10px 10px;
     }
     .bar-avatar {
-        width: 45px;
-        height: 45px;
+        width: 60px;
+        height: 60px;
         font-size: 35px;
+        border: 1px solid var(--placeholder1);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     .logo-text {
         display: initial;
@@ -399,10 +425,19 @@
         font-size: 0.8rem;
         margin: 0 auto;
     }
+    #footer {
+        padding: 5px 0 0px 0;
+    }
+    footer {
+        border-radius: 0 !important;
+    }
 }
 
 /* Ultra-small screens <400px */
 @media (max-width: 400px) {
+    .logo-text {
+        font-size: 22px;
+    }
     .ultra-small-devices {
         width: 102%;
     }
@@ -469,5 +504,14 @@
     .logo-icon {
         width: 32px;
         height: 32px;
+    }
+}
+
+@media (max-width: 361px) {
+    .logo-text {
+        font-size: 20px;
+    }
+    .leaderboard-page {
+        width: 105%;
     }
 }

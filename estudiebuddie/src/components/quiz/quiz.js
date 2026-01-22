@@ -712,7 +712,7 @@ function Quiz() {
 					onSubmit={submitHandler}
 					// handles pre-quiz
 					className={`quiz-text glass ${(isPreQuiz&&!activeSession)?'':'d-none'}`}>
-						{/* <h2>Pre Tests Page</h2> */}
+						<h1 className="quiz-head1">Quiz</h1>
 						<fieldset className="questions-header">
 						{statePreHeadForm.map((input, inpIdx) => {
 							// console.log({input})
@@ -821,7 +821,7 @@ function Quiz() {
 									<>
 										{/* <div className=''> */}
 											{/* question counter */}
-											<>
+											<div className="d-flex">
 												<h5>
 													Question {sessionLength?(QuestionNumber + 1):0} of {sessionLength}
 												</h5>
@@ -840,7 +840,7 @@ function Quiz() {
 													submitHandler={submitHandler}
 												/>
 												</div>:null}
-											</>
+											</div>
 											{/* <div style={styles.rowed}> */}
 											{/* navigation buttons */}
 											<div className="mb-1">

@@ -457,6 +457,7 @@ function ScrambleQuestionsComponent() {
 				<form
 				onSubmit={submitHandler}
 				className={`form-head scramble-question-text glass ${loadingPage?'d-none':''}`}>
+					<h1 className="shuffle-question-head1">Shuffle Questions</h1>
 					<fieldset className="questions-header">
 						{formHead.map((input, inpIdx) => {
 							return (
@@ -581,9 +582,9 @@ function ScrambleQuestionsComponent() {
 					hasMultipleLinks ?
 					(<div
 						onMouseEnter={(e)=>setIsNewDownload(false)}
-						style={{margin: '0 5rem',}}
+						// style={{margin: '0 5rem',}}
 						className="download-btn-dropdown">
-						<button className="cta-button no-cursor">
+						<button className="cta-button fit no-cursor">
 							Download files ({downloadLink.length}) <sup
 							className={`download-notification-dot ${isNewDownload?'':'d-none'}`}
 							/>
