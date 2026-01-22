@@ -83,3 +83,20 @@
 	background: rgba(255, 255, 255, 0.3) !important;
 	color: rgba(0, 0, 0, 0.8) !important;
 }
+
+/* small devices */
+@media (max-width: 768px) {
+	.image-preview {
+		width: 160px !important;
+		height: 140px !important;
+	}
+	.cta-button {
+        width: fit-content !important;
+    }
+	.image-preview-container {
+		padding-left: 3px;
+	}
+	.image-preview-container .profile {
+		width: 150px !important;
+	}
+}
