@@ -9,6 +9,8 @@ import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit";
 import { Spinner } from "../../hooks/spinner/spinner";
 import { useCreateStorage } from "../../hooks/persistToStorage";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../../hooks/authContext";
+import { useDeviceInfo } from "../../hooks/deviceType";
 
 const formValues = {
 	first_name: "",
@@ -30,7 +32,7 @@ const genderArray = [
 	'Male',
 	'Female'
 ]
-const formHead = [
+let formHead = [
 	{
 		name: "first_name",
 		required: true,
@@ -124,6 +126,7 @@ const formHead = [
 		case: null,
 	},
 ]
+const dyName = ['totalQs']
 const checkIcons = {
 	// loading: null,
 	available: <FontAwesomeIcon icon="check" className="checkers-icons"/>,
@@ -139,6 +142,9 @@ function isValidEmail(email) {
 const validateFieldsArr = ["email", "username"]
 
 function SignUp() {
+	const deviceInfo = useDeviceInfo()
+	console.log({deviceInfo})
+	const { loggedIn, setLoggedIn } = useAuth()
 	const navigate = useNavigate()
 	const { lStorage, sStorage } = useCreateStorage()
 	const [loading, setLoading] = useState(false);
@@ -153,6 +159,47 @@ function SignUp() {
 	const [usernameCheckResponse, setUsernameCheckResponse] = useState(null)
 	const { checkExistence, availabilityResponse, availabilityLoading, availabilityError } = useEmailAndUsernameChecker();
 
+	// if (deviceInfo.label === "smallLaptop") {
+	// 	console.log('smallLaptop'.repeat(5))
+	// 	dyName.forEach(obj => {
+	// 		let objItem = formHead.find(item => item.name === obj)
+	// 		if (objItem) objItem.width = '17%'
+	// 	})
+	// } else if (deviceInfo.label === "tablet") {
+	// 	console.log('tablet'.repeat(5))
+	// 	dyName.forEach(obj => {
+	// 		let objItem = formHead.find(item => item.name === obj)
+	// 		if (objItem) {
+	// 			if (deviceInfo.width > 800) {
+	// 				objItem.width = '19%'
+	// 			} else {
+	// 				objItem.width = '22%'
+	// 			}
+	// 		}
+	// 	})
+	// } else
+	if (deviceInfo.label === "mobile") {
+		console.log('mobile'.repeat(5))
+		formHead.forEach(obj => {
+			// let objItem = formHead.find(item => item.name === obj)
+			// if (obj.name==="totalQs") {
+			// 	obj.width = '40%'
+			// } else if (obj.name==="school") {
+			// 	obj.width = '100%'
+			// } else if (obj.name==="subject") {
+			// 	obj.width = '65%'
+			// } else if (obj.name==="noOfTypes") {
+			// 	obj.width = '30%'
+			// } else if (obj.name==="class") {
+			// 	obj.width = '20%'
+			// } else if (obj.name==="term"||obj.name==="duration") {
+			// 	obj.width = '37%'
+			// } else if (obj.name==="instruction") {
+			// 	obj.width = '100%'
+			// }
+			obj.width = '40%'
+		})
+	}
 	const handleChange = async (e) => {
 		let { name, value } = e.target;
 		if (name === 'mobile_no') {
@@ -267,7 +314,8 @@ function SignUp() {
 			toast.success('Success')
 			lStorage.setItem('user', res.data)
 			setFormData(formValues)
-			navigate('/login')
+			setLoggedIn(res.ok)
+			navigate(-1)
 		}
 		setLoading(false)
 	};
@@ -282,7 +330,7 @@ function SignUp() {
 	return (
 		<>
 			{/* <section className="contact-grid"> */}
-			<div className="login-form sign-up-form glass flex-column">
+			<div className="sign-up-form glass flex-column">
 				{/* <h2>Get In Touch</h2> */}
 				<h1>Sign Up</h1>
 				<small className="pl-color">Note: Every field with * must be filled</small>
