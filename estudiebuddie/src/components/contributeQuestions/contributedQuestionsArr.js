@@ -1,26 +1,6 @@
 import { Fragment, useEffect, useState, useRef } from 'react';
 import { ImageCropAndCompress } from '../../hooks/imgCompressAndCrop/ImageCropAndCompress';
-// import defaultImage from '../../statics/images/sample_image.png'
-// import { useIsMobile } from '../../hooks/IsMobile';
-// import { ConvertCase } from '../../hooks/ConvertCase';
-// import { MoreInfo } from "../MoreInfo";
-// import { serverOrigin } from "../../hooks/fetch/FetchFromServer";
-
-// const generateUniqueId = () => crypto.randomUUID();
-// console.log({id: generateUniqueId()})
-// const imageScapeOption = ['side', 'top']
-// const questionObject = {
-// 	number: '',
-// 	question: '',
-// 	correct_answer: '',
-// 	wrong_answer1: '',
-// 	wrong_answer2: '',
-// 	wrong_answer3: '',
-// 	image: null,
-// 	// previewImage: defaultImage,
-// 	imageMode: 'side',
-// 	uniqueId: generateUniqueId(),
-// }
+import { useDeviceInfo } from '../../hooks/deviceType';
 
 const formQuestions = [
 	{
@@ -76,6 +56,7 @@ const formQuestions = [
 ]
 
 function QuestionsArrComp({args}) {
+	const deviceInfo = useDeviceInfo()
 	const [uploadedImg, setUploadedImg] = useState(null)
 	const {
 		// questions,
@@ -323,7 +304,7 @@ function QuestionsArrComp({args}) {
 				// 	id: questionData.uniqueId})
 				return (
 					<fieldset key={questionData.uniqueId}
-					className="form-group mb-2 mx-5 border-top-1 pt-1">
+					className="form-group mb-2 q-mx border-top-1 pt-1">
 						{/* textarea separately */}
 						{formQuestions.map((field, fIdx) => {
 							if (field.element !== "textarea") return null;
@@ -344,7 +325,7 @@ function QuestionsArrComp({args}) {
 										}}
 										name={field.name}
 									/>
-									<label className={`${field.name==='question'?'top-left':''}`}>{`${field.placeholder} ${qIdx + 1}`}</label>
+									<label className={`${field.name==='question'?'left-textarea':''}`}>{`${field.placeholder} ${qIdx + 1}`}</label>
 								</div>
 							);
 						})}
@@ -363,7 +344,7 @@ function QuestionsArrComp({args}) {
 									<div className='floating-field'
 									key={field.name + fIdx}
 									style={{
-										width: "49%", // 2 per row roughly (45% + gap ≈ 100%)
+										width: deviceInfo.label === "mobile"?"100%":"49%", // 2 per row roughly (45% + gap ≈ 100%)
 										margin: '2px',
 									}}>
 										<input
@@ -374,7 +355,7 @@ function QuestionsArrComp({args}) {
 											onChange={(e)=>handleQuestionChange(e, null, qIdx)}
 											required={field.required}
 										/>
-										<label>{`${field.placeholder} for question ${qIdx + 1}`}</label>
+										<label className='left-50-mobile'>{`${field.placeholder} for question ${qIdx + 1}`}</label>
 									</div>
 								);
 							})}
@@ -436,7 +417,7 @@ function QuestionsArrComp({args}) {
 			<button
 			style={{margin: '0 5rem'}}
 			type="button" onClick={addRemoveQuestion}
-			className={`cta-button mb-xs ${(currentNumberOfQs > 0 && currentNumberOfQs < 10)?'':'d-none'}`}>
+			className={`cta-button mb-xs q-mx ${(currentNumberOfQs > 0 && currentNumberOfQs < 10)?'':'d-none'}`}>
 				Add Another Question
 			</button>
 		</div>
