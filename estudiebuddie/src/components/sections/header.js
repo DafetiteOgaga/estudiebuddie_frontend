@@ -152,23 +152,25 @@ function Header({isSticky, scrollY}) {
 						onClick={() => setIsMenuOpen(false)}
 					/>}
 					<div className={`nav-links ${isMenuOpen?'open':''}`}>
-						<Link to={`profile/${userData?.id}`}
-						className={`avatar-container ${['profile'].includes(location) ? 'active' : ''}`}
-						onClick={() => setIsMenuOpen(false)}>
-						{image_url ?
-							<img
-							className="bar-avatar"
-							src={image_url}
-							alt={first_name} />
-							:
-							<div className="bar-avatar m-0">{avatar_code?avatar_code:avatar}</div>
-						}
-						
-						<p className="p-05 white-space-pre">
-							{id ? username||first_name : 'Anon'}
-						</p>
+						{loggedIn ?
+							<Link to={`profile/${userData?.id}`}
+							className={`avatar-container ${['profile'].includes(location) ? 'active' : ''}`}
+							onClick={() => setIsMenuOpen(false)}>
+								{image_url ?
+									<img
+									className="bar-avatar"
+									src={image_url}
+									alt={first_name} />
+									:
+									<div className="bar-avatar m-0">{avatar_code?avatar_code:avatar}</div>
+								}
+								<p className="p-05 white-space-pre">
+									{id ? username||first_name : 'Anon'}
+								</p>
 
-						</Link>
+							</Link>
+							:
+							<span className="not-logged-in"></span>}
 						{moveByIndex(headerMenu, 0, 3).map((header, hIdx) => {
 							if (header.name.toLowerCase()==='profile') return null
 							// console.log({link: header?.link})

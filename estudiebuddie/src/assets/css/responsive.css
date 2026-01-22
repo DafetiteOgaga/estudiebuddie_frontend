@@ -291,6 +291,10 @@
         justify-content: center;
         align-items: center;
     }
+    .not-logged-in {
+        border-top: 1px solid var(--shadow5);
+        padding: 0 80px;
+    }
     .profile-avatar,
     .select-avatar {
         width: 80px;
