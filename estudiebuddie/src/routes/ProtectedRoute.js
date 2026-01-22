@@ -12,30 +12,30 @@ function ProtectedRoute({ children, requireMatch = false }) {
 
 	// Retrieve user info
 	const currentUser = lStorage.getItem('user');
-	// console.log(protectedroute, "currentUser =", currentUser);
-	// console.log(protectedroute, "params =", params);
-	// console.log(protectedroute, "requireMatch =", requireMatch);
-	// console.log(protectedroute, "location =", location.pathname);
-	// console.log(protectedroute, "children =", children);
-	// console.log(protectedroute, "currentUser.id =", currentUser?.id);
-	// console.log(protectedroute, "type of currentUser.id =", typeof currentUser?.id);
-	// console.log(protectedroute, "params.id =", params.id)
-	// console.log(protectedroute, "type of params.id =", typeof params?.id)
+	console.log(protectedroute, "currentUser =", currentUser);
+	console.log(protectedroute, "params =", params);
+	console.log(protectedroute, "requireMatch =", requireMatch);
+	console.log(protectedroute, "location =", location.pathname);
+	console.log(protectedroute, "children =", children);
+	console.log(protectedroute, "currentUser.id =", currentUser?.id);
+	console.log(protectedroute, "type of currentUser.id =", typeof currentUser?.id);
+	console.log(protectedroute, "params.id =", params.id)
+	console.log(protectedroute, "type of params.id =", typeof params?.id)
 
 	// Not logged in — redirect to login
 	if (!currentUser) {
-		// console.log(protectedroute, "User not logged in, redirecting to /login");
+		console.log(protectedroute, "User not logged in, redirecting to /login");
 		return <Navigate to="/login" state={{ from: location }} replace />;
 	}
 
 	// Masking protection — if route contains a userID param
 	if (requireMatch && Object.keys(params).length > 0) {
-		// console.log(protectedroute, "requireMatch is true, checking userID match");
+		console.log(protectedroute, "requireMatch is true, checking userID match");
 		const loggedUserId = String(currentUser.id);
 		const routeUserId = String(params.id);
 
 		if (loggedUserId !== routeUserId) {
-			// console.log(protectedroute, "User ID mismatch, redirecting");
+			console.log(protectedroute, "User ID mismatch, redirecting");
 			const scramble = location?.pathname?.split?.('/')[1]
 			const contribute = location?.pathname?.split?.('/')[3]
 			// console.log({scramble})
@@ -54,7 +54,7 @@ function ProtectedRoute({ children, requireMatch = false }) {
 
 	// // Role-based access control (RBAC)
 	// if (location?.pathname?.toLowerCase()?.includes("post-products")) {
-	// 	console.log(protectedroute, "Checking RBAC for post-products route");
+		// console.log(protectedroute, "Checking RBAC for post-products route");
 	// 	if (!currentUser?.is_seller) {
 	// 		console.warn(`Unauthorized access attempt by non-seller role: ${currentUser.role}`);
 	// 		return <Navigate to="/unauthorised" replace />;
@@ -62,7 +62,7 @@ function ProtectedRoute({ children, requireMatch = false }) {
 	// }
 	// if (location?.pathname?.toLowerCase()?.includes("staff-dashboard")||
 	// 	location?.pathname?.toLowerCase()?.includes("notifications")) {
-	// 	console.log(protectedroute, "Checking RBAC for notifications/staff-dashboard route");
+		// console.log(protectedroute, "Checking RBAC for notifications/staff-dashboard route");
 	// 	// const allowedRoles = ["admin", "editor"];
 	// 	// if (!allowedRoles.includes(currentUser.role.toLowerCase())) {
 	// 	// 	console.warn(`Unauthorized access attempt by role: ${currentUser.role}`);
@@ -75,7 +75,7 @@ function ProtectedRoute({ children, requireMatch = false }) {
 	// }
 
 	// Passed all checks — render the component
-	// console.log(protectedroute, "Access granted, rendering children");
+	console.log(protectedroute, "Access granted, rendering children");
 	return <Outlet />;
 }
 
@@ -87,23 +87,23 @@ function PublicRoute({ children }) {
 
 	// Retrieve user and location info
 	const currentUser = lStorage.getItem('user');
-	// console.log(publicroute, "location =", location);
-	// console.log(publicroute, "currentUser.id =", currentUser?.id);
-	// console.log(publicroute, "children =", children);
+	console.log(publicroute, "location =", location);
+	console.log(publicroute, "currentUser.id =", currentUser?.id);
+	console.log(publicroute, "children =", children);
 
 	// Logged in and location is login/signup — redirect to home
 	if (currentUser?.id && (pathname === "/login" || pathname === "/signup")) {
-		// console.log(publicroute, "User logged in and trying to access login/signup, redirecting to /");
-		if (pathname === "/login") {
-			toast.info('You are already logged in.')
-		} else if (pathname === "/signup") {
-			toast.info('You have to logout to create a new account.')
-		}
+		console.log(publicroute, "User logged in and trying to access login/signup, redirecting to /");
+		// if (pathname === "/login") {
+		// 	toast.info('You are already logged in.')
+		// } else if (pathname === "/signup") {
+		// 	toast.info('You have to logout to create a new account.')
+		// }
 		return <Navigate to="/" replace />;
 	}
 
 	// Passed — render the component
-	// console.log(publicroute, "Access granted, rendering children");
+	console.log(publicroute, "Access granted, rendering children");
 	return children ? children : <Outlet />;
 }
 
