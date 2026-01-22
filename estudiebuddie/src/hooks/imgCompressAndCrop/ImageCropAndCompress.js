@@ -224,7 +224,7 @@ const ImageCropAndCompress = forwardRef(({onComplete,
 						onClearSelection(true)
 					}
 				}}
-				className={`cta-button question remove ${imgType === "sch-logo"?'x':''}`}>
+				className={`cta-button fit question remove ${imgType === "sch-logo"?'x':''}`}>
 					{imgType === "sch-logo"?'X':'Remove'}
 				</button>
 
