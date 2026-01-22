@@ -221,6 +221,7 @@ function Quiz() {
 					return updatedPreForm
 				} else {
 					const insertIndex = 4;
+					const width = deviceInfo.label === "mobile"?"70%":"15%"
 					updatedPreForm = [
 						...updatedPreForm.slice(0, insertIndex),
 						{
@@ -229,7 +230,7 @@ function Quiz() {
 							disabled: false,
 							type: "select",
 							placeholder: "Department",
-							width: "70%",
+							width: width,
 							options: departmentArray,
 							case: "title",
 						},
