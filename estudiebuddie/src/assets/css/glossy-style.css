@@ -276,6 +276,7 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .questions-header.quiz-questions {
     justify-content: unset !important;
+    flex-direction: column;
 }
 .quiz-questions img {
     border-radius: 5px !important;
@@ -335,6 +336,12 @@ fieldset {
 }
 .m-auto-td {
     margin: 0 auto !important;
+}
+.auto-left {
+    margin-left: auto;
+}
+.auto-right {
+    margin-right: auto;
 }
 
 .p-2px {
@@ -931,6 +938,7 @@ button[type="submit"] {
     padding: 0.9rem 0.5rem;
     text-decoration: none;
     color: white;
+    text-wrap-mode: nowrap;
 }
 .download-btn-dropdown-item:hover {
     background: var(--shadow);
@@ -980,8 +988,8 @@ button[type="submit"] {
 }
 .quiz-content .quiz {
     display: grid;
-    grid-template-columns: 7fr 1fr;
-    gap: 40px;
+    grid-template-columns: 7fr 2fr;
+    gap: 5px;
     align-items: center;
 }
 .quiz-content .pre-quiz {
@@ -1075,7 +1083,7 @@ button[type="submit"] {
 }
 .stat-card {
     text-align: center;
-    padding: 30px;
+    padding: 15px;
     color: white;
 }
 .stat-number {
@@ -1119,7 +1127,7 @@ button[type="submit"] {
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr); /* 5 items per row */
-    gap: 0.2rem 2.1rem;
+    /* gap: 0.2rem 2.1rem; */
     justify-items: center;
 }
 .selected_choice.correct-answer {
