@@ -13,7 +13,12 @@ const removeWhiteSpace = (str = '') => {
 
 const justNumbers = (str) => {
 	if (!str) return '';
-	return str.replace(/\D+/g, '');
+	return str.trim().replace(/\D+/g, '');
+};
+
+const spaceToHyphen = (str) => {
+	if (!str) return '';
+	return str.replace(/\s+/g, '-');
 };
 
 const generateUniqueId = () => crypto.randomUUID();
@@ -22,5 +27,6 @@ export {
 	shuffleArray,
 	generateUniqueId,
 	justNumbers,
-	removeWhiteSpace
+	removeWhiteSpace,
+	spaceToHyphen,
 };

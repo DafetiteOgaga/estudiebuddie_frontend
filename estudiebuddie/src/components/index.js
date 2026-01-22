@@ -15,7 +15,7 @@ function Index() {
             const updatedScrollY = window.scrollY;
             setScrollY(updatedScrollY); // update scrollY state
             // // remove head when scrolling down
-            if (updatedScrollY > 10) {
+            if (updatedScrollY > 30) {
                 setIsSticky(true);
             } else {
                 // show head when scrolling up (to top)
@@ -29,10 +29,6 @@ function Index() {
             window.removeEventListener("scroll", handleScroll);
         };
     }, [])
-	// console.log({
-	// 	isSticky,
-	// 	scrollY
-	// })
 	return (
 		<>
 			{/* shapes */}

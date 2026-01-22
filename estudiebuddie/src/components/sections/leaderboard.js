@@ -91,10 +91,10 @@ function Leaderboard() {
 										<th className="leadership-th"></th>
 										<th className="leadership-th">ID</th>
 										<th className="leadership-th">Name</th>
-										<th className="leadership-th">Points 🏆</th>
+										<th className="leadership-th white-space-pre">Pts 🏆</th>
 										<th className="leadership-th">Accuracy</th>
 										<th className="leadership-th">Score</th>
-										<th className="leadership-th">Questions</th>
+										<th className="leadership-th">Qs</th>
 										<th className="leadership-th">Rank</th>
 									</tr>
 								</thead>

@@ -105,11 +105,11 @@ const randomAvatar = [
 const getRandomAvatar = () => {
 	return randomAvatar[Math.floor(Math.random() * randomAvatar.length)];
 };
-const getGender = (gender, role) => {
-	if (!gender) return getRandomAvatar()
-	if (role === 'teacher') {
-		return gender === 'm' ? '👨‍💼' : '👩‍💼';
-	}
+const getGender = () => {
+	// if (!gender) return getRandomAvatar()
+	// if (role === 'teacher') {
+	// 	return gender === 'm' ? '👨‍💼' : '👩‍💼';
+	// }
 	// non-teacher (student / others)
 	return getRandomAvatar()
 };
@@ -171,7 +171,7 @@ function Profile() {
 		gender = gender.toLowerCase()==='m'?'M':'F'
 	}
 	const notAvailable = "N/A"
-	const [avatar] = useState(() => getGender(gender, role));
+	const [avatar] = useState(() => getGender());
 	
 	const uploadToCloud = useUploadToImagekit()
 	const [uploadedProfileImg, setUploadedProfileImg] = useState(null)
@@ -182,25 +182,25 @@ function Profile() {
 	const [showOldPassword, setShowOldPassword] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-	console.log({
-		about,
-		email,
-		fileId,
-		image_url,
-		avatar_code,
-		first_name,
-		last_name,
-		is_staff,
-		is_superuser,
-		role,
-		gender,
-		mobile_no,
-		username,
-		contributor,
-		id,
-		points,
-		userData
-	})
+	// console.log({
+	// 	about,
+	// 	email,
+	// 	fileId,
+	// 	image_url,
+	// 	avatar_code,
+	// 	first_name,
+	// 	last_name,
+	// 	is_staff,
+	// 	is_superuser,
+	// 	role,
+	// 	gender,
+	// 	mobile_no,
+	// 	username,
+	// 	contributor,
+	// 	id,
+	// 	points,
+	// 	userData
+	// })
 	const profileArr = [
 		{
 			name: "Email",
@@ -343,14 +343,14 @@ function Profile() {
 		setLoading(false)
 	};
 
-	console.log({
-		formData,
-		selectedAvatar,
-		activeView,
-		// passwordCheckError,
-		// uploadedProfileImg,
-		// isEditing,
-	})
+	// console.log({
+	// 	formData,
+	// 	selectedAvatar,
+	// 	activeView,
+	// 	// passwordCheckError,
+	// 	// uploadedProfileImg,
+	// 	// isEditing,
+	// })
 	return (
 		<>
 			{/* spinner */}
@@ -360,14 +360,14 @@ function Profile() {
 				<div className={`glass ${activeView==='edit'?'profile-form flex-column':'profile-info'}`}>
 
 					{/* page header */}
-					<div className="d-flex justify-content-between">
+					<div className="d-flex justify-content-between mobile-profile">
 						<h2 className="mb-0">
 							{activeView==='edit'?'Edit Profile':
 							activeView==='password'?'Change Password':
 							activeView==='avatar'?'Pick Avatar':
 							'Profile'}
 						</h2>
-						<div className="d-flex align-items-center">
+						<div className="d-flex align-items-center mobile-profile-btns">
 							{selectedAvatar?<div className="avatar-beside-btn mr-05">{selectedAvatar}</div>:null}
 							{(activeView!=='profile') ?
 								(<>
@@ -401,13 +401,13 @@ function Profile() {
 							<button
 							className={`cta-button profile mr-05 ${(activeView==='profile'&&contributor)?'':'d-none'}`}
 							type="button"
-							onClick={(e)=>navigate(`${id}/contribute-questions`)}>
+							onClick={(e)=>navigate(`contribute-questions`)}>
 								{'Contribute Questions'}
 							</button>
 
 							{/* edit and back button */}
 							<button
-							className="cta-button profile"
+							className="cta-button profile text-nowrap"
 							type="button"
 							onClick={(e)=>setActiveView(prev=>{
 								console.log({prev})
@@ -457,9 +457,9 @@ function Profile() {
 								<div className="profile-avatar">{avatar_code?avatar_code:avatar}</div>
 							}
 							<div className="d-flex m-auto-td gap-1">
-								<h3 className="text-center">{titleCase(first_name)||notAvailable}</h3>
-								<h3 className="text-center">{titleCase(last_name)}</h3>
-								<h3 className="text-center">{username}</h3>
+								<h3 className="text-center profile-h3">{titleCase(first_name)||notAvailable}</h3>
+								<h3 className="text-center profile-h3">{titleCase(last_name)}</h3>
+								<h3 className="text-center profile-h3">{username}</h3>
 							</div>
 							<div className="d-flex align-items-baseline justify-content-center">
 								<p className="role text-center">{titleCase(role)||notAvailable}</p>
@@ -761,4 +761,4 @@ function usePasswordCheck () {
 	}
 	return passwordCheck
 }
-export { Profile };
+export { Profile, getGender };

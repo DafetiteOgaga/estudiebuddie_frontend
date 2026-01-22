@@ -3,47 +3,74 @@ import Lottie from "lottie-react";
 import dancingLion from "./lrunning.json";
 import talkingLion from "./lion.json";
 import idleLion from "./lrunning.json";
-import anime1 from "../../assets/animation/anime1.json"
-import anime2 from "../../assets/animation/anime2.json"
-import anime3 from "../../assets/animation/anime3.json"
-import anime4 from "../../assets/animation/anime4.json"
-import anime5 from "../../assets/animation/anime5.json"
-import anime6 from "../../assets/animation/anime6.json"
-import anime7 from "../../assets/animation/anime7.json"
-import anime8 from "../../assets/animation/anime8.json"
-import anime9 from "../../assets/animation/anime9.json"
-import anime10 from "../../assets/animation/anime10.json"
-import anime11 from "../../assets/animation/anime11.json"
+import anime01 from "../../assets/animation/a.json"
+import anime02 from "../../assets/animation/b.json"
+import anime03 from "../../assets/animation/c.json"
+import anime04 from "../../assets/animation/d.json"
+import anime05 from "../../assets/animation/e.json"
+import anime06 from "../../assets/animation/1.json"
+import anime07 from "../../assets/animation/2.json"
+import anime08 from "../../assets/animation/3.json"
+import anime09 from "../../assets/animation/4.json"
+import anime10 from "../../assets/animation/5.json"
+import anime11 from "../../assets/animation/6.json"
+import anime12 from "../../assets/animation/7.json"
+import anime13 from "../../assets/animation/8.json"
+import anime14 from "../../assets/animation/9.json"
 
 const animes = [
-	anime1,
-	anime2,
-	anime3,
-	anime4,
-	anime5,
-	anime6,
-	anime7,
-	anime8,
-	anime9,
+	anime01,
+	anime02,
+	anime03,
+	anime04,
+	anime05,
+	anime06,
+	anime07,
+]
+const animes2 = [
+	anime08,
+	anime09,
 	anime10,
 	anime11,
+	anime10,
+	anime12,
+	anime13,
+	anime14,
 ]
 function DancingLion() {
-  return (
-    <>
-		{animes.map((anime, aIdx) => {
-			return (
-				<Fragment key={aIdx}>
-					<Lottie
-						animationData={anime}
-						loop
-						style={{ width: 200, height: 200 }}
-					/>
-				</Fragment>
-			)
-		})}
-	</>
-  );
+	return (
+		<>
+			{animes.map((anime, aIdx) => {
+				return (
+					<Fragment key={aIdx}>
+						<Lottie
+							animationData={anime}
+							loop
+							style={{ width: 200, height: 200 }}
+						/>
+					</Fragment>
+				)
+			})}
+		</>
+	);
+}
+
+function DancingLion2() {
+	return (
+		<>
+			{animes2.map((anime, aIdx) => {
+				return (
+					<Fragment key={aIdx}>
+						<Lottie
+							animationData={anime}
+							loop
+							style={{ width: 200, height: 200 }}
+						/>
+					</Fragment>
+				)
+			})}
+		</>
+	);
 }
 
 function TalkingAnimal({ talking }) {
@@ -59,4 +86,4 @@ function TalkingAnimal({ talking }) {
 	);
   }
 
-  export { DancingLion, TalkingAnimal };
+  export { DancingLion, DancingLion2, TalkingAnimal };

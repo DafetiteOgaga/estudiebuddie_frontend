@@ -3,12 +3,13 @@
 function titleCase(str) {
 	if (typeof str!=='string'||str==='') return
 
+	// console.log({str})
 	const slash = str.includes('/')
 	// Insert space before all caps (handles camel and pascal cases)
 	str = str.replace(/([a-z])([A-Z])/g, '$1 $2');
 	return str
 		.toLowerCase()
-		.split(/[\s_/]+/) // split by space OR underscore
+		.split(/[\s_\-/]+/)
 		.map(word => word.charAt(0).toUpperCase() + word.slice(1))
 		.join(slash?'/':' ');
 }

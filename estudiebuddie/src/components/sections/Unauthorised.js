@@ -5,12 +5,8 @@ import { Spinner } from '../../hooks/spinner/spinner'
 // import { CoinsRain } from '../animationComps/framerAnime'
 import { DancingLion, DancingLion2, TalkingAnimal } from '../animationComps/lottieAnime'
 import { FetchFromServer } from "../../hooks/FetchFromServer";
-import { useDeviceInfo } from "../../hooks/deviceType";
-import { titleCase } from "../../hooks/changeCase";
 
-function PageNotFound() {
-	const deviceInfo = useDeviceInfo()
-	console.log({deviceInfo})
+function Unauthorized() {
 	const [showAnime, setShowAnime] = useState(false)
 
 	const submitHandler = async (e) => {
@@ -28,7 +24,7 @@ function PageNotFound() {
 		<>
 			<div className="d-flex flex-column justify-content-center align-items-center">
 				<h2>Oopsy!</h2>
-				<h1>Page not found</h1>
+				<h1>You are not authorised to view this page</h1>
 			</div>
 
 			<button
@@ -76,9 +72,7 @@ function PageNotFound() {
 			className="cta-button profile-btn">
 				test GET request
 			</button>
-			<h2>Device: {titleCase(deviceInfo.label)}</h2>
-			<h3>Media width: {deviceInfo.width}px</h3>
 		</>
 	)
 }
-export { PageNotFound };
+export { Unauthorized };

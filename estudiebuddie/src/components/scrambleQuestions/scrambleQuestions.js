@@ -2,37 +2,26 @@ import { Fragment, useState, useEffect, useRef, useMemo } from "react";
 import { QuestionsArrComp } from "./questionsArrComp";
 import { FetchFromServer, buildFormData, serverOrigin } from "../../hooks/FetchFromServer";
 import { titleCase, sentenceCase, formatPhoneNumber } from "../../hooks/changeCase";
-import { justNumbers, generateUniqueId } from "../../hooks/formHooks";
+import { justNumbers, generateUniqueId, spaceToHyphen } from "../../hooks/formHooks";
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
+import { ImageCropAndCompress } from "../../hooks/imgCompressAndCrop/ImageCropAndCompress";
+import { imageCompression } from 'browser-image-compression';
+import { useDeviceInfo } from "../../hooks/deviceType";
 
 const formValues = {
 	school: "",
-	email: "",
+	// email: "",
 	subject: "",
-	phone: "",
+	// phone: "",
 	class: "",
 	term: "",
 	duration: "",
 	totalQs: "",
-	session: "",
+	// session: "",
 	instruction: "",
 	noOfTypes: "",
 	questions: [],
 }
-// const formValues = {
-// 	school: "totalman",
-// 	email: "chasisdrex@yahoo.com",
-// 	subject: "english",
-// 	phone: "8038091572",
-// 	class: "ss2",
-// 	term: "Second",
-// 	duration: "1",
-// 	totalQs: "3",
-// 	session: "2025/26",
-// 	instruction: "answer all",
-// 	noOfTypes: "2",
-// 	questions: [],
-// }
 
 // console.log({id: generateUniqueId()})
 const questionObject = {
@@ -46,14 +35,14 @@ const questionObject = {
 }
 
 const termArray = ['first', 'second', 'third']
-const formHead = [
+let formHead = [
 	{
 		name: "totalQs",
 		required: true,
 		disabled: false,
 		type: "text",
 		placeholder: "No. of Questions",
-		width: "15%",
+		width: "20%",
 		case: null,
 	},
 	{
@@ -65,24 +54,24 @@ const formHead = [
 		width: "50%",
 		case: 'upper',
 	},
-	{
-		name: "email",
-		required: true,
-		disabled: false,
-		type: "email",
-		placeholder: "Email Address",
-		width: "30%",
-		case: null,
-	},
-	{
-		name: "phone",
-		required: false,
-		disabled: false,
-		type: "tel",
-		placeholder: "Phone Number",
-		width: "25%",
-		case: 'phone',
-	},
+	// {
+	// 	name: "email",
+	// 	required: true,
+	// 	disabled: false,
+	// 	type: "email",
+	// 	placeholder: "Email Address",
+	// 	width: "30%",
+	// 	case: null,
+	// },
+	// {
+	// 	name: "phone",
+	// 	required: false,
+	// 	disabled: false,
+	// 	type: "tel",
+	// 	placeholder: "Phone Number",
+	// 	width: "25%",
+	// 	case: 'phone',
+	// },
 	{
 		name: "subject",
 		required: true,
@@ -98,7 +87,7 @@ const formHead = [
 		disabled: false,
 		type: "text",
 		placeholder: "No. of Types",
-		width: "15%",
+		width: "20%",
 		case: null,
 	},
 	{
@@ -110,22 +99,22 @@ const formHead = [
 		width: "20%",
 		case: "upper",
 	},
-	{
-		name: "session",
-		required: true,
-		disabled: false,
-		type: "text",
-		placeholder: "Session",
-		width: "20%",
-		case: null,
-	},
+	// {
+	// 	name: "session",
+	// 	required: true,
+	// 	disabled: false,
+	// 	type: "text",
+	// 	placeholder: "Session",
+	// 	width: "20%",
+	// 	case: null,
+	// },
 	{
 		name: "term",
 		required: true,
 		disabled: false,
 		type: "select",
 		placeholder: "Term",
-		width: "11%",
+		width: "15%",
 		options: termArray,
 		case: "title",
 	},
@@ -135,7 +124,7 @@ const formHead = [
 		disabled: false,
 		type: "text",
 		placeholder: "Duration (hour)",
-		width: "15%",
+		width: "20%",
 		case: null,
 	},
 	{
@@ -148,6 +137,7 @@ const formHead = [
 		case: "title",
 	},
 ]
+const dyName = ['totalQs']
 const displayValue = (val, strCase) => {
 	if (strCase === "upper") return val.toUpperCase();
 	if (strCase === "lower") return val.toLowerCase();
@@ -157,7 +147,21 @@ const displayValue = (val, strCase) => {
 	return val;
 };
 
+const endpoint = 'shufflequestions'
+
+const fetchDownloadLinkss = async ({endpoint, setDownloadLink}) => {
+	const subpoint = 'get-links'
+	const downloadLinks = await FetchFromServer(`${endpoint}/${subpoint}`)
+	if (downloadLinks.ok) {
+		console.log({data: downloadLinks?.data})
+		setDownloadLink(downloadLinks?.data)
+	}
+}
+
 function ScrambleQuestionsComponent() {
+	const deviceInfo = useDeviceInfo()
+	console.log({deviceInfo})
+	const [tick, setTick] = useState(Date.now());
 	const [loadingPage, setLoadingPage] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const formDataRef = useRef(new FormData())
@@ -176,25 +180,61 @@ function ScrambleQuestionsComponent() {
 	const [totalFileUploadQuestions, setTotalFileUploadQuestions] = useState(0)
 	const [isImageVisible, setIsImageVisible] = useState([Array(totalFileUploadQuestions?totalFileUploadQuestions:totalNumberOfQuestions).fill(false)]);
 	const [isFile, setIsFile] = useState(false)
-	// const [isReload, setIsReload] = useState(false);
-	// const [UploadedContent, setUploadedContent] = useState(null)
+	const hasFetched = useRef(false)
+	const [isNewDownload, setIsNewDownload] = useState(false)
+	const [uploadedSchLogo, setUploadedSchLogo] = useState(null)
+	const [isClearUploadedLogo, setIsClearUploadedLogo] = useState(false)
 
-	// let deleteIndexArray = useRef([])
-	// // const { text, processedText, handleFileChange } = useHandleFileUpload();
-	// let infoItems
-	// const toggleFile = () => {
-	// 	setIsFile((prev) => {
-	// 		if (prev===true) {
-	// 			infoItems = null
-	// 		} else {
-	// 			setTotalFileUploadQuestions(0)
-	// 		}
-	// 		setFormData(formValues)
-	// 		return !prev
+	// if (deviceInfo.label === "smallLaptop") {
+	// 	console.log('smallLaptop'.repeat(5))
+	// 	dyName.forEach(obj => {
+	// 		let objItem = formHead.find(item => item.name === obj)
+	// 		if (objItem) objItem.width = '17%'
 	// 	})
-	// }
+	// } else if (deviceInfo.label === "tablet") {
+	// 	console.log('tablet'.repeat(5))
+	// 	dyName.forEach(obj => {
+	// 		let objItem = formHead.find(item => item.name === obj)
+	// 		if (objItem) {
+	// 			if (deviceInfo.width > 800) {
+	// 				objItem.width = '19%'
+	// 			} else {
+	// 				objItem.width = '22%'
+	// 			}
+	// 		}
+	// 	})
+	// } else
+	if (deviceInfo.label === "mobile") {
+		console.log('mobile'.repeat(5))
+		formHead.forEach(obj => {
+			// let objItem = formHead.find(item => item.name === obj)
+			if (obj.name==="totalQs") {
+				obj.width = '40%'
+			} else if (obj.name==="school") {
+				obj.width = '100%'
+			} else if (obj.name==="subject") {
+				obj.width = '65%'
+			} else if (obj.name==="noOfTypes") {
+				obj.width = '30%'
+			} else if (obj.name==="class") {
+				obj.width = '20%'
+			} else if (obj.name==="term"||obj.name==="duration") {
+				obj.width = '37%'
+			} else if (obj.name==="instruction") {
+				obj.width = '100%'
+			}
+		})
+	}
 	useEffect(() => {
 		setLoadingPage(false)
+		if (!hasFetched.current) {
+			fetchDownloadLinkss({endpoint, setDownloadLink})
+			hasFetched.current = true
+		}
+	}, []);
+	useEffect(() => {
+		const i = setInterval(() => setTick(Date.now()), 30_000);
+		return () => clearInterval(i);
 	}, []);
 	const handleQuestionChange = (e=null, data=null, index, mode='+') => {
 		console.log('in handle question change fxn...', {data})
@@ -215,17 +255,6 @@ function ScrambleQuestionsComponent() {
 		// setQuestions(updatedQuestions)
 		// console.log({file})
 		setFormData((prev) => {
-			// console.log({prev})
-			// const updatedQuestions = [...prev.questions];
-			// console.log(
-			// 	'updating form',
-			// {
-			// 	updatedQuestions,
-			// 	index,
-			// 	name, value,
-			// 	prevQs: prev.questions,
-			// 	prevQsWidx: prev.questions[index]
-			// })
 			if (mode === '-') {
 				updatedQuestions[index] = {
 					...updatedQuestions[index],
@@ -242,7 +271,6 @@ function ScrambleQuestionsComponent() {
 			return {
 				...prev,
 				questions: updatedQuestions,
-				// totalQs: updatedQuestions.length
 			}}
 		)
 		setQuestionFormData(prev => {
@@ -280,105 +308,75 @@ function ScrambleQuestionsComponent() {
 		}
 	};
 
-	const handleChange = (e) => {
-		let { name, value } = e.target;
-		if (name === 'totalQs'||name === 'phone'||
-			name === 'noOfTypes'||name === 'duration') {
-			value = justNumbers(value)
-			if (name === 'totalQs') {
-				setTotalNoOfQs(Number.isNaN(value) ? 0 : value)
-				totalNoOfQsRef.current = Number.isNaN(value) ? 0 : value
+	useEffect(() => {
+		// console.log({uploadedSchLogo, isClearUploadedLogo})
+		// const handleImages = (file, index) => [
+		handleChange(
+			null,
+			{
+				name: 'logo',
+				value: isClearUploadedLogo?'':uploadedSchLogo?.imgPreview,
+				files: isClearUploadedLogo?['clear']:[uploadedSchLogo?.compressedFile],
+				type: 'file'
+			},
+			isClearUploadedLogo ? '-' : '+'
+		)
+	}, [uploadedSchLogo, isClearUploadedLogo])
+
+	const handleChange = (e=null, data=null, mode='+') => {
+		if (!e && !data?.files?.[0]) return
+		let { name, value, files, type } = e ? e.target : data
+		console.log({name, value, files, type, mode})
+		let file
+		let previewLogo
+		if (name === "logo") {
+			file = files[0];
+			previewLogo = value
+			// previewLogo = URL.createObjectURL(file); // assign preview URL for the image
+		} else {
+			if (name === 'totalQs'||name === 'phone'||
+				name === 'noOfTypes'||name === 'duration') {
+				value = justNumbers(value)
+				if (name === 'totalQs') {
+					setTotalNoOfQs(Number.isNaN(value) ? 0 : value)
+					totalNoOfQsRef.current = Number.isNaN(value) ? 0 : value
+				}
 			}
-			// setTotalNumberOfQuestions(!isNaN(Number(value))?Number(value):0)
-			// setTotalFileUploadQuestions(Number(0))
-			// setFormData(formValues)
-			// if (!value) {
-			// 	setShowSubmitArray(prev => {
-			// 		const updated = [...prev];
-			// 		updated[0] = false;
-			// 		return updated;
-			// 	});
-			// } else if (value) {
-			// 	setShowSubmitArray(prev => {
-			// 		const updated = [...prev];
-			// 		updated[0] = true;
-			// 		return updated;
-			// 	});
-			// }
-
+			if (name==='subject') {
+				value = spaceToHyphen(value)
+			}
 		}
-		// if (name === 'totalQs') {
-		// 	setFormData((prev) => ({
-		// 		...prev,
-		// 		[name]: !isNaN(Number(value))?Number(value):0,
-		// 	}))
-		// }
-		// else if (name === 'noOfTypes') {
-		// 		setFormData((prev) => ({
-		// 			...prev,
-		// 			[name]: (!isNaN(Number(value))&&value!==''&&Number(value)>0&&Number(value)<=26)?Number(value):'',
-		// 		}))
-		// } else {
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}))
-		// }
+
+		setFormData((prev) => {
+			// console.log({name, value, file})
+			if (mode === '-') {
+				return {
+					...prev,
+					logo: null,
+					previewLogo: '',
+				}
+			} else {
+				const updteImage = {
+					[name]: file,
+					previewLogo,
+				}
+				return {
+					...prev,
+					...(file ?
+						updteImage:
+						{[name]: value}
+					)
+				}
+			}
+		})
+		setIsClearUploadedLogo(false)
 	};
-	// const totalQsInFD = useRef(formData.totalQs.length)
-	// useEffect(() => {
-	// 	console.log('attempting to update tQs...')
-	// 	if (totalQsInFD.current) {
-	// 		console.log('updating tQs...')
-	// 		setFormData((prev) => ({
-	// 			...prev,
-	// 			totalQs: totalQsInFD.current,
-	// 		}))
-	// 	}
-	// }, [totalQsInFD.current])
 
-	// useEffect(() => {
-	// 	console.log('0'.repeat(20), {formData})
-	// 	const updatedFormData = {...formData}
-	// 	console.log('1'.repeat(20), {formData})
-	// 	updatedFormData.postQuestions = updatedFormData.questions
-	// 	console.log('2'.repeat(20), {formData})
-	// 	delete updatedFormData.questions
-	// 	console.log('3'.repeat(20), {formData})
-	// 	formDataRef.current = buildFormData(formDataRef.current, updatedFormData)
-	// 	console.log('4'.repeat(20), {formData})
-	// }, [formData])
+	// ({
+	// 	...prev,
+	// 	[name]: value,
+	// })
 
-	// const addQuestion = () => {
-	// 	console.log('addQuestion')
-	// 	console.log('fileUploadQuestions:', fileUploadQuestions)
-	// 	const newQuestionObject = [
-	// 		// ...questions,
-	// 		{
-	// 			number: '',
-	// 			question: '',
-	// 			correct_answer: '',
-	// 			wrong_answer1: '',
-	// 			wrong_answer2: '',
-	// 			wrong_answer3: '',
-	// 			image: null,
-	// 			// previewImage: defaultImage,
-	// 			imageMode: 'side',
-	// 			// uniqueId: generateUniqueId(),
-	// 		}
-	// 	]
-	// 	// setQuestions();
-	// 	if (totalFileUploadQuestions) {
-	// 		setNewFileUploadQuestions((prev)=>(prev?[...prev, newQuestionObject]:[...fileUploadQuestions, newQuestionObject]))
-	// 		// setTotalFileUploadQuestions(prev=>prev+1)
-	// 	} else {
-	// 		setQuestions((prev)=>[...prev, newQuestionObject[0]])
-	// 		setFormData((prev) => ({
-	// 			...prev,
-	// 			totalQs: Number(prev.totalQs)+1
-	// 		}));
-	// 	}
-	// };
 	useEffect(() => {
 		const newQuestions = []
 		for (let i=0; i<totalNoOfQs; i++) {
@@ -391,174 +389,39 @@ function ScrambleQuestionsComponent() {
 		setQuestionFormData(newQuestions);
 	}, [totalNoOfQs]);
 
-	// const removeQuestion = (index, questionID) => {
-	// 	console.log('removeQuestion called with\nindex:', index, '\nquestionID:', questionID)
-	// 	// console.log('removeQuestion:', index)
-	// 	const updatedQuestions = totalFileUploadQuestions?[...fileUploadQuestions]:[...questions];
-	// 	// console.log({questions})
-	// 	// console.log({fileUploadQuestions})
-	// 	// updatedQuestions.splice(index, 1);
-	// 	console.log('updatedQuestions1:', updatedQuestions)
-	// 	const filteredQuestions = updatedQuestions.filter((item, i) => {
-	// 		if (item.uniqueId === questionID) {
-	// 			console.log(`removing question with ${item.uniqueId}`)
-	// 			console.log(`removing ${item.question} from questions`)
-	// 			return false;
-	// 		}
-	// 		return item.uniqueId !== questionID});
-	// 	setImageVisibility(questionID);
-	// 	console.log('filteredQuestions:', filteredQuestions)
-	// 	// console.log({updatedQuestions})
-	// 	// if (totalFileUploadQuestions) {updatedQuestions = [...fileUploadQuestions]}
-		
-	// 	// if (totalFileUploadQuestions) {
-	// 	if (totalFileUploadQuestions) {
-	// 		// console.log('totalFileUploadQuestions:')
-	// 		setNewFileUploadQuestions(filteredQuestions)
-	// 	} else {
-	// 		setQuestions(filteredQuestions)
-	// 		setFormData((prev) => ({
-	// 			...prev,
-	// 			totalQs: Number(prev.totalQs)-1
-	// 		}));
-	// 	}
-	// };
-
-	// const toggleImage = (index, questionID, remove=false) => {
-	// 	console.log('image toggled to:', isImageVisible)
-	// 	console.log('index:', index)
-	// 	if (remove) {
-	// 		console.warn('may not need to use toggleImage fxn in remove image button')
-	// 	} else {
-	// 		console.log('questionID:', questionID)
-	// 		setIsImageVisible((prev) => prev.map((visible, i) => (i === index ? questionID : visible)))
-	// 	}
-	// };
-
-	// const setImageVisibility = (questionID=null) => {
-	// 	console.log('questionID:', questionID)
-	// 	console.log('isImageVisible:', isImageVisible)
-	// 	const numberOfQuestions = totalFileUploadQuestions || totalNumberOfQuestions;
-	// 	const visibleItems = (isImageVisible).filter(item => {
-	// 		if (item === false) return false;
-	// 		if (questionID&&item.includes(questionID)) {
-	// 			return false
-	// 		}
-	// 		return true});
-	// 	let visibleItemsLength = questionID?visibleItems.length:visibleItems.length-1;
-	// 	console.log('initial visibleItemsLength:', visibleItemsLength)
-	// 	if (visibleItemsLength < 0) visibleItemsLength = 0;
-	// 	const remainingCount = numberOfQuestions - visibleItemsLength;
-	// 	console.log(
-	// 		'\nvisibleItems:', visibleItems,
-	// 		'\nnumberOfQuestions:', numberOfQuestions,
-	// 		'\nvisibleItemsLength:', visibleItemsLength,
-	// 		'\nremainingCount:', remainingCount,
-	// 	)
-	// 	const falseArray = Array(remainingCount).fill(false);
-	// 	setIsImageVisible(visibleItemsLength?[...visibleItems, ...falseArray]:[...falseArray]);
-	// 	// console.log('\nReloading app'.repeat(5))
-	// 	// setIsReload(prev => !prev)
-	// }
-	// useEffect(() => {
-	// 	console.log('from useeffect:')
-	// 	setImageVisibility()
-	// }, [totalFileUploadQuestions, totalNumberOfQuestions]);
-
-	// useEffect(() => {
-	// 	if (downloadLink) {
-	// 		const delay = setTimeout(() => {
-	// 			setDownloadLink(null);
-	// 		}, 1000*60*60*5); // 5 hours
-	// 		return () => clearTimeout(delay);
-	// 	}
-	// }, [downloadLink])
-
 	// // let cleanedData;
 	const submitHandler = async (e) => {
 		e.preventDefault(); // prevent default page refresh
 		setLoading(true)
 		const cleanedData = {...formData}
-		// console.log({formData})
-		// const questions = []
-		// Object.entries(cleanedData).forEach(([key, value]) => {
-		// 	// console.log('\n', {key}, {value}, typeof(value))
-		// 	if (!isNaN(Number(key))) {
-		// 		// console.log('checking value:', value.question)
-		// 		if (deleteIndexArray.current.includes(value.uniqueId)) {
-		// 			console.log(`removing ${value.question} from cleanedData`)
-		// 			delete cleanedData[key]
-		// 		} else {
-		// 			// console.log('key1:', Number(key))
-		// 			questions.push({
-		// 				...value,
-		// 				index: Number(key)+1,
-		// 			})
-		// 			delete cleanedData[key]
-		// 		}
-		// 	}
-		// 	if (typeof(value) === 'object'&&!value.question) {
-		// 		delete cleanedData[key]
-		// 	}})
+
 		cleanedData.postQuestions = formData.questions
-		// console.log({
-		// 	fquetions: formData.questions,
-		// 	cfquestions: cleanedData.questions,
-		// 	cquestions: cleanedData.postQuestions
-		// })
+
 		delete cleanedData.questions
 		const fd = buildFormData(new FormData(), cleanedData)
 		// console.log(cleanedData);
 		// return;
-		const endpoint = 'shufflequestions/shuffle'
-		const res = await FetchFromServer(endpoint, 'POST', fd)
+		const subpoint = 'shuffle'
+		const res = await FetchFromServer(`${endpoint}/${subpoint}`, 'POST', fd)
 		console.log('Form submitted with data:');
 		// const alert1 = `\nResponse: \n ${JSON.stringify(res, null, 2)}`
 		alert("Success\nClick 'Download File' to download the shuffled questions");
 		if (res.ok) {
-			setDownloadLink(res.data.downloadLink)
+			fetchDownloadLinkss({endpoint, setDownloadLink})
+			setIsNewDownload(true)
+			// subpoint = 'get-links'
+			// const downloadLinks = await FetchFromServer(`${endpoint}/${subpoint}`)
+			// if (downloadLinks.ok) {
+			// 	console.log({data: downloadLinks?.data})
+			// 	setDownloadLink(downloadLinks?.data)
+			// }
+			
 			// deleteIndexArray.current = [];
 		}
 		setLoading(false)
 	};
-	const fileQuestionsHandle = (fileQuestions) => {
-		// console.log('updating formData with fileQuestions:')
-		setFormData((prev) => ({...prev, ...fileQuestions}))
-	}
-	
-	// const removeQuestionFromArray = (questionID) => {
-	// 	console.log('removeQuestionFromArray called')
-	// 	deleteIndexArray.current.push(questionID);
-	// 	console.log(`added ${questionID} to be delete array removed`);
-	// }
-	const args = {
-		// questions,
-		// totalNumberOfQuestions,
-		// isImageVisible,
-		// toggleImage,
-		// addQuestion,
-		// removeQuestion,
-		// handleQuestionChange,
-		// totalFileUploadQuestions,
-		// setTotalFileUploadQuestions,
-		// setFileUploadQuestions,
-		// newFileUploadQuestions,
-		// questionObject,
-		// setSchoolData,
-		// formData,
-		// setFormData,
-		// fileQuestionsHandle,
-		// showSubmitArray,
-		// setShowSubmitArray,
-		// type: 'create',
-		// text: null,
-		// // processedText,
-		// downloadLink,
-		// removeQuestionFromArray,
-		// setImageVisibility,
-		// // generateUniqueId,
-		// // setIsReload,
 
+	const args = {
 		// handleChange,
 		setFormData,
 		questionObject,
@@ -567,46 +430,24 @@ function ScrambleQuestionsComponent() {
 		questionFormData,
 		setQuestionFormData,
 	}
-	// infoItems = useMemo(() => {
-	// 	if (!schoolData) return null;
 
-	// 	const lines = schoolData.split('\n').filter(Boolean);
-	// 	return Object.assign({}, ...lines.map((item, index) => {
-	// 		const [key, value] = item.includes(':') ? item.split(':') : [null, item.trim()];
-	// 		return {...(key?{[key.toLowerCase().trim()]: value.trim()}:{[index]: item})}
-	// 	}));
-	// }, [schoolData]);
+	const hasLinks = Array.isArray(downloadLink) && downloadLink.length > 0;
+	const hasMultipleLinks = hasLinks && downloadLink.length > 1;
+	const hasSingleLink = hasLinks && downloadLink.length === 1;
 
-	// useEffect(() => {
-	// 	if (!infoItems) return;
-
-	// 	setFormData((prev) => ({
-	// 	...prev,
-	// 	school: infoItems.school || "",
-	// 	email: infoItems.email || "",
-	// 	subject: infoItems.subject || "",
-	// 	phone: infoItems.phone || "",
-	// 	class: infoItems.class || "",
-	// 	term: infoItems.term.toLowerCase().includes('first')?'first':infoItems.term.toLowerCase().includes('second')?'second':infoItems.term.toLowerCase().includes('third')?'third':'none',
-	// 	duration: infoItems.duration || "",
-	// 	totalQs: "",
-	// 	session: infoItems.session || "",
-	// 	instruction: infoItems.instruction || "",
-	// 	}));
-	// 	setShowSubmitArray(prev => {
-	// 		const updated = [...prev];
-	// 		updated[0] = true;
-	// 		return updated;
-	// 	});
-	// }, [infoItems]);
 	console.log({
 		formData,
-		formDataQuestions: formData.questions,
-		// newTQs: totalQsInFD.current,
-	// 	formQs: formData.questions,
-	// 	totalNoOfQs,
-	// 	questionFormData,
+	// 	formDataQuestions: formData.questions,
+	// 	// newTQs: totalQsInFD.current,
+	// // 	formQs: formData.questions,
+	// // 	totalNoOfQs,
+	// // 	questionFormData,
 	// 	downloadLink,
+	// 	hasMultipleLinks,
+	// 	hasSingleLink,
+	// 	isNewDownload,
+	uploadedSchLogo,
+	isClearUploadedLogo
 	})
 	return (
 			<>
@@ -651,7 +492,7 @@ function ScrambleQuestionsComponent() {
 										placeholder=" "
 										value={(input.name.toLowerCase()==='totalqs'&&
 											Number(formData[input.name])===0)?
-												'':displayValue(formData[input.name], input.case)}
+												'':displayValue(formData[input.name], input.case)||''}
 										onChange={handleChange}
 										required={input.required}
 										disabled={input.disabled}
@@ -662,6 +503,25 @@ function ScrambleQuestionsComponent() {
 								</div>
 							)
 						})}
+						<div className=''>
+							<div className="d-flex gap-1">
+								{/* upload/change images */}
+								<ImageCropAndCompress
+								onComplete={setUploadedSchLogo}
+								onClearSelection={setIsClearUploadedLogo}
+								imageId={'logo'}
+								imgType="sch-logo" />
+
+								{/* <button
+								type="button"
+								onClick={()=>addRemoveQuestion({id:questionData.uniqueId})}
+								className="cta-button question">
+									Remove Question
+								</button> */}
+							</div>
+
+							{/* <img src={formData.preview} alt="preview" /> */}
+						</div>
 					</fieldset>
 
 					{/* {(totalNumberOfQuestions&&!isFile) ? */}
@@ -679,7 +539,7 @@ function ScrambleQuestionsComponent() {
 									{/* <MoreInfo info="Upload information ..." /> */}
 									<button
 									style={{margin: '0 5rem'}}
-									className="cta-button mb-xs"
+									className="cta-button mb-xs q-mx"
 									type="button"
 									disabled={true}
 									onClick={() => null}>
@@ -704,22 +564,51 @@ function ScrambleQuestionsComponent() {
 						</div>
 					{/* download file button */}
 					{/* <div className=""> */}
-					{downloadLink?
-					<a
-					href={`${serverOrigin}${downloadLink}`}
-					download
-					style={{margin: '0 5rem'}}
-					role="button"
-					className="cta-button">
-						Download files
-					</a>:null}
-					{/* </div> */}
+					{hasSingleLink ?
+					(<DownloadBtn tick={tick}
+					item={downloadLink?.[0]}
+					single={true} />)
+					// (<a
+					// 	href={`${serverOrigin}${downloadLink?.[0]?.link}`}
+					// 	// href="##"
+					// 	download
+					// 	style={{margin: '0 5rem',}}
+					// 	role="button"
+					// 	className="cta-button">
+					// 		Download file
+					// 	</a>)
+					:
+					hasMultipleLinks ?
+					(<div
+						onMouseEnter={(e)=>setIsNewDownload(false)}
+						style={{margin: '0 5rem',}}
+						className="download-btn-dropdown">
+						<button className="cta-button no-cursor">
+							Download files ({downloadLink.length}) <sup
+							className={`download-notification-dot ${isNewDownload?'':'d-none'}`}
+							/>
+						</button>
+					
+						<div className="download-btn-dropdown-menu">
+							{downloadLink.map((item, idx) => {
+								return (
+									<Fragment key={idx}>
+										<DownloadBtn
+										tick={tick}
+										item={item} />
+									</Fragment>
+								)
+							})}
+						</div>
+					</div>)
+				: null}
+
 					{/* submit button */}
 					<div className="d-flex justify-content-center">
 						<button
 						style={{margin: '0 5rem'}}
 						type="submit"
-						className={`cta-button ${questionFormData?.length?'':'d-none'}`}>
+						className={`cta-button scramble-submit-mobile ${questionFormData?.length?'':'d-none'}`}>
 							{loading ?
 								<Spinner type={'dot'} /> :
 								'Scramble Questions'}
@@ -728,5 +617,56 @@ function ScrambleQuestionsComponent() {
 				</form>
 			</>
 	)
+}
+
+function DownloadBtn({item, tick, single=false}) {
+	const itemName = item.link.split('/')[2].split('_')
+	const subject = itemName[1].slice(0, 9)+'...'
+	const uKey = (itemName[4]??itemName[3]).slice(4)
+	// console.log({itemName, subject, uKey})
+	const fileName = `${subject}_${uKey}`
+	return (
+		<a
+			style={{...single?{margin: '0 5rem'}:{}}}
+			role="button"
+
+			href={`${serverOrigin}${item.link}`}
+			download
+			className={single?'cta-button':'download-btn-dropdown-item'}
+		>
+			{titleCase(fileName)} <span className="time-ago">({timeAgo(item.created_at)})</span>
+		</a>
+	)
+}
+
+function timeAgo(isoString) {
+	if (!isoString) return '';
+
+	const now = Date.now();
+	const then = new Date(isoString).getTime();
+
+	if (isNaN(then)) return '';
+
+	const ago = 'ago'
+	const diffSeconds = Math.floor((now - then) / 1000);
+
+	if (diffSeconds < 0) return 'now';
+
+	if (diffSeconds < 60) {
+		return `${diffSeconds}s ${ago}`;
+	}
+
+	const diffMinutes = Math.floor(diffSeconds / 60);
+	if (diffMinutes < 60) {
+		return `${diffMinutes}m ${ago}`;
+	}
+
+	const diffHours = Math.floor(diffMinutes / 60);
+	if (diffHours < 24) {
+		return `${diffHours}h ${ago}`;
+	}
+
+	const diffDays = Math.floor(diffHours / 24);
+	return `${diffDays}d ${ago}`;
 }
 export { ScrambleQuestionsComponent };

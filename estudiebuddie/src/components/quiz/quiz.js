@@ -5,6 +5,7 @@ import { shuffleArray } from "../../hooks/formHooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCreateStorage } from "../../hooks/persistToStorage";
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
+import { useDeviceInfo } from "../../hooks/deviceType";
 import { toast } from 'react-toastify';
 
 const formValues = {
@@ -29,7 +30,7 @@ const jssSubjectArrar = ["science", "computer"]
 const sssSubjectArray = ["physics", "chemistry"]
 
 // const durationArray = ["1hr"]
-const durationArray = Array.from({length: 4}).map((_, idx) => {
+const durationArray = Array.from({length: 5}).map((_, idx) => {
 	const fraction = 0.5
 	// const fraction = 0.003
 	return fraction * (idx + 1)
@@ -40,7 +41,7 @@ const noOfQsArray = [0, 30, 70].map((increment, idx) => {
 })
 // console.log({noOfQsArray, durationArray})
 
-const preHeadForm = [
+let preHeadForm = [
 	{
 		name: "name",
 		required: true,
@@ -110,13 +111,16 @@ const preHeadForm = [
 		case: null,
 	},
 ]
+const dyName = ['class', 'duration', 'noOfQs']
 
 const blankSession = {
 	quizQuestions: [],
 	duration: null,
 	sessionID: null,
 	quizAnswers: [],
-	totalScore: null,
+	quizScore: null,
+	quizAttempted: null,
+	quizDuration: null,
 	submitted: false,
 	formDetails: {}
 }
@@ -130,6 +134,8 @@ const STORAGE_KEY = "countdown_seconds_left";
 // - "wrong"
 // - "coin"
 function Quiz() {
+	const deviceInfo = useDeviceInfo()
+	console.log({deviceInfo})
 	const [isTimeUp, setIsTimeUp] = useState(false);
 	const startButtonRef = useRef(null);
 	const modalRef = useRef(null);
@@ -142,12 +148,50 @@ function Quiz() {
 	const [loading, setLoading] = useState(false);
 	const { lStorage, sStorage } = useCreateStorage()
 	const [session, setSession] = useState(blankSession)
+	const [temporaryResponse, setTemporaryResponse] = useState(null)
 	// const [quizQuestions, setQuizQuestions] = useState([])
 	// const [duration, setDuration] = useState(null)
 	const [isNotQuiz, setIsNotQuiz] = useState(null);
 	const [isPreQuiz, setIsPreQuiz] = useState(true)
 	const [formData, setFormData] = useState(formValues)
+	const selectedQuestionNumberSerialsRef = useRef([])
 	const selectedAnswersRef = useRef([])
+	if (deviceInfo.label === "smallLaptop") {
+		console.log('smallTablet'.repeat(5))
+		dyName.forEach(obj => {
+			let objItem = preHeadForm.find(item => item.name === obj)
+			if (objItem) objItem.width = '17%'
+		})
+	} else if (deviceInfo.label === "tablet") {
+		console.log('smallTablet'.repeat(5))
+		dyName.forEach(obj => {
+			let objItem = preHeadForm.find(item => item.name === obj)
+			if (objItem) {
+				if (deviceInfo.width > 800) {
+					objItem.width = '19%'
+				} else {
+					objItem.width = '22%'
+				}
+			}
+		})
+	} else if (deviceInfo.label === "mobile") {
+		console.log('mobile'.repeat(5))
+		preHeadForm.forEach(obj => {
+			// let objItem = formHead.find(item => item.name === obj)
+			if (obj.name==="name"||obj.name==="email") {
+				obj.width = '100%'
+			} else if (obj.name==="type"||obj.name==="class") {
+				obj.width = '40%'
+			} else if (obj.name==="subject") {
+				obj.width = '70%'
+			} else if (obj.name==="duration") {
+				obj.width = '40%'
+			} else if (obj.name==="noOfQs") {
+				obj.width = '40%'
+			}
+		})
+	}
+	console.log(preHeadForm)
 	useEffect(() => {
 		setLoadingPage(false)
 	}, []);
@@ -206,30 +250,48 @@ function Quiz() {
 			[name]: value,
 		}))
 	}
-	const submitHandler = async (e, isQuiz=false) => {
-		e.preventDefault(); // prevent default page refresh
+	const submitHandler = async (e=null, isQuiz=false) => {
+		if (e) {
+			e.preventDefault(); // prevent default page refresh
+		} else {
+			console.warn('tiime up, forcefully submitting')
+		}
+		console.log({isQuiz, formData})
 		setLoading(true)
 		let res
 		let cleanedData
 		let endpoint
 		if (isQuiz) {
 			// submitting quiz to the server for grading
+			// console.log({selectedAnswers})
 			cleanedData = {
-				answers: selectedAnswers,
+				answers: selectedAnswersRef.current,
 				session_id: session.sessionID
 			}
 			// console.log({cleanedData})
 			endpoint = 'take-quiz/grade-quiz'
 			res = await FetchFromServer(endpoint, 'POST', cleanedData, true)
 			if (res.ok) {
-				// console.log({res})
+				console.log({res})
+				const answerUpdate = {
+					quizAnswers: res?.data?.quiz_result,
+					quizScore: res?.data?.quiz_score,
+					quizAttempted: res?.data?.quiz_attempted,
+					quizDuration: res?.data?.quiz_duration,
+					submitted: true
+				}
 				setSession(prev => ({
 					...prev,
-					quizAnswers: res?.data?.results,
-					totalScore: res?.data?.score,
-					submitted: true
+					...answerUpdate
 				}))
+				const updatedSessionWithAnswers = {
+					...localSession,
+					...answerUpdate
+				}
+				lStorage.setItem('session-info', updatedSessionWithAnswers)
+				setTemporaryResponse(res?.data)
 			}
+			setQuizStarting(null)
 			setLoading(false)
 			return
 		}
@@ -237,7 +299,7 @@ function Quiz() {
 		// sending pre-quiz data to server
 
 		// populate cleandata with formdata (new quiz) or form details (continue quiz)
-		cleanedData = (formData?.selectedAnswers) ?
+		cleanedData = (formData?.selectedAnswers?.length) ?
 						{...session?.formDetails}:
 						{...formData}
 
@@ -318,10 +380,22 @@ function Quiz() {
 		setUserStartTime(null)
 	}
 
+	const handleRePopulateFormData = () => {
+		setFormData(prev => {
+			const updatedFormData = {
+				...prev,
+				...session?.formDetails,
+				selectedAnswers: [],
+			}
+			return updatedFormData
+		})
+	}
+
 
 
 	// /////////////////////////////////////
 	const sessionHasHydratedRef = useRef(false)
+	const questionTimeRef = useRef({});
 	const localSelectedAnswers = lStorage.getItem('selected-answers')||[]
 	const localSession = lStorage.getItem('session-info')
 	const activeSession = !!localSession?.sessionID
@@ -333,6 +407,18 @@ function Quiz() {
 			// console.log({prevSelected})
 			const exists = prevSelected.some(item => item.questionId === questionId);
 			// console.log({exists})
+
+			if (!exists) {
+				const timing = questionTimeRef.current[questionId];
+	
+				if (timing && !timing.answeredAt) {
+					const answeredAt = Date.now();
+	
+					timing.answeredAt = answeredAt;
+					timing.duration = (answeredAt - timing.renderedAt) / 1000;
+				}
+			}
+
 			if (exists) {
 				// console.log('question has been answered before')
 				return prevSelected.map(item =>
@@ -340,17 +426,25 @@ function Quiz() {
 						? {
 							...item,
 							answer: answer,
+							response_duration: null,
 						}
 						: item
 				);
 			} else {
 				// console.log('question was just answered')
+
+				const timing = questionTimeRef.current[questionId] || {};
+
 				return [
 					...prevSelected,
 					{
 						number: QuestionNumber,
 						questionId: questionId,
 						answer: answer,
+
+						// renderedAt: timing.renderedAt ?? null,
+						// answeredAt: timing.answeredAt ?? null,
+						response_duration: timing.duration ?? null,
 					}
 				];
 			}
@@ -361,6 +455,7 @@ function Quiz() {
 			lStorage.setItem('selected-answers', selectedAnswers)
 		}
 	}, [selectedAnswers])
+
 	useEffect(() => {
 		// console.log('aaaaa')
 		if (session?.quizQuestions?.length) {
@@ -391,7 +486,8 @@ function Quiz() {
 				selectedAnswers,
 			}));
 		}
-		selectedAnswersRef.current = selectedAnswers.map((answers, aIdx) => {
+		selectedAnswersRef.current = selectedAnswers
+		selectedQuestionNumberSerialsRef.current = selectedAnswers.map((answers, aIdx) => {
 			return answers.number
 		})
 	}, [selectedAnswers])
@@ -433,7 +529,8 @@ function Quiz() {
 	const answerObject = {
 		correct_answer: session?.quizAnswers?.find(ans=>ans.question_id===currentQuestionId)?.correct_answer,
 		gradeQuestion: session?.quizAnswers?.find(ans=>ans.question_id===currentQuestionId)?.correct,
-		answerExplanation: session?.quizAnswers?.find(ans=>ans.question_id===currentQuestionId)?.explanation
+		answerExplanation: session?.quizAnswers?.find(ans=>ans.question_id===currentQuestionId)?.explanation,
+		responseDuration: session?.quizAnswers?.find(ans=>ans.question_id===currentQuestionId)?.response_duration,
 	}
 
 	// // resize into columns of 5s for side display
@@ -456,7 +553,7 @@ function Quiz() {
 	// 	// totalPointsScored,
 	// 	totalQuestionsAnswered,
 	// 	totalQuestions,
-	// 	selectedAnswersRef: selectedAnswersRef.current,
+	// 	selectedQuestionNumberSerialsRef: selectedQuestionNumberSerialsRef.current,
 	// })
 	// console.log({selectedAnswers})
 	// console.log({answers: session.quizAnswers})
@@ -480,6 +577,29 @@ function Quiz() {
 	// 	isTimeUp,
 	// })
 
+	useEffect(() => {
+		const question = session?.quizQuestions?.[QuestionNumber];
+		if (!question) return;
+	
+		// Guard: only track first-ever render
+		if (!questionTimeRef.current[question.id]) {
+			questionTimeRef.current[question.id] = {
+				renderedAt: Date.now(),
+				// answeredAt: null,
+				// duration: null,
+			};
+		}
+	}, [QuestionNumber, session]);
+
+	console.log({
+		selectedAnswers,
+		session,
+		isSubmitted,
+		showReadyModal,
+		isTimeUp,
+		formData,
+	})
+
 	return (
 			<>
 				{/* spinner */}
@@ -495,21 +615,30 @@ function Quiz() {
 					role="dialog"
 					aria-modal="true"
 					aria-labelledby="quiz-ready-title">
-						<h3 id="quiz-ready-title">{isTimeUp?'TIME UP!':'Quiz Ready'}</h3>
-						<p>{isTimeUp?(<span>This session is expired<br />You must take a new quiz.</span>):'Questions are ready.'}</p>
+						<h3 id="quiz-ready-title">{isTimeUp?'Oopsy!':'Quiz Ready'}</h3>
+						<p>
+							{isTimeUp?
+								(
+									<span>
+										Time up
+										<br />
+										Review your answers
+									</span>):
+								'Questions are ready.'}
+						</p>
 						<button
 						className="cta-button modal"
 						ref={startButtonRef}
 						onClick={(e) => {
 							if (isTimeUp) {
-								handleClearSession()
+								// handleClearSession()
 								setIsTimeUp(false)
 								// submitHandler()
 							} else {
 								loadStartTime(session?.sessionID)
 							}
 							}}>
-							{isTimeUp?'New':'Start'} Quiz
+							{isTimeUp?'Review Answers':'Start Quiz'}
 						</button>
 					</div>
 				</div>
@@ -619,18 +748,35 @@ function Quiz() {
 						<form
 						onSubmit={(e)=>submitHandler(e, !isSubmitted)}
 						// handles pretest
-						className={`quiz-text glass`}>
+						className={`quiz-text glass ultra-small-devices`}>
 							{/* <h2>Tests Page</h2>
 							<p>Tests Page</p> */}
 							<fieldset className="questions-header quiz-questions">
 							
 								<div className="">
-									<div className="">
-										<div className=''>
+									{/* <div className=""> */}
+										{/* <div className=''> */}
 											{/* question counter */}
-											<h5>
-												Question {sessionLength?(QuestionNumber + 1):0} of {sessionLength}
-											</h5>
+											<div className="d-flex justify-content-between">
+												<h5>
+													Question {sessionLength?(QuestionNumber + 1):0} of {sessionLength}
+												</h5>
+												{deviceInfo.label === "mobile" ?
+												<div className="mr-05">
+													<QuizTimer
+													isStartTime={quizStarting}
+													setIsStarting={setQuizStarting}
+													start={userStartTime}
+													duration={Number(session?.duration) * 60 * 60} // 2 hrs in seconds
+													onWarning={() => setFeedback("warning")}
+													onTimeUp={() => setFeedback("timeup")}
+													onTabLeave={() => setFeedback("warning")}
+													onTimeUpChange={setIsTimeUp}
+													isSubmitted={isSubmitted}
+													submitHandler={submitHandler}
+												/>
+												</div>:null}
+											</div>
 											{/* <div style={styles.rowed}> */}
 											{/* navigation buttons */}
 											<div className="mb-1">
@@ -638,7 +784,7 @@ function Quiz() {
 												{(QuestionNumber!==0) &&
 												<button
 												style={{marginRight: 10}}
-												className="cta-button prev mb-xs"
+												className="cta-button prev mb-xs keep-btn-width fit"
 												type="button"
 												onClick={(e)=>setQuestionNumber(prev => prev - 1)}>
 													◀ Previous
@@ -646,7 +792,7 @@ function Quiz() {
 												{/* next button */}
 												{(QuestionNumber!==sessionLength-1) &&
 												<button
-												className="cta-button next mb-xs"
+												className="cta-button next mb-xs keep-btn-width fit"
 												type="button"
 												onClick={(e)=>setQuestionNumber(prev => prev + 1)}>
 													Next ▶
@@ -654,7 +800,7 @@ function Quiz() {
 											</div>
 												{/* <Countdown targetDate={countdownHandler(Number(duration))} /> */}
 											{/* </div> */}
-										</div>
+										{/* </div> */}
 										{/* image preview */}
 										{session.quizQuestions[QuestionNumber]?.image_url &&
 										<div>
@@ -671,7 +817,11 @@ function Quiz() {
 										<div>
 											<div className="">
 												{/* renders questions */}
-												<h5>
+												<h5 className="no-copy"
+												// onCopy={'return false'}
+												// onCut={'return false'}
+												// onContextMenu={'return false'}
+												>
 													{session.quizQuestions[QuestionNumber]?.question}
 												</h5>
 												{/* renders choices */}
@@ -680,22 +830,29 @@ function Quiz() {
 													<div key={sIndex} className="">
 														{/* selectable option with hover and active effects */}
 														<div className={`selected_choice px-1 radius-5 ${userChoice===selectedOption?'active':''} ${isSubmitted?'submitted':''} ${(isSubmitted&&answerObject.correct_answer===selectedOption)?'correct-answer':''}`}
-														onClick={()=>selectedAnswerHandler(
-															session.quizQuestions[QuestionNumber].id,
-															selectedOption
-															)}>
+														onClick={(e)=> {
+															selectedAnswerHandler(
+																session.quizQuestions[QuestionNumber].id,
+																selectedOption)
+																if (QuestionNumber!==sessionLength-1) {
+																	setQuestionNumber(prev => prev + 1)
+																}
+														}}>
 															{/* option texts */}
-															<p>
+															<p className="d-flex align-items-center no-copy">
 																{/* option choices (A, B, C, D) then gold highlights for submitted events */}
 																<span
 																className="choices">
 																		{answerOptionsArray[sIndex]}:</span> {selectedOption} {(userChoice===answerObject.correct_answer&&isSubmitted&&answerObject.correct_answer===selectedOption)?<span
-																className="">
+																className="d-flex align-items-center">
 																	{/* green check (pass) */}
 																	<FontAwesomeIcon
 																		icon="check"
 																		className="font-green"
 																	/>
+																	<span className="response-time">
+																		RT: <DurationDisplay seconds={answerObject?.responseDuration} />
+																	</span>
 																</span>:
 																(userChoice===selectedOption&&isSubmitted)?<span
 																className="">
@@ -712,14 +869,14 @@ function Quiz() {
 											</div>
 										</div>
 										<div className="show-choice">
-											<p className="choices">
+											<p className="choices no-copy">
 												{userChoice ?
 												isSubmitted?(<><span className="font-white text-underline">Reason:</span>{' '+answerObject?.answerExplanation}</>):
 												`Selected choice: ${userChoice} (${answerOptionsArray[choiceLetterIndex]?.toUpperCase()})`:
 												null}
 											</p>
 										</div>
-									</div>
+									{/* </div> */}
 								</div>
 
 							{/* <h2>Take Tests Page</h2> */}
@@ -729,31 +886,35 @@ function Quiz() {
 							</fieldset>
 							<div className="d-flex justify-content-center">
 								<button
-									style={{margin: '1rem 1rem 0 5rem'}}
+									style={{margin: deviceInfo.label === "mobile"?'1rem 1rem 0 3rem':'1rem 1rem 0 5rem'}}
 									type="submit"
 									disabled={(!isSubmitted&&!selectedAnswers.length)}
-									className="cta-button">
+									className="cta-button text-nowrap">
 										{loading ?
 											<Spinner type={'dot'} /> :
-											isSubmitted?'New Quiz':'Submit'}
+											isSubmitted?'Retake Quiz':'Submit'}
 								</button>
 								<button
-									style={{margin: '1rem 5rem 0 1rem'}}
+									style={{margin: deviceInfo.label === "mobile"?'1rem 3rem 0 1rem':'1rem 5rem 0 1rem'}}
 									onClick={(e)=>{
+										if (isSubmitted) {
+											handleRePopulateFormData()
+										}
 										handleClearSession()
 									}}
 									type="button"
 									// disabled={(!isSubmitted&&!selectedAnswers.length)}
-									className={`cta-button ${isSubmitted?'d-none':''}`}>
-										Cancel Test
+									className={`cta-button text-nowrap`}>
+										{isSubmitted?'New Quiz':'Cancel Test'}
 								</button>
 							</div>
 						</form>
 
 						{/* timer and question list section */}
-						<div className="align-self-baseline mb-0">
+						<div className="align-self-baseline mb-0 ultra-small-devices-ans">
 							<div className="stat-card glass">
 								{/* <div className="stat-number">150+</div> */}
+								{deviceInfo.label !== "mobile" ?
 								<QuizTimer
 									isStartTime={quizStarting}
 									setIsStarting={setQuizStarting}
@@ -763,7 +924,9 @@ function Quiz() {
 									onTimeUp={() => setFeedback("timeup")}
 									onTabLeave={() => setFeedback("warning")}
 									onTimeUpChange={setIsTimeUp}
-								/>
+									isSubmitted={isSubmitted}
+									submitHandler={submitHandler}
+								/>:null}
 								<div className="stats-grid">
 									{session.quizQuestions.map((question, qIdx) => {
 										const isCorrect = session?.quizAnswers?.find(answer=>answer.question_id===question.id)?.correct
@@ -777,10 +940,18 @@ function Quiz() {
 										<div
 										key={question.question + qIdx}
 										onClick={(e)=>setQuestionNumber(qIdx)}
-										className={`stat-label number-hover overflow-hidden ${selectedAnswersRef.current.includes(qIdx)?'glass choices':''} ${isSubmitted?(isCorrect?'question-box-green':isCorrect===false?'question-box-red':''):''}`}>
+										className={`stat-label number-hover overflow-hidden ${selectedQuestionNumberSerialsRef.current.includes(qIdx)?'glass choices':''} ${isSubmitted?(isCorrect?'question-box-green':isCorrect===false?'question-box-red':''):''}`}>
 										Q{qIdx + 1}
 										</div>
 									)})}
+								</div>
+								<div className="pt-1">
+									{session?.quizAnswers?.length ?
+										<>
+											<p className="quiz-score">Score: {session?.quizScore}/{session?.quizQuestions?.length}</p>
+											<p className="quiz-score attempts">Questions Attempted: {session?.quizAttempted}</p>
+											<p className="quiz-score duration">Duration: <DurationDisplay seconds={session?.quizDuration} /></p>
+										</> : null}
 								</div>
 							</div>
 						</div>
@@ -794,7 +965,7 @@ function Quiz() {
 
 function QuizTimer({
 	start, duration, isStartTime, setIsStarting, onTimeUp,
-	onWarning, onTabLeave, onTimeUpChange, } = {}) {
+	onWarning, onTabLeave, onTimeUpChange, isSubmitted, submitHandler } = {}) {
 	const [timeLeft, setTimeLeft] = useState(0); // seconds
 	const warnedRef = useRef(false);
 	const _10percent = Math.ceil(0.1 * duration)
@@ -804,26 +975,28 @@ function QuizTimer({
 	const intervalRef = useRef(null);
 
 	// expose isTimeUp to parent
-	console.log('outside', {
-		start,
-		duration,
-		timeLeft,
-		isStartTime,
-		expiredReportedRef: expiredReportedRef.current,
-		hasStartedRef: hasStartedRef.current,
-	})
+	// console.log('outside', {
+	// 	// isSubmitted,
+	// 	// start,
+	// 	// duration,
+	// 	// timeLeft,
+	// 	// isStartTime,
+	// 	// expiredReportedRef: expiredReportedRef.current,
+	// 	// hasStartedRef: hasStartedRef.current,
+	// })
 	useEffect(() => {
-		console.log('yyyyy')
+		// console.log('yyyyy')
 		console.log('in effect', {
-			start,
-			duration,
-			timeLeft,
-			isStartTime,
-			expiredReportedRef: expiredReportedRef.current,
-			hasStartedRef: hasStartedRef.current,
+			isSubmitted,
+			// start,
+			// duration,
+			// timeLeft,
+			// isStartTime,
+			// expiredReportedRef: expiredReportedRef.current,
+			// hasStartedRef: hasStartedRef.current,
 		})
 		if (!start) {
-			console.log('no start')
+			// console.log('no start')
 			setTimeLeft(0);
 			warnedRef.current = false;
 			hasStartedRef.current = false;
@@ -848,18 +1021,19 @@ function QuizTimer({
 
 			console.log({
 				diff,
-				gt0: diff>0,
-				ltm1: diff<-1,
-				start,
-				duration,
-				timeLeft,
-				startTime,
-				expiredReportedRef: expiredReportedRef.current,
-				hasStartedRef: hasStartedRef.current,
+				isSubmitted,
+				// gt0: diff>0,
+				// ltm1: diff<-1,
+				// start,
+				// duration,
+				// timeLeft,
+				// startTime,
+				// expiredReportedRef: expiredReportedRef.current,
+				// hasStartedRef: hasStartedRef.current,
 			})
 			// gt0 and start
 			if (diff > 0 || (start && diff < -1)) {
-				console.log('setting has started to true')
+				// console.log('setting has started to true')
 				hasStartedRef.current = true;
 				if (diff > 0) {
 					expiredReportedRef.current = false
@@ -867,11 +1041,11 @@ function QuizTimer({
 			}
 
 			if (diff <= 0) {
-				console.log('time may be up or just starting')
+				// console.log('time may be up or just starting')
 				if (!expiredReportedRef.current
 					&& hasStartedRef.current
 				) {
-					console.log('bulls eye'.repeat(5))
+					// console.log('bulls eye'.repeat(5))
 					expiredReportedRef.current = true;
 					// STOP tick interval
 					if (intervalRef.current) {
@@ -880,9 +1054,13 @@ function QuizTimer({
 						intervalRef.current = null;
 						// setIsStarting(null)
 					}
+					if (!isSubmitted) {
+						console.log('trigger time up overlay')
+						onTimeUpChange?.(true);
+						submitHandler?.(null, true) // forcefully submit current progress
+					}
 					setIsStarting(null)
 					onTimeUp?.();
-					onTimeUpChange?.(true);
 				}
 				setTimeLeft(0);
 				// setIsExpired(hasExpired)
@@ -893,7 +1071,7 @@ function QuizTimer({
 			setTimeLeft(diff);
 	
 			if (diff <= _10percent && !warnedRef.current) {
-				console.log('warning phase')
+				// console.log('warning phase')
 				warnedRef.current = true;
 				onWarning?.();
 			}
@@ -908,12 +1086,9 @@ function QuizTimer({
 
 		return () => {
 			console.log('in clearing interval return')
-				// if (intervalRef.current) {
-					console.log('actually clearing interval')
-					clearInterval(intervalRef.current);
-					intervalRef.current = null;
-				// }
-			};
+			clearInterval(intervalRef.current);
+			intervalRef.current = null;
+		};
 	}, [start, duration, isStartTime]);
 
 	// detect tab switching (kids cheating)
@@ -943,7 +1118,7 @@ function QuizTimer({
 				{minutes.toString().padStart(2, "0")}:
 				{seconds.toString().padStart(2, "0")} */}
 				{isTimeUp ?
-					"--:--:--" :
+					<span className="timer-dash">--:--:--</span> :
 					<>
 						{hours.toString().padStart(2, "0")}:
 						{minutes.toString().padStart(2, "0")}:
@@ -970,6 +1145,24 @@ function useGetStartTime () {
 		return null
 	}
 	return fetchTime
+}
+
+function DurationDisplay({ seconds }) {
+	if (seconds == null || isNaN(seconds)) return null;
+
+	const totalSeconds = Math.floor(seconds);
+
+	const hours = Math.floor(totalSeconds / 3600);
+	const minutes = Math.floor((totalSeconds % 3600) / 60);
+	const secs = totalSeconds % 60;
+
+	return (
+		<span className="text-nowrap">
+			{hours > 0 && `${hours}h `}
+			{minutes > 0 && `${minutes}m `}
+			{(secs > 0 || (hours === 0 && minutes === 0)) && `${secs}s`}
+		</span>
+	);
 }
 
 export { Quiz };
