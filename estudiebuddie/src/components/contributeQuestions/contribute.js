@@ -347,6 +347,7 @@ function ContributeQuestionsComponent() {
 				<form
 				onSubmit={submitHandler}
 				className={`form-head scramble-question-text glass ${loadingPage?'d-none':''}`}>
+					<h1 className="shuffle-question-head1">Contribute Questions</h1>
 					<fieldset className="questions-header">
 						{formHead.map((input, inpIdx) => {
 							console.log({
