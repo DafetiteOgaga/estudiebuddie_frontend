@@ -5,6 +5,7 @@ import { shuffleArray } from "../../hooks/formHooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCreateStorage } from "../../hooks/persistToStorage";
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
+import { useDeviceInfo } from "../../hooks/deviceType";
 import { toast } from 'react-toastify';
 
 const formValues = {
@@ -40,7 +41,7 @@ const noOfQsArray = [0, 30, 70].map((increment, idx) => {
 })
 // console.log({noOfQsArray, durationArray})
 
-const preHeadForm = [
+let preHeadForm = [
 	{
 		name: "name",
 		required: true,
@@ -110,6 +111,7 @@ const preHeadForm = [
 		case: null,
 	},
 ]
+const dyName = ['class', 'duration', 'noOfQs']
 
 const blankSession = {
 	quizQuestions: [],
@@ -132,6 +134,8 @@ const STORAGE_KEY = "countdown_seconds_left";
 // - "wrong"
 // - "coin"
 function Quiz() {
+	const deviceInfo = useDeviceInfo()
+	console.log({deviceInfo})
 	const [isTimeUp, setIsTimeUp] = useState(false);
 	const startButtonRef = useRef(null);
 	const modalRef = useRef(null);
@@ -152,6 +156,42 @@ function Quiz() {
 	const [formData, setFormData] = useState(formValues)
 	const selectedQuestionNumberSerialsRef = useRef([])
 	const selectedAnswersRef = useRef([])
+	if (deviceInfo.label === "smallLaptop") {
+		console.log('smallTablet'.repeat(5))
+		dyName.forEach(obj => {
+			let objItem = preHeadForm.find(item => item.name === obj)
+			if (objItem) objItem.width = '17%'
+		})
+	} else if (deviceInfo.label === "tablet") {
+		console.log('smallTablet'.repeat(5))
+		dyName.forEach(obj => {
+			let objItem = preHeadForm.find(item => item.name === obj)
+			if (objItem) {
+				if (deviceInfo.width > 800) {
+					objItem.width = '19%'
+				} else {
+					objItem.width = '22%'
+				}
+			}
+		})
+	} else if (deviceInfo.label === "mobile") {
+		console.log('mobile'.repeat(5))
+		preHeadForm.forEach(obj => {
+			// let objItem = formHead.find(item => item.name === obj)
+			if (obj.name==="name"||obj.name==="email") {
+				obj.width = '100%'
+			} else if (obj.name==="type"||obj.name==="class") {
+				obj.width = '40%'
+			} else if (obj.name==="subject") {
+				obj.width = '70%'
+			} else if (obj.name==="duration") {
+				obj.width = '40%'
+			} else if (obj.name==="noOfQs") {
+				obj.width = '40%'
+			}
+		})
+	}
+	console.log(preHeadForm)
 	useEffect(() => {
 		setLoadingPage(false)
 	}, []);
@@ -708,18 +748,35 @@ function Quiz() {
 						<form
 						onSubmit={(e)=>submitHandler(e, !isSubmitted)}
 						// handles pretest
-						className={`quiz-text glass`}>
+						className={`quiz-text glass ultra-small-devices`}>
 							{/* <h2>Tests Page</h2>
 							<p>Tests Page</p> */}
 							<fieldset className="questions-header quiz-questions">
 							
 								<div className="">
-									<div className="">
-										<div className=''>
+									{/* <div className=""> */}
+										{/* <div className=''> */}
 											{/* question counter */}
-											<h5>
-												Question {sessionLength?(QuestionNumber + 1):0} of {sessionLength}
-											</h5>
+											<div className="d-flex justify-content-between">
+												<h5>
+													Question {sessionLength?(QuestionNumber + 1):0} of {sessionLength}
+												</h5>
+												{deviceInfo.label === "mobile" ?
+												<div className="mr-05">
+													<QuizTimer
+													isStartTime={quizStarting}
+													setIsStarting={setQuizStarting}
+													start={userStartTime}
+													duration={Number(session?.duration) * 60 * 60} // 2 hrs in seconds
+													onWarning={() => setFeedback("warning")}
+													onTimeUp={() => setFeedback("timeup")}
+													onTabLeave={() => setFeedback("warning")}
+													onTimeUpChange={setIsTimeUp}
+													isSubmitted={isSubmitted}
+													submitHandler={submitHandler}
+												/>
+												</div>:null}
+											</div>
 											{/* <div style={styles.rowed}> */}
 											{/* navigation buttons */}
 											<div className="mb-1">
@@ -727,7 +784,7 @@ function Quiz() {
 												{(QuestionNumber!==0) &&
 												<button
 												style={{marginRight: 10}}
-												className="cta-button prev mb-xs"
+												className="cta-button prev mb-xs keep-btn-width fit"
 												type="button"
 												onClick={(e)=>setQuestionNumber(prev => prev - 1)}>
 													◀ Previous
@@ -735,7 +792,7 @@ function Quiz() {
 												{/* next button */}
 												{(QuestionNumber!==sessionLength-1) &&
 												<button
-												className="cta-button next mb-xs"
+												className="cta-button next mb-xs keep-btn-width fit"
 												type="button"
 												onClick={(e)=>setQuestionNumber(prev => prev + 1)}>
 													Next ▶
@@ -743,7 +800,7 @@ function Quiz() {
 											</div>
 												{/* <Countdown targetDate={countdownHandler(Number(duration))} /> */}
 											{/* </div> */}
-										</div>
+										{/* </div> */}
 										{/* image preview */}
 										{session.quizQuestions[QuestionNumber]?.image_url &&
 										<div>
@@ -812,14 +869,14 @@ function Quiz() {
 											</div>
 										</div>
 										<div className="show-choice">
-											<p className="choices">
+											<p className="choices no-copy">
 												{userChoice ?
 												isSubmitted?(<><span className="font-white text-underline">Reason:</span>{' '+answerObject?.answerExplanation}</>):
 												`Selected choice: ${userChoice} (${answerOptionsArray[choiceLetterIndex]?.toUpperCase()})`:
 												null}
 											</p>
 										</div>
-									</div>
+									{/* </div> */}
 								</div>
 
 							{/* <h2>Take Tests Page</h2> */}
@@ -829,16 +886,16 @@ function Quiz() {
 							</fieldset>
 							<div className="d-flex justify-content-center">
 								<button
-									style={{margin: '1rem 1rem 0 5rem'}}
+									style={{margin: deviceInfo.label === "mobile"?'1rem 1rem 0 3rem':'1rem 1rem 0 5rem'}}
 									type="submit"
 									disabled={(!isSubmitted&&!selectedAnswers.length)}
-									className="cta-button">
+									className="cta-button text-nowrap">
 										{loading ?
 											<Spinner type={'dot'} /> :
 											isSubmitted?'Retake Quiz':'Submit'}
 								</button>
 								<button
-									style={{margin: '1rem 5rem 0 1rem'}}
+									style={{margin: deviceInfo.label === "mobile"?'1rem 3rem 0 1rem':'1rem 5rem 0 1rem'}}
 									onClick={(e)=>{
 										if (isSubmitted) {
 											handleRePopulateFormData()
@@ -847,16 +904,17 @@ function Quiz() {
 									}}
 									type="button"
 									// disabled={(!isSubmitted&&!selectedAnswers.length)}
-									className={`cta-button`}>
+									className={`cta-button text-nowrap`}>
 										{isSubmitted?'New Quiz':'Cancel Test'}
 								</button>
 							</div>
 						</form>
 
 						{/* timer and question list section */}
-						<div className="align-self-baseline mb-0">
+						<div className="align-self-baseline mb-0 ultra-small-devices-ans">
 							<div className="stat-card glass">
 								{/* <div className="stat-number">150+</div> */}
+								{deviceInfo.label !== "mobile" ?
 								<QuizTimer
 									isStartTime={quizStarting}
 									setIsStarting={setQuizStarting}
@@ -868,7 +926,7 @@ function Quiz() {
 									onTimeUpChange={setIsTimeUp}
 									isSubmitted={isSubmitted}
 									submitHandler={submitHandler}
-								/>
+								/>:null}
 								<div className="stats-grid">
 									{session.quizQuestions.map((question, qIdx) => {
 										const isCorrect = session?.quizAnswers?.find(answer=>answer.question_id===question.id)?.correct
