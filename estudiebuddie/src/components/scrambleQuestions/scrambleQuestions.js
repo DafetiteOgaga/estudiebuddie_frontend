@@ -6,6 +6,7 @@ import { justNumbers, generateUniqueId, spaceToHyphen } from "../../hooks/formHo
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
 import { ImageCropAndCompress } from "../../hooks/imgCompressAndCrop/ImageCropAndCompress";
 import { imageCompression } from 'browser-image-compression';
+import { useDeviceInfo } from "../../hooks/deviceType";
 
 const formValues = {
 	school: "",
@@ -34,14 +35,14 @@ const questionObject = {
 }
 
 const termArray = ['first', 'second', 'third']
-const formHead = [
+let formHead = [
 	{
 		name: "totalQs",
 		required: true,
 		disabled: false,
 		type: "text",
 		placeholder: "No. of Questions",
-		width: "15%",
+		width: "20%",
 		case: null,
 	},
 	{
@@ -86,7 +87,7 @@ const formHead = [
 		disabled: false,
 		type: "text",
 		placeholder: "No. of Types",
-		width: "15%",
+		width: "20%",
 		case: null,
 	},
 	{
@@ -113,7 +114,7 @@ const formHead = [
 		disabled: false,
 		type: "select",
 		placeholder: "Term",
-		width: "11%",
+		width: "15%",
 		options: termArray,
 		case: "title",
 	},
@@ -123,7 +124,7 @@ const formHead = [
 		disabled: false,
 		type: "text",
 		placeholder: "Duration (hour)",
-		width: "15%",
+		width: "20%",
 		case: null,
 	},
 	{
@@ -136,6 +137,7 @@ const formHead = [
 		case: "title",
 	},
 ]
+const dyName = ['totalQs']
 const displayValue = (val, strCase) => {
 	if (strCase === "upper") return val.toUpperCase();
 	if (strCase === "lower") return val.toLowerCase();
@@ -157,6 +159,8 @@ const fetchDownloadLinkss = async ({endpoint, setDownloadLink}) => {
 }
 
 function ScrambleQuestionsComponent() {
+	const deviceInfo = useDeviceInfo()
+	console.log({deviceInfo})
 	const [tick, setTick] = useState(Date.now());
 	const [loadingPage, setLoadingPage] = useState(true);
 	const [loading, setLoading] = useState(false);
@@ -181,6 +185,46 @@ function ScrambleQuestionsComponent() {
 	const [uploadedSchLogo, setUploadedSchLogo] = useState(null)
 	const [isClearUploadedLogo, setIsClearUploadedLogo] = useState(false)
 
+	// if (deviceInfo.label === "smallLaptop") {
+	// 	console.log('smallLaptop'.repeat(5))
+	// 	dyName.forEach(obj => {
+	// 		let objItem = formHead.find(item => item.name === obj)
+	// 		if (objItem) objItem.width = '17%'
+	// 	})
+	// } else if (deviceInfo.label === "tablet") {
+	// 	console.log('tablet'.repeat(5))
+	// 	dyName.forEach(obj => {
+	// 		let objItem = formHead.find(item => item.name === obj)
+	// 		if (objItem) {
+	// 			if (deviceInfo.width > 800) {
+	// 				objItem.width = '19%'
+	// 			} else {
+	// 				objItem.width = '22%'
+	// 			}
+	// 		}
+	// 	})
+	// } else
+	if (deviceInfo.label === "mobile") {
+		console.log('mobile'.repeat(5))
+		formHead.forEach(obj => {
+			// let objItem = formHead.find(item => item.name === obj)
+			if (obj.name==="totalQs") {
+				obj.width = '40%'
+			} else if (obj.name==="school") {
+				obj.width = '100%'
+			} else if (obj.name==="subject") {
+				obj.width = '65%'
+			} else if (obj.name==="noOfTypes") {
+				obj.width = '30%'
+			} else if (obj.name==="class") {
+				obj.width = '20%'
+			} else if (obj.name==="term"||obj.name==="duration") {
+				obj.width = '37%'
+			} else if (obj.name==="instruction") {
+				obj.width = '100%'
+			}
+		})
+	}
 	useEffect(() => {
 		setLoadingPage(false)
 		if (!hasFetched.current) {
@@ -495,7 +539,7 @@ function ScrambleQuestionsComponent() {
 									{/* <MoreInfo info="Upload information ..." /> */}
 									<button
 									style={{margin: '0 5rem'}}
-									className="cta-button mb-xs"
+									className="cta-button mb-xs q-mx"
 									type="button"
 									disabled={true}
 									onClick={() => null}>
@@ -564,7 +608,7 @@ function ScrambleQuestionsComponent() {
 						<button
 						style={{margin: '0 5rem'}}
 						type="submit"
-						className={`cta-button ${questionFormData?.length?'':'d-none'}`}>
+						className={`cta-button scramble-submit-mobile ${questionFormData?.length?'':'d-none'}`}>
 							{loading ?
 								<Spinner type={'dot'} /> :
 								'Scramble Questions'}
