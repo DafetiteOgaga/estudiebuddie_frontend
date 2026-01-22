@@ -2,12 +2,13 @@ import './App.css';
 import { AppRoutes } from './routes/route';
 import { ToastContainer } from 'react-toastify';
 import './assets/css/glossy-style.css';
+import './assets/css/responsive.css';
 
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faEye, faEyeSlash, faCircleCheck, faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash, faCircleCheck, faCheck, faTimes, faBars } from "@fortawesome/free-solid-svg-icons";
 library.add(
   faEye, faEyeSlash, faCircleCheck, faCheck,
-  faTimes
+  faTimes, faBars
 );
 
 function App() {
