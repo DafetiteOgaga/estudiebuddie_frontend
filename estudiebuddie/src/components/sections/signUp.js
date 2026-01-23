@@ -8,7 +8,7 @@ import { ImageCropAndCompress } from "../../hooks/imgCompressAndCrop/ImageCropAn
 import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit"; 
 import { Spinner } from "../../hooks/spinner/spinner";
 import { useCreateStorage } from "../../hooks/persistToStorage";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../../hooks/authContext";
 import { useDeviceInfo } from "../../hooks/deviceType";
 
@@ -146,6 +146,8 @@ function SignUp() {
 	console.log({deviceInfo})
 	const { loggedIn, setLoggedIn } = useAuth()
 	const navigate = useNavigate()
+	const location = useLocation()
+	const from = location.state?.from?.pathname;
 	const { lStorage, sStorage } = useCreateStorage()
 	const [loading, setLoading] = useState(false);
 	const uploadToCloud = useUploadToImagekit()
@@ -312,10 +314,14 @@ function SignUp() {
 			});
 		if (res.ok) {
 			toast.success('Success')
-			lStorage.setItem('user', res.data)
+			// lStorage.setItem('user', res.data)
 			setFormData(formValues)
 			setLoggedIn(res.ok)
-			navigate(-1)
+			if (from === "/login") {
+				navigate("/", { replace: true });
+			} else {
+				navigate(-1);
+			}
 		}
 		setLoading(false)
 	};

@@ -179,6 +179,10 @@
     .download-btn-dropdown-item {
         padding: 0.9rem 1rem;
     }
+    .download-btn-not-dropdown {
+        width: max-content;
+        justify-self: center;
+    }
     /* .page {
         padding: 30px 20px 20px;
     } */
