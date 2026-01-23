@@ -378,31 +378,7 @@ function QuestionsArrComp({args}) {
 								onComplete={setUploadedImg}
 								imageId={qIdx}
 								imgType="question" />
-								{/* <button
-								type='button'
-								className='cta-button question'
-								onClick={()=> document.getElementById(`image-upload-${qIdx}`).click()}>
-									{isImage?'Change':'Upload'} Image
-								</button>
-								<input
-								id={`image-upload-${qIdx}`}
-								type="file"
-								name='image'
-								accept="image/*"
-								onChange={(e)=>handleQuestionChange(e, null, qIdx)}
-								hidden
-								/> */}
-								{/* remove uploaded image */}
-								{/* {isImage ?
-								<>
-									<button
-									type='button'
-									className='cta-button question'
-									onClick={(e)=>handleQuestionChange(e, qIdx, '-')}>
-										Remove Image
-									</button>
-								</>
-								:null} */}
+
 								<button
 								type="button"
 								onClick={()=>addRemoveQuestion({id:questionData.uniqueId})}
