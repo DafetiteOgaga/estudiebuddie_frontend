@@ -513,12 +513,6 @@ function ScrambleQuestionsComponent() {
 								imageId={'logo'}
 								imgType="sch-logo" />
 
-								{/* <button
-								type="button"
-								onClick={()=>addRemoveQuestion({id:questionData.uniqueId})}
-								className="cta-button question">
-									Remove Question
-								</button> */}
 							</div>
 
 							{/* <img src={formData.preview} alt="preview" /> */}
@@ -566,18 +560,11 @@ function ScrambleQuestionsComponent() {
 					{/* download file button */}
 					{/* <div className=""> */}
 					{hasSingleLink ?
-					(<DownloadBtn tick={tick}
-					item={downloadLink?.[0]}
-					single={true} />)
-					// (<a
-					// 	href={`${serverOrigin}${downloadLink?.[0]?.link}`}
-					// 	// href="##"
-					// 	download
-					// 	style={{margin: '0 5rem',}}
-					// 	role="button"
-					// 	className="cta-button">
-					// 		Download file
-					// 	</a>)
+					<div className="download-btn-not-dropdown">
+						<DownloadBtn tick={tick}
+						item={downloadLink?.[0]}
+						single={true} />
+					</div>
 					:
 					hasMultipleLinks ?
 					(<div
@@ -605,7 +592,7 @@ function ScrambleQuestionsComponent() {
 				: null}
 
 					{/* submit button */}
-					<div className="d-flex justify-content-center">
+					<div className="d-flex justify-content-center pt-05">
 						<button
 						style={{margin: '0 5rem'}}
 						type="submit"
@@ -633,7 +620,7 @@ function DownloadBtn({item, tick, single=false}) {
 
 			href={`${serverOrigin}${item.link}`}
 			download
-			className={single?'cta-button':'download-btn-dropdown-item'}
+			className={single?'cta-button fit':'download-btn-dropdown-item'}
 		>
 			{titleCase(fileName)} <span className="time-ago">({timeAgo(item.created_at)})</span>
 		</a>
