@@ -135,6 +135,7 @@ const STORAGE_KEY = "countdown_seconds_left";
 // - "wrong"
 // - "coin"
 function Quiz() {
+	const [isFirstRender, setIsFirstRender] = useState(false)
 	const [statePreHeadForm, setStatePreHeadForm] = useState(preHeadForm)
 	const deviceInfo = useDeviceInfo()
 	// console.log({deviceInfo})
@@ -158,6 +159,8 @@ function Quiz() {
 	const [formData, setFormData] = useState(formValues)
 	const selectedQuestionNumberSerialsRef = useRef([])
 	const selectedAnswersRef = useRef([])
+	// check session storage for existing isFirstRender data
+	const isFirstRenderExist = sStorage.getItem('isFirstRender')
 	if (deviceInfo.label === "smallLaptop") {
 		// console.log('smallTablet'.repeat(5))
 		dyName.forEach(obj => {
@@ -253,6 +256,8 @@ function Quiz() {
 	}, [formData.type])
 	// console.log(statePreHeadForm)
 	useEffect(() => {
+		// console.log('isFirstRender'.repeat(10), isFirstRenderExist)
+		if (!isFirstRenderExist) setIsFirstRender(true)
 		setLoadingPage(false)
 	}, []);
 	useEffect(() => {
@@ -669,42 +674,48 @@ function Quiz() {
 				{loadingPage && <SpinnerBarForPage />}
 
 				{/* start quiz modal */}
-				{(showReadyModal||isTimeUp) && (
-				<div className="quiz-ready-backdrop"
-				aria-hidden={!showReadyModal}>
-					<div
-					className="quiz-ready-modal"
-					ref={modalRef}
-					role="dialog"
-					aria-modal="true"
-					aria-labelledby="quiz-ready-title">
-						<h3 id="quiz-ready-title">{isTimeUp?'Oopsy!':'Quiz Ready'}</h3>
-						<p>
-							{isTimeUp?
-								(
-									<span>
-										Time up
-										<br />
-										Review your answers
-									</span>):
-								'Questions are ready.'}
-						</p>
-						<button
-						className="cta-button modal"
-						ref={startButtonRef}
-						onClick={(e) => {
-							if (isTimeUp) {
-								// handleClearSession()
-								setIsTimeUp(false)
-								// submitHandler()
-							} else {
-								loadStartTime(session?.sessionID)
-							}
-							}}>
-							{isTimeUp?'Review Answers':'Start Quiz'}
-						</button>
-					</div>
-				</div>
+				{(showReadyModal) && (
+				<ModalOverlay
+				isOpen={showReadyModal}
+				title="Quiz Ready"
+				message="Questions are ready."
+				buttonText="Start Quiz"
+				modalRef={modalRef}
+				buttonRef={startButtonRef}
+				onConfirm={() => loadStartTime(session?.sessionID)}
+				/>
+				)}
+				{(isTimeUp) && (
+				<ModalOverlay
+				isOpen={isTimeUp}
+				title="Oopsy!"
+				message={
+					<>
+					Time up
+					<br />
+					Review your answers
+					</>
+				}
+				buttonText="Review Answers"
+				onConfirm={() => setIsTimeUp(false)}
+				/>
+				)}
+				{(isFirstRender) && (
+				<ModalOverlay
+				isOpen={isFirstRender}
+				title="COMING SOON!"
+				message={
+					<>
+					In development
+					<br />
+					But there is a mock quiz available.
+					</>}
+				// buttonText="Review Answers"
+				onConfirm={() => {
+					setIsFirstRender(false)
+					sStorage.setItem('isFirstRender', 1)
+				}}
+				/>
 				)}
 
 				<section className={`quiz-content ${loadingPage?'d-none':''}`}>
@@ -906,8 +917,8 @@ function Quiz() {
 															<p className="d-flex align-items-center no-copy">
 																{/* option choices (A, B, C, D) then gold highlights for submitted events */}
 																<span
-																className="choices">
-																		{answerOptionsArray[sIndex]}:</span> {selectedOption} {(userChoice===answerObject.correct_answer&&isSubmitted&&answerObject.correct_answer===selectedOption)?<span
+																className="choices white-space-pre">
+																		{answerOptionsArray[sIndex]}: </span> {selectedOption} {(userChoice===answerObject.correct_answer&&isSubmitted&&answerObject.correct_answer===selectedOption)?<span
 																className="d-flex align-items-center">
 																	{/* green check (pass) */}
 																	<FontAwesomeIcon
@@ -1226,6 +1237,42 @@ function DurationDisplay({ seconds }) {
 			{minutes > 0 && `${minutes}m `}
 			{(secs > 0 || (hours === 0 && minutes === 0)) && `${secs}s`}
 		</span>
+	);
+}
+
+function ModalOverlay({
+	isOpen,
+	title,
+	message,
+	buttonText = "Continue",
+	onConfirm,
+	modalRef = null,
+	buttonRef = null,
+}) {
+	if (!isOpen) return null;
+  
+	return (
+		<div className="ready-backdrop" aria-hidden={!isOpen}>
+			<div
+			className="ready-modal"
+			ref={modalRef}
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="ready-title"
+			>
+			<h3 id="ready-title">{title}</h3>
+	
+			<p>{message}</p>
+	
+			<button
+				className="cta-button modal"
+				ref={buttonRef}
+				onClick={onConfirm}
+			>
+				{buttonText}
+			</button>
+			</div>
+		</div>
 	);
 }
 
