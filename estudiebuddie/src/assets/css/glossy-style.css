@@ -733,6 +733,7 @@ nav.sticky {
     /* background-color: var(--glass); */
     backdrop-filter: blur(12px);
     border-radius: 0;
+    z-index: 100;
 }
 /* Page system */
 .page {
