@@ -756,7 +756,7 @@ nav.sticky {
     gap: 40px;
     align-items: center;
     padding: 60px 40px;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
 }
 .hero-image {
     display: flex;
@@ -874,24 +874,24 @@ button[type="submit"] {
     /* margin-bottom: 40px; */
 }
 .feature-card {
-    padding: 40px 30px;
+    padding: 15px;
     text-align: center;
     color: white;
 }
 .feature-icon {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 20px;
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 5px;
     background: var(--border);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 20px;
 }
 .feature-card h3 {
     font-size: 1.5rem;
-    margin-bottom: 15px;
+    /* margin-bottom: 15px; */
     color: white;
 }
 .feature-card p {
