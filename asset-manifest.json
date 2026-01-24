@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/estudiebuddie_frontend/static/css/main.9e136396.css",
+    "main.css": "/estudiebuddie_frontend/static/css/main.ded2eb1b.css",
     "main.js": "/estudiebuddie_frontend/static/js/main.06586617.js",
     "static/js/453.1c12c522.chunk.js": "/estudiebuddie_frontend/static/js/453.1c12c522.chunk.js",
     "static/media/eStudieBuddie.png": "/estudiebuddie_frontend/static/media/eStudieBuddie.4e7ccbeeab7211ed4e66.png",
     "static/media/dafelogoWhiteTransparent.png": "/estudiebuddie_frontend/static/media/dafelogoWhiteTransparent.9e22063262c522af2111.png",
     "index.html": "/estudiebuddie_frontend/index.html",
-    "main.9e136396.css.map": "/estudiebuddie_frontend/static/css/main.9e136396.css.map",
+    "main.ded2eb1b.css.map": "/estudiebuddie_frontend/static/css/main.ded2eb1b.css.map",
     "main.06586617.js.map": "/estudiebuddie_frontend/static/js/main.06586617.js.map",
     "453.1c12c522.chunk.js.map": "/estudiebuddie_frontend/static/js/453.1c12c522.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.9e136396.css",
+    "static/css/main.ded2eb1b.css",
     "static/js/main.06586617.js"
   ]
 }
