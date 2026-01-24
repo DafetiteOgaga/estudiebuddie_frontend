@@ -361,7 +361,7 @@ function Profile() {
 
 					{/* page header */}
 					<div className="d-flex justify-content-between mobile-profile">
-						<h2 className="mb-0">
+						<h2 className="mb-0 pl-0 pb-05">
 							{activeView==='edit'?'Edit Profile':
 							activeView==='password'?'Change Password':
 							activeView==='avatar'?'Pick Avatar':
