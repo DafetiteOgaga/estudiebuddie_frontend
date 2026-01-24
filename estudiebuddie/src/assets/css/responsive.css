@@ -13,7 +13,7 @@
 
 @media (max-width: 1024px) {
     header.sticky {
-        padding: 1px;
+        padding: 0.1px;
     }
     nav.sticky {
         padding: 8px 15px;
