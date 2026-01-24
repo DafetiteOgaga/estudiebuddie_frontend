@@ -389,6 +389,27 @@ fieldset {
 .pt-5 {
     padding-top: 5rem !important;
 }
+.pb-0 {
+    padding-bottom: 0 !important;
+}
+.pb-05 {
+    padding-bottom: 0.5rem !important;
+}
+.pb-1 {
+    padding-bottom: 1rem !important;
+}
+.pb-2 {
+    padding-bottom: 2rem !important;
+}
+.pb-3 {
+    padding-bottom: 3rem !important;
+}
+.pb-4 {
+    padding-bottom: 4rem !important;
+}
+.pb-5 {
+    padding-bottom: 5rem !important;
+}
 .px-0 {
     padding-left: 0 !important;
     padding-right: 0 !important;
