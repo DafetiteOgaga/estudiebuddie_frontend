@@ -8,7 +8,7 @@ import { ImageCropAndCompress } from "../../hooks/imgCompressAndCrop/ImageCropAn
 import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit"; 
 import { Spinner } from "../../hooks/spinner/spinner";
 import { useCreateStorage } from "../../hooks/persistToStorage";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from "../../hooks/authContext";
 import { useDeviceInfo } from "../../hooks/deviceType";
 
@@ -459,18 +459,7 @@ function SignUp() {
 					// imageId={qIdx}
 					imgType="profile" />
 					</div>
-					{/* <div className="form-group">
-						<label htmlFor="email">Email Address</label>
-						<input type="email" id="email" name="email" placeholder="Enter your email" required />
-					</div>
-					<div className="form-group">
-						<label htmlFor="subject">Subject</label>
-						<input type="text" id="subject" name="subject" placeholder="What's this about?" />
-					</div>
-					<div className="form-group">
-						<label htmlFor="message">Message</label>
-						<textarea id="message" name="message" placeholder="Tell us about your project..." required></textarea>
-					</div> */}
+
 					<button
 					type="submit"
 					className="cta-button signup-btn">
@@ -478,6 +467,7 @@ function SignUp() {
 							<Spinner type={'dot'} /> :
 							'Register'}</button>
 				</form>
+				<p className="forgot-password-new-user">Have an account? <Link to={'/login'} className="">Login</Link></p>
 			</div>
 		</>
 	)

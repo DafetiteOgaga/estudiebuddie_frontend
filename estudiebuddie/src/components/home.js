@@ -1,7 +1,42 @@
 import { Link } from 'react-router-dom';
 import { AppName } from './sections/header';
+import { useAuth } from '../hooks/authContext';
 
+const homeCards = [
+	{
+		icon: '📚',
+		heading: 'Interactive Quizzes',
+		para: 'Take engaging quizzes across different topics to test understanding and strengthen knowledge.',
+	},
+	{
+		icon: '⏱️',
+		heading: 'Timed Challenges',
+		para: 'Quizzes are time-based to improve focus, speed, and exam readiness under real conditions.',
+	},
+	{
+		icon: '📈',
+		heading: 'Progress Tracking',
+		para: 'Track scores, improvements, and learning growth over time in one place.',
+	},
+	{
+		icon: '🎯',
+		heading: 'Performance Insights',
+		para: 'Detailed results help students understand strengths, weaknesses, and areas to improve.',
+	},
+	{
+		icon: '🏆',
+		heading: 'Learning Motivation',
+		para: 'Achievements and consistent practice to encourage you stay motivated and aim higher.',
+	},
+	{
+		icon: '🔐',
+		heading: 'Secure Student Accounts',
+		para: 'Your progress, quiz history, and results are safely stored and protected.',
+	},
+]
 function Home() {
+	const { loggedIn } = useAuth()
+	console.log({loggedIn})
 	// const { showPage } = useOutletContext();
 	return (
 		<>
@@ -31,48 +66,24 @@ function Home() {
 								<div className='d-flex gap-1 center-btns'>
 									<Link to={"/quiz"}
 									className="cta-button">Take a Test!</Link>
+									{!loggedIn ?
 									<Link to={"/signup"}
-									className="cta-button">Register for Free!</Link>
+									className="cta-button">Register for Free!</Link>:null}
 								</div>
 							</div>
 						</section>
 
 						<section className="features">
-							<div className="feature-card glass">
-								<div className="feature-icon">📚</div>
-								<h3>Interactive Quizzes</h3>
-								<p>Take engaging quizzes across different topics to test understanding and strengthen knowledge.</p>
-							</div>
-							
-							<div className="feature-card glass">
-								<div className="feature-icon">⏱️</div>
-								<h3>Timed Challenges</h3>
-								<p>Quizzes are time-based to improve focus, speed, and exam readiness under real conditions.</p>
-							</div>
-							
-							<div className="feature-card glass">
-								<div className="feature-icon">📈</div>
-								<h3>Progress Tracking</h3>
-								<p>Track scores, improvements, and learning growth over time in one place.</p>
-							</div>
-
-							<div className="feature-card glass">
-								<div className="feature-icon">🎯</div>
-								<h3>Performance Insights</h3>
-								<p>Detailed results help students understand strengths, weaknesses, and areas to improve.</p>
-							</div>
-
-							<div className="feature-card glass">
-								<div className="feature-icon">🏆</div>
-								<h3>Learning Motivation</h3>
-								<p>Achievements and consistent practice to encourage you stay motivated and aim higher.</p>
-							</div>
-
-							<div className="feature-card glass">
-								<div className="feature-icon">🔐</div>
-								<h3>Secure Student Accounts</h3>
-								<p>Your progress, quiz history, and results are safely stored and protected.</p>
-							</div>
+							{homeCards.map((card, cIdx) => {
+								return (
+									<div key={cIdx}
+									className="feature-card glass">
+										<div className="feature-icon">{card.icon}</div>
+										<h3>{card.heading}</h3>
+										<p>{card.para}</p>
+									</div>
+								)
+							})}
 						</section>
 					</>
 				{/* </div>

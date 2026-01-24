@@ -428,8 +428,27 @@
         font-size: 0.8rem;
         margin: 0 auto;
     }
+    .features {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 8px;
+    }
+    .feature-card {
+        padding: 8px 5px;
+    }
+    .feature-icon {
+        width: 30px;
+        height: 30px;
+        margin: 0 auto 5px;
+        font-size: 17px;
+    }
+    .feature-card h3 {
+        font-size: 1.2rem;
+    }
+    .feature-card p {
+        line-height: 1.2;
+    }
     #footer {
-        padding: 5px 0 0px 0;
+        padding: 10px 0 0 0;
     }
     footer {
         border-radius: 0 !important;
