@@ -3,16 +3,20 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
 import { AuthProvider } from './hooks/authContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+// automatically detect github-pages environment and use HashRouter in that case
+const isGitHubPages = window.location.hostname.includes('github.io');
+const RouterToUse = isGitHubPages ? HashRouter : BrowserRouter;
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <HashRouter>
+      <RouterToUse>
         <App />
-      </HashRouter>
+      </RouterToUse>
     </AuthProvider>
   </React.StrictMode>
 );
