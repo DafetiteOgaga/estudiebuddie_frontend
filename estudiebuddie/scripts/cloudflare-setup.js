@@ -24,6 +24,14 @@ const CUSTOM_URL = `https://${CUSTOM_DOMAIN}/`;
 console.log("🟡 cloudflare detected → Applying changes...");
 
 async function domainIsValid(domain) {
+	console.log({
+		domainData: domain,
+		domainBool: !!domain,
+	})
+	if (!domain) {
+		console.log('custom domain name not provided.')
+		return false
+	}
 	console.log(`🔎 domain lookup: ${domain}`);
 	try {
 		console.log(`🔎 Checking DNS for ${domain}...`);
