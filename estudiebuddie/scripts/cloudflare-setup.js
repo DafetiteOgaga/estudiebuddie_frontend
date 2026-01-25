@@ -29,7 +29,7 @@ async function domainIsValid(domain) {
 		console.log(`🔎 Checking DNS for ${domain}...`);
 		const result = await dns.lookup(domain);
 		console.log(`✅ Domain resolved: ${result.address}`);
-		return true;
+		return !!result.address;
 	} catch (e) {
 		console.log(`❌ Domain lookup failed: ${e.message}`);
 		return false;
@@ -41,18 +41,12 @@ async function domainIsValid(domain) {
 	// Determine the correct URL
 	let finalDomainURL = cLOUDFLARE_FREE_URL;
 
-	if (CUSTOM_DOMAIN === "") {
-		console.log(`⚪ No custom domain set → Using Cloudflare free URL: ${cLOUDFLARE_FREE_URL}`);
+	if (await domainIsValid(CUSTOM_DOMAIN)) {
+		finalDomainURL = CUSTOM_URL;
+		console.log(`🟢 Using CUSTOM DOMAIN: ${finalDomainURL}`);
 	} else {
-		console.log(`🔎 Custom domain provided: ${CUSTOM_DOMAIN} → Checking DNS...`);
-		const isValidDomain = await domainIsValid(CUSTOM_DOMAIN);
-		if (isValidDomain) {
-			finalDomainURL = CUSTOM_URL;
-			console.log(`🟢 Using CUSTOM DOMAIN: ${finalDomainURL}`);
-		} else {
-		}
-			console.log(`🟡 Using cloudflare FREE URL fallback: ${cLOUDFLARE_FREE_URL}`);
-		}
+		console.log(`🟡 Using cloudflare FREE URL fallback: ${cLOUDFLARE_FREE_URL}`);
+	}
 
 	/* -----------------------------------------------------------
 	REMOVE HOMEPAGE FROM package.json
