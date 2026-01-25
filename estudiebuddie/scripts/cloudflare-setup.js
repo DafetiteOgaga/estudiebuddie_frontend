@@ -8,11 +8,6 @@ use: "build": "node scripts/cloudflare-setup.js && react-scripts build",
 
 const isCloudflare = !!process.env.CF_PAGES_BRANCH;
 
-const GH_URL = "https://dafetiteogaga.github.io/estudiebuddie_frontend/";
-const cLOUDFLARE_FREE_URL = "https://estudiebuddie-frontend.pages.dev/";
-const CUSTOM_DOMAIN = "";
-const CUSTOM_URL = `https://${CUSTOM_DOMAIN}/`;
-
 console.log("🔍 Checking environment...");
 
 if (!isCloudflare) {
@@ -20,15 +15,29 @@ if (!isCloudflare) {
 	process.exit(0);
 }
 
+
+const GH_URL = "https://dafetiteogaga.github.io/estudiebuddie_frontend/";
+const cLOUDFLARE_FREE_URL = "https://estudiebuddie-frontend.pages.dev/";
+const CUSTOM_DOMAIN = "";
+const CUSTOM_URL = `https://${CUSTOM_DOMAIN}/`;
+
 console.log("🟡 cloudflare detected → Applying changes...");
 
 async function domainIsValid(domain) {
+	console.log({
+		domainData: domain,
+		domainBool: !!domain,
+	})
+	if (!domain) {
+		console.log('custom domain name not provided.')
+		return false
+	}
 	console.log(`🔎 domain lookup: ${domain}`);
 	try {
 		console.log(`🔎 Checking DNS for ${domain}...`);
 		const result = await dns.lookup(domain);
 		console.log(`✅ Domain resolved: ${result.address}`);
-		return true;
+		return !!result.address;
 	} catch (e) {
 		console.log(`❌ Domain lookup failed: ${e.message}`);
 		return false;
@@ -36,7 +45,7 @@ async function domainIsValid(domain) {
 }
 
 (async () => {
-	console.log("🔧 Determining final url to use...");
+	console.log("🔧 Determining final url to use....");
 	// Determine the correct URL
 	let finalDomainURL = cLOUDFLARE_FREE_URL;
 
