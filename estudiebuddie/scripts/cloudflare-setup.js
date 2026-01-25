@@ -45,7 +45,7 @@ async function domainIsValid(domain) {
 }
 
 (async () => {
-	console.log("🔧 Determining final url to use...");
+	console.log("🔧 Determining final url to use....");
 	// Determine the correct URL
 	let finalDomainURL = cLOUDFLARE_FREE_URL;
 
