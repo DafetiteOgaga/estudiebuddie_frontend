@@ -8,17 +8,18 @@ use: "build": "node scripts/cloudflare-setup.js && react-scripts build",
 
 const isCloudflare = !!process.env.CF_PAGES_BRANCH;
 
-const GH_URL = "https://dafetiteogaga.github.io/estudiebuddie_frontend/";
-const cLOUDFLARE_FREE_URL = "https://estudiebuddie-frontend.pages.dev/";
-const CUSTOM_DOMAIN = "";
-const CUSTOM_URL = `https://${CUSTOM_DOMAIN}/`;
-
 console.log("🔍 Checking environment...");
 
 if (!isCloudflare) {
 	console.log("⚪ Not cloudflare environment → No modifications applied.");
 	process.exit(0);
 }
+
+
+const GH_URL = "https://dafetiteogaga.github.io/estudiebuddie_frontend/";
+const cLOUDFLARE_FREE_URL = "https://estudiebuddie-frontend.pages.dev/";
+const CUSTOM_DOMAIN = "";
+const CUSTOM_URL = `https://${CUSTOM_DOMAIN}/`;
 
 console.log("🟡 cloudflare detected → Applying changes...");
 
@@ -40,7 +41,7 @@ async function domainIsValid(domain) {
 	// Determine the correct URL
 	let finalDomainURL = cLOUDFLARE_FREE_URL;
 
-	if (await domainIsValid(CUSTOM_DOMAIN)) {
+	if (CUSTOM_DOMAIN!==""&&await domainIsValid(CUSTOM_DOMAIN)) {
 		finalDomainURL = CUSTOM_URL;
 		console.log(`🟢 Using CUSTOM DOMAIN: ${finalDomainURL}`);
 	} else {
