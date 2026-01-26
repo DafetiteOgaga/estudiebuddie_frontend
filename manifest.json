@@ -8,12 +8,12 @@
       "type": "image/x-icon"
     },
     {
-      "src": "eStudieBuddie.png",
+      "src": "eStudieBuddie_150x150.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "eStudieBuddie.png",
+      "src": "eStudieBuddie_150x150.png",
       "type": "image/png",
       "sizes": "512x512"
     }
