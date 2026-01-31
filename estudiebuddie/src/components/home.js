@@ -36,7 +36,7 @@ const homeCards = [
 ]
 function Home() {
 	const { loggedIn } = useAuth()
-	console.log({loggedIn})
+	// console.log({loggedIn})
 	// const { showPage } = useOutletContext();
 	return (
 		<>

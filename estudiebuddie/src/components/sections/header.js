@@ -91,12 +91,12 @@ function Header({isSticky, scrollY}) {
 	}, [isMenuOpen]);
 	const navigate = useNavigate()
 	const location = useLocation().pathname.split('/')[1];
-	console.log({location, username})
-	console.log({
-		location,
-		split: ['profile'],
-		includes: ['profile'].includes(location)
-	})
+	// console.log({location, username})
+	// console.log({
+	// 	location,
+	// 	split: ['profile'],
+	// 	includes: ['profile'].includes(location)
+	// })
 	// console.log({isSticky, scrollY});
 	return (
 		<header className={`header ${isSticky?'sticky':''}`}>

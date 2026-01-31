@@ -15,7 +15,8 @@ const originUrl = (api=false) => {
 		return 'http://127.0.0.1:8000/';
 	}
 	console.log('Running in production mode');
-	return 'https://estudiebuddieremake.pythonanywhere.com/';
+	// return 'https://estudiebuddieremake.pythonanywhere.com/'; // pythonanywhere
+	return 'https://estudiebuddie-frontend.pages.dev/'; // fly.io
 };
 const serverOrigin = originUrl()
 
@@ -153,6 +154,7 @@ async function FetchFromServer(endpoint, method = 'GET', body = null, keepForm=f
 			console.log('refresh data:', {data})
 			console.log({refresh_status: response.status})
 			console.log('refresh and retry completed')
+			console.log('❎ completed after refresh ❎')
 			return {
 				ok: true,
 				status: response.status,
@@ -187,6 +189,7 @@ async function FetchFromServer(endpoint, method = 'GET', body = null, keepForm=f
 			lStorage.setItem('user', data?.user)
 			data = "Success"
 		}
+		console.log('✅ completed with normal process ✅')
 		return {
 			ok: true,
 			status: response.status,

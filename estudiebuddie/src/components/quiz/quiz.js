@@ -1079,7 +1079,7 @@ function QuizTimer({
 		}
 		if (!duration||!isStartTime) {
 			const durationErr = "Error: Duration not set properly"
-			console.error(durationErr)
+			console.warn(durationErr)
 			// toast.error(durationErr)
 			clearInterval(intervalRef.current);
 			intervalRef.current = null;
