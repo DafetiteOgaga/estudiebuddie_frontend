@@ -10,7 +10,7 @@ const authPages = [
 function useLogout() {
 	const navigate = useNavigate()
 	const location = useLocation()?.pathname?.split('/')[1]
-	console.log({location})
+	// console.log({location})
 	// console.log('trying to logout')
 	const { setLoggedIn } = useAuth();
 	const { lStorage } = useCreateStorage();
