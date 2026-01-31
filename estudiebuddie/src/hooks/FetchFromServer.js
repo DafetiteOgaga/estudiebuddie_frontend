@@ -15,8 +15,8 @@ const originUrl = (api=false) => {
 		return 'http://127.0.0.1:8000/';
 	}
 	console.log('Running in production mode');
-	// return 'https://estudiebuddieremake.pythonanywhere.com/'; // pythonanywhere
 	return 'https://estudiebuddie-backend.fly.dev/'; // fly.io
+	// return 'https://estudiebuddieremake.pythonanywhere.com/'; // pythonanywhere
 };
 const serverOrigin = originUrl()
 
