@@ -16,7 +16,7 @@ const originUrl = (api=false) => {
 	}
 	console.log('Running in production mode');
 	// return 'https://estudiebuddieremake.pythonanywhere.com/'; // pythonanywhere
-	return 'https://estudiebuddie-frontend.pages.dev/'; // fly.io
+	return 'https://estudiebuddie-backend.fly.dev/'; // fly.io
 };
 const serverOrigin = originUrl()
 
