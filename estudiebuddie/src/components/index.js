@@ -3,8 +3,13 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { Shapes } from './sections/shapes';
 import { Header } from './sections/header';
 import { Footer } from './sections/footer';
+import { useDeviceInfo } from '../hooks/deviceType';
 
 function Index() {
+	const deviceInfo = useDeviceInfo()
+	const isOver2000Width = deviceInfo.width>1600
+	const isMobileDev = deviceInfo.width<=768
+	// console.log({isOver2000Width,})
 	const page = useLocation().pathname.split('/')[1]
 	const centerWrapper = page==='login' || page==='signup' || page==='leaderboard'
 	// console.log({centerWrapper})
@@ -29,16 +34,23 @@ function Index() {
             window.removeEventListener("scroll", handleScroll);
         };
     }, [])
+	const headerArgs = {
+		isSticky,
+		scrollY,
+		isOver2000Width,
+	}
+	// console.log({page})
 	return (
 		<>
 			{/* shapes */}
 			<Shapes />
 
 			{/* header */}
-			<Header isSticky={isSticky} scrollY={scrollY}/>
+			<Header {...headerArgs}/>
 
-			<div className="page">
-				<div className={`container`}>
+			<div className="page"
+			style={(page==="dashboard"&&isMobileDev)?{padding: '0 4px'}:{}}>
+				<div className={`${isOver2000Width?'max-w-auto':'container'}`}>
 					<div className={`content-wrapper ${isSticky?'dy-scroll-top':''} ${centerWrapper?'center-login':''}`}>
 						{/* children pages */}
 						<Outlet context={{}} />
