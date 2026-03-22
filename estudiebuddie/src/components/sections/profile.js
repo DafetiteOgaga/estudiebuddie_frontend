@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { FetchFromServer } from "../../hooks/FetchFromServer";
 import { toast } from 'react-toastify'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { justNumbers, removeWhiteSpace } from "../../hooks/formHooks";
+import { justNumbers, removeWhiteSpace, getAuthorizedCodes } from "../../hooks/formHooks";
 import { formatPhoneNumber, sentenceCase, titleCase } from "../../hooks/changeCase";
 import { ImageCropAndCompress } from "../../hooks/imgCompressAndCrop/ImageCropAndCompress";
 import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit";
@@ -113,6 +113,7 @@ const getGender = () => {
 	// non-teacher (student / others)
 	return getRandomAvatar()
 };
+const notAvailable = "N/A"
 const cleanFormForSubmit = (arr, formObj) => {
 	return Object.keys(formObj).reduce((acc, key) => {
 		// console.log(
@@ -125,8 +126,23 @@ const cleanFormForSubmit = (arr, formObj) => {
 	}, {});
 };
 
+const handleCopy = async (content, isCopied) => {
+	if (!content) return;
+	try {
+		await navigator.clipboard.writeText(content);
+		// toast.info("copied!"); // optional feedback
+		isCopied(true)
+	} catch (err) {
+		console.error("Copy failed:", err);
+	}
+};
+const copyDelayDuration = 800
+
 function Profile() {
 	const navigate = useNavigate()
+	const [copied, setCopied] = useState(false);
+	const [isGenSchCode, setIsGenSchCode] = useState(false)
+	const [theGenCode, setTheGenCode] = useState(null)
 	const [loadingPage, setLoadingPage] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const [activeView, setActiveView] = useState('profile')
@@ -144,7 +160,9 @@ function Profile() {
 		first_name,
 		last_name,
 		is_staff,
-		is_superuser,
+		is_super_admin,
+		is_school_admin,
+		school,
 		role,
 		contributor,
 		gender,
@@ -170,7 +188,6 @@ function Profile() {
 	if (gender) {
 		gender = gender.toLowerCase()==='m'?'M':'F'
 	}
-	const notAvailable = "N/A"
 	const [avatar] = useState(() => getGender());
 	
 	const uploadToCloud = useUploadToImagekit()
@@ -182,25 +199,30 @@ function Profile() {
 	const [showOldPassword, setShowOldPassword] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-	// console.log({
-	// 	about,
-	// 	email,
-	// 	fileId,
-	// 	image_url,
-	// 	avatar_code,
-	// 	first_name,
-	// 	last_name,
-	// 	is_staff,
-	// 	is_superuser,
-	// 	role,
-	// 	gender,
-	// 	mobile_no,
-	// 	username,
-	// 	contributor,
-	// 	id,
-	// 	points,
-	// 	userData
-	// })
+	console.log({
+		about,
+		email,
+		fileId,
+		image_url,
+		avatar_code,
+		first_name,
+		last_name,
+		is_staff,
+		is_super_admin,
+		is_school_admin,
+		school,
+		role,
+		gender,
+		mobile_no,
+		username,
+		contributor,
+		id,
+		points,
+		userData,
+
+		isGenSchCode,
+		theGenCode
+	})
 	const profileArr = [
 		{
 			name: "Email",
@@ -214,6 +236,17 @@ function Profile() {
 		},
 	]
 
+	useEffect(() => {
+		if (!isGenSchCode) {
+			return
+		}
+		const fetchCode = async () => {
+			const code = await getAuthorizedCodes()
+			setTheGenCode(code)
+			setIsGenSchCode(false)
+		}
+		fetchCode()
+	}, [isGenSchCode])
 	useEffect(() => {
 		setLoadingPage(false)
 	}, []);
@@ -343,6 +376,14 @@ function Profile() {
 		setLoading(false)
 	};
 
+	useEffect(() => {
+		if (!copied) return
+		const copyDelay = setTimeout(() => {
+			setCopied(false)
+		}, copyDelayDuration);
+		return ()=>clearTimeout(copyDelay)
+	}, [copied])
+
 	// console.log({
 	// 	formData,
 	// 	selectedAvatar,
@@ -373,7 +414,7 @@ function Profile() {
 								(<>
 									{/* password change button */}
 									<button
-									className={`cta-button change-password mr-05 ${(activeView==='avatar'||activeView==='password')?'d-none':''}`}
+									className={`cta-button first change-password ${(activeView==='avatar'||activeView==='password')?'d-none':''}`}
 									type="button"
 									onClick={(e)=>setActiveView(prev=>{
 										console.log({prev})
@@ -385,7 +426,7 @@ function Profile() {
 
 									{/* avatar button */}
 									<button
-									className={`cta-button profile mr-05 ${(activeView==='password'||activeView==='avatar')?'d-none':''}`}
+									className={`cta-button middle profile ${(activeView==='password'||activeView==='avatar')?'d-none':''}`}
 									type="button"
 									onClick={(e)=>setActiveView(prev=>{
 										console.log({prev})
@@ -397,6 +438,14 @@ function Profile() {
 								</>
 								):null}
 
+							{/* get school code button */}
+							<button
+							className={`cta-button profile mr-05 ${(activeView==='profile'&&is_super_admin)?'':'d-none'}`}
+							type="button"
+							onClick={(e)=>setIsGenSchCode(true)}>
+								{'Gen sch code'}
+							</button>
+
 							{/* contribute button */}
 							<button
 							className={`cta-button profile mr-05 ${(activeView==='profile'&&contributor)?'':'d-none'}`}
@@ -407,7 +456,8 @@ function Profile() {
 
 							{/* edit and back button */}
 							<button
-							className="cta-button profile text-nowrap"
+							className={`cta-button profile text-nowrap
+										${activeView==='edit'?'last':''}`}
 							type="button"
 							onClick={(e)=>setActiveView(prev=>{
 								console.log({prev})
@@ -438,6 +488,7 @@ function Profile() {
 						<button
 						type="submit"
 						onClick={(e)=>submitHandler(e, 'avatar')}
+						disabled={loading}
 						className="cta-button profile-btn">
 							{loading ?
 								<Spinner type={'dot'} /> :
@@ -468,6 +519,24 @@ function Profile() {
 							<p className="bio text-center">{sentenceCase(about)||notAvailable}</p>
 						</div>
 
+						{(is_super_admin&&theGenCode) ?
+						<div className="profile-item">
+							<div className="profile-item-text">
+								<h4>Generated school code</h4>
+								<p
+								className="white-space-pre pointer"
+								onClick={()=>handleCopy(theGenCode, setCopied)}
+								>{theGenCode}
+								<span className="pl-05">
+									<FontAwesomeIcon
+										icon={copied?"check":"copy"}
+										// style={{ cursor: "pointer" }}
+										title="Copy school code"
+									/>
+								</span>
+								</p>
+							</div>
+						</div>:null}
 						{profileArr.map((profileItem, pIdx) => {
 							return (
 								<div key={pIdx}
@@ -542,6 +611,7 @@ function Profile() {
 							<button
 							onClick={(e)=>submitHandler(e, 'delete-image')}
 							type="button"
+							disabled={loading}
 							className={`cta-button question ml-05 ${image_url?'':'d-none'}`}>
 								{loading ?
 									<Spinner type={'dot'} /> :
@@ -550,6 +620,7 @@ function Profile() {
 						</div>
 						<button
 						type="submit"
+						disabled={loading}
 						className="cta-button profile-btn">
 							{loading ?
 								<Spinner type={'dot'} /> :
@@ -645,6 +716,7 @@ function Profile() {
 						})}
 						<button
 						type="submit"
+						disabled={loading}
 						className="cta-button profile-btn">
 							{loading ?
 								<Spinner type={'dot'} /> :
@@ -761,4 +833,4 @@ function usePasswordCheck () {
 	}
 	return passwordCheck
 }
-export { Profile, getGender };
+export { Profile, getGender, handleCopy, notAvailable, copyDelayDuration };
