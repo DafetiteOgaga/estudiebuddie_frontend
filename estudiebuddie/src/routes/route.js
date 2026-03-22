@@ -15,6 +15,7 @@ import { Login } from '../components/authentication/login';
 import { SignUp } from '../components/sections/signUp';
 import { Leaderboard } from '../components/sections/leaderboard';
 import { Profile } from '../components/sections/profile';
+import { Dashboard } from '../components/sections/dashboard';
 
 function AppRoutes() {
 	return (
@@ -28,9 +29,12 @@ function AppRoutes() {
 				<Route element={<ProtectedRoute requireMatch />}>
 					{/* scramble quetions */}
 					<Route path="scramble-questions/:id" element={<ScrambleQuestionsComponent />} />
+					<Route path="dashboard/:id/scramble-questions/:scrambleID" element={<ScrambleQuestionsComponent />} />
 					{/* profile */}
 					<Route path="profile/:id/contribute-questions" element={<ContributeQuestionsComponent />} />
 					<Route path="profile/:id" element={<Profile />} />
+					<Route path="dashboard/:id" element={<Dashboard />} />
+					{/* <Route path="dashboard/:id" element={<Dashboard />} /> */}
 				</Route>
 
 				{/* Protected routes (auth only) */}
