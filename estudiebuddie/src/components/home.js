@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { AppName } from './sections/header';
 import { useAuth } from '../hooks/authContext';
+import { useDeviceInfo } from '../hooks/deviceType';
 
 const homeCards = [
 	{
@@ -36,6 +37,7 @@ const homeCards = [
 ]
 function Home() {
 	const { loggedIn } = useAuth()
+	const deviceInfo = useDeviceInfo()
 	// console.log({loggedIn})
 	// const { showPage } = useOutletContext();
 	return (
@@ -62,6 +64,7 @@ function Home() {
 									With interactive quizzes, timed practice sessions, smart feedback, and exam-focused
 									questions, <AppName paragragh={true} color1='white' color2="font-gold" /> helps you <strong>learn better, track your progress, and build
 									confidence</strong>, one question at a time.
+									<span className='font-gold'>{deviceInfo.width}px</span>
 								</p>
 								<div className='d-flex gap-1 center-btns'>
 									<Link to={"/quiz"}

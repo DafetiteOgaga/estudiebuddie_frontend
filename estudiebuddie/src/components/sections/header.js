@@ -14,16 +14,12 @@ const moveByIndex = (arr, fromIndex, toIndex) => {
 	return copy;
 }
 
-function Header({isSticky, scrollY}) {
+function Header({isSticky, scrollY, isOver2000Width}) {
 	const logoutFunc = useLogout()
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const { loggedIn, setLoggedIn } = useAuth()
 	const { lStorage, sStorage } = useCreateStorage()
-	// const userData = lStorage.getItem('user')
-	// const { role, contributor, points } = userData||{}
-	// console.log({loggedIn, userData, role, contributor})
-	// console.log({scrollY, isSticky})
-	const userData = lStorage.getItem('user') || {}
+	const userInfo = lStorage.getItem('user') || {}
 	let {
 		about,
 		email,
@@ -33,15 +29,16 @@ function Header({isSticky, scrollY}) {
 		first_name,
 		last_name,
 		is_staff,
-		is_superuser,
+		is_super_admin,
 		role,
 		contributor,
 		gender,
 		mobile_no,
+		school,
 		username,
 		id,
 		points,
-	} = userData
+	} = userInfo
 	const [avatar] = useState(() => getGender());
 
 	const headerMenu = [];
@@ -51,34 +48,24 @@ function Header({isSticky, scrollY}) {
 	} else {
 		headerMenu.push({ name: 'Login', link: 'login' });
 	}
+	if (loggedIn&&(is_super_admin||school?.name)) {
+		headerMenu.push({ name: 'Dashboard', link: `dashboard/${userInfo?.id}` });
+	}
 	// Always available
 	headerMenu.push({ name: 'Quiz', link: 'quiz' });
 	// Profile (only when logged in)
 	if (loggedIn) {
-		headerMenu.push({ name: 'Profile', link: `profile/${userData?.id}` });
+		headerMenu.push({ name: 'Profile', link: `profile/${userInfo?.id}` });
 	}
 	// Teacher-specific options
-	if (loggedIn && role?.toLowerCase() === 'teacher') {
-		headerMenu.push({ name: 'Scramble', link: `scramble-questions/${userData?.id}` });
-		// Contributor option for teachers
-		// if (contributor) {
-		// 	headerMenu.push({ name: 'Contribute', link: 'contribute-questions' });
-		// }
+	if (loggedIn && role?.toLowerCase() !== 'student') {
+		headerMenu.push({ name: 'Scramble', link: `scramble-questions/${userInfo?.id}` });
 	}
 	// Always available
 	headerMenu.push({ name: 'Leaderboard', link: 'leaderboard' });
-	// headerMenu.push({ name: 'About', link: 'about' });
-	// headerMenu.push({ name: 'Services', link: 'services' });
-	// headerMenu.push({ name: 'Contact', link: 'contact' });
 
-	// // temporary
-	// headerMenu.push({ name: 'Logout', link: logoutFunc });
-	// headerMenu.push({ name: 'Login', link: 'login' });
-	// headerMenu.push({ name: 'Quiz', link: 'quiz' });
-	// headerMenu.push({ name: 'Profile', link: 'profile' });
-	// headerMenu.push({ name: 'Scramble', link: 'scramble-questions' });
-	// headerMenu.push({ name: 'Contribute', link: 'contribute-questions' });
-	// headerMenu.push({ name: 'Leaderboard', link: 'leaderboard' });
+	// // for development only
+	// headerMenu.push({ name: 'D', link: 'development' });
 
 	useEffect(() => {
 		if (isMenuOpen) {
@@ -91,16 +78,14 @@ function Header({isSticky, scrollY}) {
 	}, [isMenuOpen]);
 	const navigate = useNavigate()
 	const location = useLocation().pathname.split('/')[1];
-	// console.log({location, username})
-	// console.log({
-	// 	location,
-	// 	split: ['profile'],
-	// 	includes: ['profile'].includes(location)
-	// })
-	// console.log({isSticky, scrollY});
+	// console.log({userInfo, headerMenu, isOver2000Width, isSticky, scrollY})
+	let mobileHeaderMenu = moveByIndex(headerMenu, 0, 3)
+	// console.log({firstMHM: mobileHeaderMenu})
+	mobileHeaderMenu = moveByIndex(mobileHeaderMenu, 4, 3).filter(item=>item)
+	// console.log({secondMHM: mobileHeaderMenu})
 	return (
 		<header className={`header ${isSticky?'sticky':''}`}>
-			<div className={`container ${isSticky?'sticky':''}`}>
+			<div className={`${isOver2000Width?'max-w-auto':'container'} ${isSticky?'sticky':''}`}>
 				<nav className={`glass ${isSticky?'sticky':''}`}>
 					<div className="logo"
 					onClick={(e)=>navigate('/')}
@@ -114,7 +99,7 @@ function Header({isSticky, scrollY}) {
 						{headerMenu.map((header, hIdx) => {
 							// console.log({link: header?.link})
 							let linkArr
-							if (typeof(header.link) === "function") {
+							if (typeof(header?.link) === "function") {
 								linkArr = ["logout"]
 							} else {
 								linkArr = header?.link?.split?.('/')
@@ -124,15 +109,15 @@ function Header({isSticky, scrollY}) {
 								<Link
 									key={hIdx}
 									onClick={(e)=>{
-										if (typeof(header.link)==='function') {
+										if (typeof(header?.link)==='function') {
 											e.preventDefault()
-											header.link()
+											header?.link()
 										}
 									}}
-									to={typeof(header.link)==='string'?header.link:'#'}
+									to={typeof(header?.link)==='string'?header?.link:'#'}
 									className={linkArr.includes(location) ? 'active' : ''}
 								>
-									{header.name}
+									{header?.name}
 								</Link>
 							)
 						})}
@@ -153,7 +138,7 @@ function Header({isSticky, scrollY}) {
 					/>}
 					<div className={`nav-links ${isMenuOpen?'open':''}`}>
 						{loggedIn ?
-							<Link to={`profile/${userData?.id}`}
+							<Link to={`profile/${userInfo?.id}`}
 							className={`avatar-container ${['profile'].includes(location) ? 'active' : ''}`}
 							onClick={() => setIsMenuOpen(false)}>
 								{image_url ?
@@ -171,19 +156,20 @@ function Header({isSticky, scrollY}) {
 							</Link>
 							:
 							<span className="not-logged-in"></span>}
-						{moveByIndex(headerMenu, 0, 3).map((header, hIdx) => {
-							if (header.name.toLowerCase()==='profile') return null
+						{mobileHeaderMenu.map((header, hIdx) => {
+							// console.log({header})
+							if (header?.name.toLowerCase()==='profile') return null
 							// console.log({link: header?.link})
 							let linkArr
-							if (typeof(header.link) === "function") {
+							if (typeof(header?.link) === "function") {
 								linkArr = ["logout"]
 							} else {
 								linkArr = header?.link?.split?.('/')
 							}
 
 							const marginMap = {
-								3: '15vh',
-								4: '15vh',
+								4: '10vh',
+								5: '15vh',
 							};
 							// console.log({hIdx})
 							return (
@@ -193,16 +179,16 @@ function Header({isSticky, scrollY}) {
 										marginTop: marginMap[hIdx] ?? undefined,
 									}}
 									onClick={(e)=>{
-										if (typeof(header.link)==='function') {
+										if (typeof(header?.link)==='function') {
 											e.preventDefault()
-											header.link()
+											header?.link()
 										}
 										setIsMenuOpen(false)
 									}}
-									to={typeof(header.link)==='string'?header.link:'#'}
-									className={`font-bold ${linkArr.includes(location) ? 'active' : ''}`}
+									to={typeof(header?.link)==='string'?header?.link:'#'}
+									className={`font-bold ${linkArr?.includes(location) ? 'active' : ''}`}
 								>
-									{header.name}
+									{header?.name}
 								</Link>
 							)
 						})}
@@ -220,7 +206,10 @@ function AppName({paragragh=false, color1=null, color2=null}) {
 		className={paragragh?'':'logo-text'}>
 			<span className="font-gold skew-e">e</span>
 			<span className={`font-${color1?color1:'light-white'}`}>Studie</span>
-			<span className={color2?color2:'font-gold1'}><span className="skew-b">B</span>uddie</span>
+			<span className={`${color2?color2:'font-gold1'} text-nowrap`}>
+				<span className="skew-b">B</span>
+				<span className=''>uddie</span>
+			</span>
 		</span>
 	)
 }

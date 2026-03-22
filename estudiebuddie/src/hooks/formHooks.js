@@ -1,4 +1,4 @@
-
+import { FetchFromServer } from "./FetchFromServer";
 
 function shuffleArray(array) {
 	return array
@@ -23,10 +23,22 @@ const spaceToHyphen = (str) => {
 
 const generateUniqueId = () => crypto.randomUUID();
 
+const getAuthorizedCodes = async (school_code='school_code') => {
+	// const queryString = new URLSearchParams({ code_type: 'school_code' }).toString();
+	const endpoint = `user/school-code/${school_code}`
+	const schCode = await FetchFromServer(endpoint)
+	console.log({schCode})
+	if (!schCode || !schCode.ok) {
+		return null
+	}
+	return schCode?.data?.esb_code
+}
+
 export {
 	shuffleArray,
 	generateUniqueId,
 	justNumbers,
 	removeWhiteSpace,
 	spaceToHyphen,
+	getAuthorizedCodes
 };

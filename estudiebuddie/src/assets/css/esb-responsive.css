@@ -11,6 +11,13 @@
     }
 }
 
+@media (max-width: 1160px) {
+    .logo-text {
+        /* font-size: 35px; */
+        font-size: 20px;
+    }
+}
+
 @media (max-width: 1024px) {
     header.sticky {
         padding: 0.1px;
@@ -21,8 +28,12 @@
     nav {
         padding: 10px;
     }
+    .logo-icon {
+        width: 45px;
+    }
     .logo-text {
-        font-size: 35px;
+        /* font-size: 35px; */
+        font-size: 20px;
     }
     .q-mx {
         margin-left: 3rem !important;
@@ -46,6 +57,23 @@
 }
 
 @media (max-width: 900px) {
+    .dashboard-content .dashboard {
+        grid-template-columns: auto;
+    }
+    .no-list-style span,
+    .no-list-style a {
+        padding: 6px 4px 6px 4px;
+    }
+    .ScramblePageComp-body .mob-pad {
+        padding: 6px 4px 6px 10px;
+    }
+    .dashboard-details button {
+        padding: 10px 15px !important;
+    }
+    .dashboard-bar-text .bar-box:hover,
+    .dashboard-bar-text .bar-box.active {
+        transform: translateY(0) !important;
+    }
     .nav-links {
         gap: 10px;
     }
@@ -76,7 +104,8 @@
         justify-content: center;
     }
     .logo-text {
-        font-size: 27px;
+        font-size: 20px;
+        /* font-size: 22px; */
     }
     .scramble-question-text {
         padding: 40px 8px;
@@ -105,13 +134,26 @@
     .quiz-head1,
     .shuffle-question-head1,
     .profile-info h2,
-    .profile-form h2 {
+    .profile-form h2,
+    .leaderboard-page h3,
+    .dashboard-content h1,
+    .dashboard-content h2 {
         font-size: medium;
         padding-left: 15px;
+    }
+    .leaderboard-page p {
+        font-size: small !important;
     }
 }
 
 @media (max-width: 768px) {
+    /* .cta-button.question {
+        padding: initial;
+    } */
+    .dashboard-bar-text button {
+        padding: 0.8rem 0.1rem;
+    }
+    
     .logo-text {
         font-size: 25px;
     }
@@ -304,8 +346,8 @@
         margin-left: 0rem !important;
         margin-right: 0rem !important;
     }
-    .left-50-mobile {
-        left: 50% !important;
+    .left-45-mobile {
+        left: 45% !important;
     }
     .leaderboard-page {
         margin: 0;
@@ -330,7 +372,7 @@
         padding: 20px 15px !important;
     }
     .scramble-submit-mobile {
-        padding: 20px 15px !important;
+        padding: 15px 15px !important;
     }
     .avatar-container {
         /* border-top-left-radius: 0 !important;
@@ -365,7 +407,7 @@
     }
     .cta-button {
         font-size: 14px;
-        padding: 10px 15px;
+        padding: 10px 14px;
     }
     button[type="submit"],
     .cta-button,
@@ -379,11 +421,21 @@
     .keep-btn-width {
         width: fit-content;
     }
+    .cta-button.question {
+        padding: 11px 13px;
+    }
     .avatar-beside-btn {
         /* width: 18px;
         height: 18px; */
         font-size: 25px;
         align-self: center;
+    }
+    .dashboard-details button {
+        padding: 10px 15px !important;
+    }
+    .dashboard-bar-text .bar-box:hover,
+    .dashboard-bar-text .bar-box.active {
+        transform: translateY(0) !important;
     }
     .logo {
         font-size: 20px;
@@ -417,6 +469,10 @@
         border-radius: 15px;
         box-shadow: 0 4px 16px var(--darkShadow);
         transition: all 0.25s ease;
+    }
+
+    .chk-box-pad-r {
+        padding-right: 1rem !important;
     }
 
     /* toast styling */
@@ -456,14 +512,46 @@
     }
 }
 
+@media (max-width: 412px) {
+    .dashboard-p-05 {
+        padding: 0.8rem 0.1rem !important;
+    }
+    .w-100.very-small-mob {
+        width: 95% !important;
+    }
+    .leaderboard-info {
+        padding: 15px 5px;
+    }
+}
+
 /* Ultra-small screens <400px */
 @media (max-width: 400px) {
+    .mob-dashb.glass {
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+    }
+    .dashboard-details button {
+        padding: 10px 8px !important;
+    }
+    .rem-mob-pad-dashb {
+        margin: 0 !important;
+    }
+    .rem-mob-margin-dashb {
+        margin: 0 !important;
+    }
+    .mr-5px.rem-mob-margin-dashb {
+        margin-right: 0 !important;
+    }
+    .ml-5px.rem-mob-margin-dashb {
+        margin-left: 0 !important;
+    }
     .logo-text {
         font-size: 22px;
     }
-    .ultra-small-devices {
+    /* .ultra-small-devices {
         width: 102%;
-    }
+    } */
     .ultra-small-devices-ans {
         width: 100%;
     }
@@ -471,7 +559,10 @@
         padding: 20px 5px;
     }
     .scramble-submit-mobile {
-        padding: 10px 15px !important;
+        padding: 10px 5px !important;
+    }
+    .scramble-btns-pt-05 {
+        padding: 0.5rem 0.2rem 0 0.2rem !important;
     }
     .floating-field label {
         font-size: 0.9rem;
@@ -523,6 +614,7 @@
     .leadership-th,
     .leadership-td {
         font-size: 0.75rem;
+        padding: 8px 3px;
     }
     .logo-icon {
         width: 32px;

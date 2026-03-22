@@ -31,7 +31,7 @@ function PageNotFound() {
 				<h1>Page not found</h1>
 			</div>
 
-			<button
+			{/* <button
 			type="submit"
 			onClick={(e)=>{
 				toast.success('Success')
@@ -40,7 +40,7 @@ function PageNotFound() {
 			}}
 			className="cta-button profile-btn">
 				Test Toasts
-			</button>
+			</button> */}
 
 			<div>
 				<Spinner type={'dot'} />
@@ -49,7 +49,7 @@ function PageNotFound() {
 				<Spinner type={'bar'} />
 			</div>
 
-			<button
+			{/* <button
 			type="submit"
 			onClick={(e)=>{
 				setShowAnime(prev=>!prev)
@@ -68,14 +68,14 @@ function PageNotFound() {
 				<div>
 					<TalkingAnimal />
 				</div>
-			</div>:null}
+			</div>:null} */}
 
-			<button
+			{/* <button
 			type="submit"
 			onClick={submitHandler}
 			className="cta-button profile-btn">
 				test GET request
-			</button>
+			</button> */}
 			<h2>Device: {titleCase(deviceInfo.label)}</h2>
 			<h3>Media width: {deviceInfo.width}px</h3>
 		</>

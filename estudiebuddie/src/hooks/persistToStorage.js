@@ -45,6 +45,26 @@ function useStorage(storage) {
 		// removes single item from storage
 		removeItem(key) {
 			storage.removeItem(key);
+			GroupAllKeys(storage, key, true) // removes the key from sb list
+			console.log('removed:', key)
+		},
+
+		// removes all saved-detail- items from local and session storages
+		removeSavedDetailsItems() {
+			const storages = [localStorage, sessionStorage];
+
+			storages.forEach((storage) => {
+				// Loop through storage keys
+				for (let i = storage.length - 1; i >= 0; i--) {
+					const key = storage.key(i);
+
+					// Check if key starts with "saved-detail-"
+					if (key && key.startsWith("saved-detail-")) {
+						storage.removeItem(key);
+						GroupAllKeys(storage, key, true);
+					}
+				}
+			});
 		},
 
 		// removes all app items from local and session storages
@@ -117,6 +137,39 @@ function useStorage(storage) {
 
 			storage.setItem("sb-keys", JSON.stringify(updatedKeys));
 			console.log('logout successful')
+		},
+
+		expiredSoRemove(key, expiryTime =1000*60*30) {
+			const stored = storage.getItem(key);
+			if (!stored) return null;
+
+			let parsed;
+			try {
+				parsed = JSON.parse(stored);
+			} catch (err) {
+				// corrupted data → remove it
+				console.log(`corrupted ${key} data:::removed`)
+				storage.removeItem(key);
+				return null;
+			}
+
+			if (!parsed?.storedAt) {
+				// invalid format → remove it
+				console.log(`invalid format ${key} data:::removed`)
+				storage.removeItem(key);
+				return null;
+			}
+
+			const now = Date.now();
+			const durationElapsed = now - parsed.storedAt
+			if (durationElapsed > expiryTime) {
+				console.log(`${key} data expired:::::removed`)
+				storage.removeItem(key);
+				return null; // expired
+			}
+			const minutesLeft = ((expiryTime - durationElapsed) / (1000 * 60)).toFixed(1)
+			console.log(`${key} data still valid for the next: ${minutesLeft} mins:::::`)
+			return null; // still valid
 		}
 	};
 }
