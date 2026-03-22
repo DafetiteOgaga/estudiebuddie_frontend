@@ -32,7 +32,7 @@ const genderArray = [
 	'Male',
 	'Female'
 ]
-let formHead = [
+let initFormHead = [
 	{
 		name: "first_name",
 		required: true,
@@ -140,10 +140,15 @@ function isValidEmail(email) {
 	return regex.test(email);
 }
 const validateFieldsArr = ["email", "username"]
+const allowSpaces = ['about', 'school']
 
 function SignUp() {
+	const [hasCode, setHasCode] = useState(false);
+	const [initRole, setInitRole] = useState('')
+	const [formHead, setFormHead] = useState(initFormHead)
 	const deviceInfo = useDeviceInfo()
-	console.log({deviceInfo})
+	const isMobileDev = deviceInfo.width<=768
+	// console.log({deviceInfo})
 	const { loggedIn, setLoggedIn } = useAuth()
 	const navigate = useNavigate()
 	const location = useLocation()
@@ -180,25 +185,86 @@ function SignUp() {
 	// 		}
 	// 	})
 	// } else
+	useEffect(() => {
+		if (hasCode) {
+			setInitRole(formData?.role)
+			setFormHead(prev => {
+				const exists = prev.some(field => field.name === 'esb_code')
+				if (!exists) {
+					const updated = prev.map(field => {
+						if (field.name === 'role') {
+							return {
+								...field,
+								options: ['Head']
+							}
+						}
+						return field
+					})
+					const codeField = [{
+						name: "esb_code",
+						required: true,
+						disabled: false,
+						type: "text",
+						placeholder: "E.g ESB-OYLC0X",
+						width: "70%",
+						case: null,
+					},
+					{
+						name: "school",
+						required: true,
+						disabled: false,
+						type: "text",
+						placeholder: "Full school name",
+						width: "100%",
+						case: null,
+					},
+					{
+						name: "acronym",
+						required: true,
+						disabled: false,
+						type: "text",
+						placeholder: "Acronym e.g unilag, futa",
+						width: "50%",
+						case: null,
+					}
+				]
+					return [...codeField, ...updated]
+				}
+				return prev
+			})
+			setFormData(prev => {
+				return {
+					...prev,
+					role: 'head',
+				}
+			})
+		} else {
+			setFormHead(prev => {
+				const hasEsbCode = prev.some(field =>field.name==='esb_code')
+				return prev.map(field => {
+					if (hasEsbCode && field.name === 'role') {
+						return {
+							...field,
+							options: roleArray,
+						}
+					}
+					return field
+				})
+				.filter(field => field.name!=='esb_code'&&field.name!=='school'&&field.name!=='acronym') // remove esb_code
+			})
+			setFormData(prev => {
+				const {esb_code, school, acronym, ...rest} = prev
+				return {
+					...rest,
+					role: initRole,
+				}
+			})
+			setInitRole('')
+		}
+	}, [hasCode])
 	if (deviceInfo.label === "mobile") {
 		console.log('mobile'.repeat(5))
 		formHead.forEach(obj => {
-			// let objItem = formHead.find(item => item.name === obj)
-			// if (obj.name==="totalQs") {
-			// 	obj.width = '40%'
-			// } else if (obj.name==="school") {
-			// 	obj.width = '100%'
-			// } else if (obj.name==="subject") {
-			// 	obj.width = '65%'
-			// } else if (obj.name==="noOfTypes") {
-			// 	obj.width = '30%'
-			// } else if (obj.name==="class") {
-			// 	obj.width = '20%'
-			// } else if (obj.name==="term"||obj.name==="duration") {
-			// 	obj.width = '37%'
-			// } else if (obj.name==="instruction") {
-			// 	obj.width = '100%'
-			// }
 			obj.width = '40%'
 		})
 	}
@@ -209,10 +275,10 @@ function SignUp() {
 		}
 		setFormData((prev) => ({
 			...prev,
-			[name]: name!=='about'?removeWhiteSpace(value):value,
+			[name]: allowSpaces.includes(name)?value:removeWhiteSpace(value),
 		}))
 
-		console.log({name: [name]})
+		console.log({name, allowSpaces: allowSpaces.includes(name)})
 		// if (name==='email'||name==='username') {
 		// 	console.log('clearing both'.repeat(5))
 		// 	setEmailCheckResponse(null)
@@ -328,10 +394,8 @@ function SignUp() {
 
 	console.log({
 		formData,
-		emailCheckResponse,
-		usernameCheckResponse
-		// passwordCheckError,
-		// uploadedProfileImg
+		hasCode,
+		initRole,
 	})
 	return (
 		<>
@@ -339,7 +403,14 @@ function SignUp() {
 			<div className="sign-up-form glass flex-column">
 				{/* <h2>Get In Touch</h2> */}
 				<h1>Sign Up</h1>
-				<small className="pl-color">Note: Every field with * must be filled</small>
+				<div className={`${isMobileDev?'block':'d-flex'} justify-content-between`}>
+					<small className="pl-color">Note: Every field with * must be filled</small>
+					<CheckBoxBtnUI
+					chkText="Got a code?"
+					spanClass='pl-color got-a-code'
+					checkState={hasCode}
+					setCheckState={setHasCode} />
+				</div>
 				<form onSubmit={submitHandler}
 				className="form-column signup">
 					{formHead.map((input, inpIdx) => {
@@ -349,7 +420,8 @@ function SignUp() {
 						// })
 						return (
 							<div key={input.name+inpIdx}
-							className={`form-group floating-field mb-0 ${input.type==='password'?'form-password':''}`}>
+							className={`form-group floating-field mb-0 ${input.type==='password'?'form-password':''}
+							${input.name==='esb_code'?'code-field':input.name==='school'?'school-field':''}`}>
 								{/* <span>
 								{input.name} | {usernameCheckResponse} | {emailCheckResponse}
 								</span> */}
@@ -357,7 +429,7 @@ function SignUp() {
 								<>
 									<textarea
 										className="signup"
-										value={formData[input.name]}
+										value={formData[input.name]||""}
 										onChange={handleChange}
 										rows={2}
 										// style={{
@@ -379,9 +451,10 @@ function SignUp() {
 									<select
 									// style={{width: input.width}}
 									// className="text-center"
-									value={formData[input.name]}
+									value={formData[input.name]||""}
 									onChange={handleChange}
 									name={input.name}
+									disabled={hasCode&&input.name==='role'}
 									required={input.required}>
 										<option value="" disabled hidden>-- {input.placeholder} --</option>
 										{input.options.map((sItem, sIdx) => (
@@ -397,10 +470,10 @@ function SignUp() {
 								<>
 									<input
 									className="text-center"
-									value={formData[input.name]}
+									value={formData[input.name]||""}
 									onChange={handleChange}
 									onKeyDown={(e) => {
-										if (e.key === ' ' && input.name!=='about') {
+										if (e.key === ' ' && (!allowSpaces.includes(input.name))) {
 											e.preventDefault();
 										}
 									}}
@@ -462,6 +535,7 @@ function SignUp() {
 
 					<button
 					type="submit"
+					disabled={loading}
 					className="cta-button signup-btn">
 						{loading ?
 							<Spinner type={'dot'} /> :
@@ -614,4 +688,17 @@ function useEmailAndUsernameChecker() {
 	return { checkExistence, availabilityResponse, availabilityLoading, availabilityError };
 }
 
-export { SignUp };
+function CheckBoxBtnUI({checkState, setCheckState, spanClass='', chkText='checkbox display msg.'}) {
+	return (
+		<span className={spanClass}
+		>{chkText}
+		<input
+			type="checkbox"
+			checked={checkState}
+			onChange={(e) => setCheckState(e.target.checked)}
+		/>
+		</span>
+	)
+}
+
+export { SignUp, roleArray, genderArray, checkIcons, isValidEmail, CheckBoxBtnUI };
