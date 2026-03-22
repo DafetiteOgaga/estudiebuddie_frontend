@@ -46,7 +46,8 @@ const ImageCropAndCompress = forwardRef(({onComplete,
 											isImagePreview = null,
 											imageId=null,
 											buttonText=null,
-											disableBtn=false
+											disableBtn=false,
+											btnStyle=null
 										}, ref) => {
 	// console.log('cropping image...')
 	// console.log({imageId})
@@ -104,6 +105,9 @@ const ImageCropAndCompress = forwardRef(({onComplete,
 			reader.onload = () => setImageSrc(reader.result);
 			reader.readAsDataURL(file);
 			console.log({reader})
+
+			// Reset input
+			e.target.value = "";
 		}
 	};
 
@@ -217,7 +221,10 @@ const ImageCropAndCompress = forwardRef(({onComplete,
 					setFileName("No file chosen");
 					if (isImagePreview) isImagePreview(false);
 					if (onComplete) {
-						onComplete(null);
+						onComplete(
+							{compressedFile: null, imageId, imgPreview: null}
+							// null
+						);
 						setIsFileSelected(false);
 					}
 					if (onClearSelection) {
@@ -241,10 +248,11 @@ const ImageCropAndCompress = forwardRef(({onComplete,
 			</div>)}
 
 			{/* File input */}
-			<div className="file-upload-container">
+			<div className={`${'file-upload-container'}`}>
 				{/* upload button */}
 				<button
 				type='button'
+				disabled={disableBtn}
 				className={`cta-button ${imgType === "sch-logo"?'':'question'}`}
 				onClick={()=> document.getElementById(`${imageId?`fileUpload-${imageId}`:'fileUpload'}`).click()}>
 					{isFileSelected?'Change':'Upload'} {imgType === "sch-logo"?'Logo':'Image'}

@@ -36,13 +36,23 @@ function ProtectedRoute({ children, requireMatch = false }) {
 
 		if (loggedUserId !== routeUserId) {
 			console.log(protectedroute, "User ID mismatch, redirecting");
-			const scramble = location?.pathname?.split?.('/')[1]
+			const routeKey = location?.pathname?.split?.('/')[1]
 			const contribute = location?.pathname?.split?.('/')[3]
+			const [_empty, dashboard, _userid, toScramble, scrambleID] = location?.pathname?.split?.('/')
+			console.log({dashboard})
 			// console.log({scramble})
-			if (scramble === 'scramble-questions'||scramble === 'profile') {
-				if (scramble === 'profile'&&contribute === 'contribute-questions') {
+			if (routeKey === 'scramble-questions'||routeKey === 'profile'||
+				routeKey === 'dashboard') {
+				if (routeKey === 'profile'&&contribute === 'contribute-questions') {
 					console.log('redirecting to contribute page but with logged in user id')
 					return <Navigate to={`/profile/${loggedUserId}/contribute-questions`} replace />;
+				} else if (routeKey === 'dashboard') {
+					if (toScramble === 'scramble-questions') {
+						console.log('redirecting to scramble from dashboard page but with logged in user id')
+						return <Navigate to={`/dashboard/${loggedUserId}/scramble-questions/${scrambleID}`} replace />;
+					}
+					console.log('redirecting to dashboard page but with logged in user id')
+					return <Navigate to={`/dashboard/${loggedUserId}`} replace />;
 				}
 				console.log('redirecting to scramble page but with logged in user id')
 				return <Navigate to={`/scramble-questions/${loggedUserId}`} replace />;

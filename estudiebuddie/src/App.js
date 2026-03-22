@@ -1,18 +1,29 @@
 import './App.css';
 import { AppRoutes } from './routes/route';
 import { ToastContainer } from 'react-toastify';
-import './assets/css/glossy-style.css';
-import './assets/css/responsive.css';
+import './assets/css/esb-style.css';
+import './assets/css/esb-responsive.css';
+import { useCreateStorage } from './hooks/persistToStorage';
+import { useDeviceInfo } from './hooks/deviceType';
 
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faEye, faEyeSlash, faCircleCheck, faCheck, faTimes, faBars } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash, faCircleCheck, faCheck, faTimes,
+  faBars, faCopy, faArrowsRotate, faDownload, faGear, faCogs,
+  faFileCirclePlus, faTrash, faTrashCan, faEraser, faXmark,
+  faPaperPlane, faCheckCircle, } from "@fortawesome/free-solid-svg-icons";
 library.add(
   faEye, faEyeSlash, faCircleCheck, faCheck,
-  faTimes, faBars
+  faTimes, faBars, faCopy, faArrowsRotate,
+  faDownload, faGear, faCogs, faFileCirclePlus,
+  faTrash, faTrashCan, faEraser, faXmark,
+  faPaperPlane, faCheckCircle,
 );
 
 function App() {
-  // console.log('App rendered');
+  // const { lStorage, sStorage } = useCreateStorage()
+  // lStorage.expiredSoRemove('pulled-staffs', 1000*60*60*2)
+  console.log('App rendered');
+  const xyz = useDeviceInfo()
   return (
     <>
       <AppRoutes />

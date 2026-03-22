@@ -355,7 +355,7 @@ function QuestionsArrComp({args}) {
 											onChange={(e)=>handleQuestionChange(e, null, qIdx)}
 											required={field.required}
 										/>
-										<label className='left-50-mobile'>{`${field.placeholder} for question ${qIdx + 1}`}</label>
+										<label className='left-45-mobile'>{`${field.placeholder} for question ${qIdx + 1}`}</label>
 									</div>
 								);
 							})}

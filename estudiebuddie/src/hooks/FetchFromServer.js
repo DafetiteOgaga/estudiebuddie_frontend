@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify'
 import { useCreateStorage } from './persistToStorage';
 import { useAuth } from './authContext';
+import { useNavigate } from 'react-router-dom';
 
 const originUrl = (api=false) => {
 	if (api) {
@@ -54,7 +55,8 @@ function buildFormData(formData, data, parentKey = '') {
 
 
 console.log('serverOrigin:', serverOrigin);
-async function FetchFromServer(endpoint, method = 'GET', body = null, keepForm=false) {
+async function FetchFromServer(endpoint, method = 'GET', body = null, keepForm=false, logoutUser=null) {
+	// const navigate = useNavigate()
 	console.log('FetchFromServer called.')
 	console.log('serverOrigin:', serverOrigin);
 	const refreshAccessToken = useRefreshAccessToken()
@@ -72,16 +74,20 @@ async function FetchFromServer(endpoint, method = 'GET', body = null, keepForm=f
 			method: method.toUpperCase(),
 		};
 	
+		if (accessToken) {
+			console.log('attatching token')
+			manualHeader['Authorization'] = `Bearer ${accessToken}`;
+		}
 		if (!body) {
 			// GET REQUESTS
 			options.headers = manualHeader // manually set header
 		} else {
 			// POST/PATCH/PUT REQUESTS
 			const fd = new FormData()
-			if (accessToken) {
-				console.log('attatching token')
-				manualHeader['Authorization'] = `Bearer ${accessToken}`;
-			}
+			// if (accessToken) {
+			// 	console.log('attatching token')
+			// 	manualHeader['Authorization'] = `Bearer ${accessToken}`;
+			// }
 			if (keepForm) {
 				console.log('JSON type')
 				options.headers = {
@@ -127,6 +133,15 @@ async function FetchFromServer(endpoint, method = 'GET', body = null, keepForm=f
 			if (!newToken) {
 				console.error("Session expired. Please log in again.")
 				toast.error("Session expired. Please log in again.");
+				console.log('clearing auth data')
+				// lStorage.removeItem('access_token')
+				// lStorage.removeItem('refresh_token')
+				// lStorage.removeItem('user')
+				if (typeof(logoutUser) === "function") {
+					logoutUser()
+				} else {
+					toast.error("Oopsy! can't logout")
+				}
 				return {
 					ok: false,
 					status: 401,
@@ -180,12 +195,15 @@ async function FetchFromServer(endpoint, method = 'GET', body = null, keepForm=f
 
 		console.log('Success:', data);
 		if (data?.access) {
+			console.log('setting access to storage')
 			lStorage.setItem('access_token', data.access);
 		}
 		if (data?.refresh) {
+			console.log('setting refresh to storage')
 			lStorage.setItem('refresh_token', data.refresh);
 		}
 		if (data?.access||data?.refresh) {
+			console.log('setting user to storage')
 			lStorage.setItem('user', data?.user)
 			data = "Success"
 		}
@@ -225,6 +243,11 @@ function useRefreshAccessToken() {
 		const data = await res.json();
 		if (!res.ok) {
 			console.error(data)
+			if (data?.code==="token_not_valid"||
+				data?.detail?.toUpperCase()==="Token is expired".toUpperCase()) {
+				lStorage.logout()
+				window.location.href = "/"
+			}
 			return null
 		};
 

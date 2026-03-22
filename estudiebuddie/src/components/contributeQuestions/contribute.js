@@ -291,8 +291,8 @@ function ContributeQuestionsComponent() {
 			const question = cleanedData.questions[index];
 		
 			if (uploadResult) {
-			question.fileId = uploadResult.fileId;
-			question.image_url = uploadResult.url;
+				question.fileId = uploadResult.fileId;
+				question.image_url = uploadResult.url;
 			}
 		
 			// group options together
@@ -449,6 +449,7 @@ function ContributeQuestionsComponent() {
 						<button
 						style={{margin: '0 5rem'}}
 						type="submit"
+						disabled={loading}
 						className="cta-button contribute-submit-mobile">
 							{loading ?
 								<Spinner type={'dot'} /> :

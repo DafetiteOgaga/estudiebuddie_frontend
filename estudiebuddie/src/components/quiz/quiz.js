@@ -256,7 +256,6 @@ function Quiz() {
 	}, [formData.type])
 	// console.log(statePreHeadForm)
 	useEffect(() => {
-		// console.log('isFirstRender'.repeat(10), isFirstRenderExist)
 		if (!isFirstRenderExist) setIsFirstRender(true)
 		setLoadingPage(false)
 	}, []);
@@ -333,7 +332,7 @@ function Quiz() {
 				answers: selectedAnswersRef.current,
 				session_id: session.sessionID
 			}
-			// console.log({cleanedData})
+			console.log({cleanedData})
 			endpoint = 'take-quiz/grade-quiz'
 			res = await FetchFromServer(endpoint, 'POST', cleanedData, true)
 			if (res.ok) {
@@ -363,8 +362,10 @@ function Quiz() {
 
 		// sending pre-quiz data to server
 
+		const hasPreviousData = formData?.selectedAnswers?.length && session?.formDetails?.name
+		console.log({hasPreviousData, session, formData})
 		// populate cleandata with formdata (new quiz) or form details (continue quiz)
-		cleanedData = (formData?.selectedAnswers?.length) ?
+		cleanedData = hasPreviousData ?
 						{...session?.formDetails}:
 						{...formData}
 
@@ -373,6 +374,8 @@ function Quiz() {
 		setSession(blankSession)
 		setSelectedAnswers([])
 		isSubmitted = false
+
+		console.log({cleanedData})
 
 		endpoint = 'take-quiz/pre-quiz'
 		res = await FetchFromServer(endpoint, 'POST', cleanedData)
@@ -659,14 +662,17 @@ function Quiz() {
 		}
 	}, [QuestionNumber, session]);
 
-	// console.log({
-	// 	selectedAnswers,
-	// 	session,
-	// 	isSubmitted,
-	// 	showReadyModal,
-	// 	isTimeUp,
-	// 	formData,
-	// })
+	const canRetakeTest = !Object.keys(formValues).some(field=>formData[field]==='')
+
+	console.log({
+		selectedAnswers,
+		session,
+		isSubmitted,
+		showReadyModal,
+		isTimeUp,
+		formData,
+		canRetakeTest,
+	})
 
 	return (
 			<>
@@ -807,6 +813,7 @@ function Quiz() {
 							<button
 							style={{margin: '1rem 5rem 0 5rem'}}
 							type="submit"
+							disabled={loading}
 							className="cta-button">
 								{loading ?
 									<Spinner type={'dot'} /> :
@@ -858,8 +865,8 @@ function Quiz() {
 												{/* previous button */}
 												{(QuestionNumber!==0) &&
 												<button
-												style={{marginRight: 10}}
-												className="cta-button prev mb-xs keep-btn-width fit"
+												// style={{marginRight: 10}}
+												className={`cta-button prev ${(QuestionNumber!==sessionLength-1)?'first':''} mb-xs keep-btn-width fit`}
 												type="button"
 												onClick={(e)=>setQuestionNumber(prev => prev - 1)}>
 													◀ Previous
@@ -867,7 +874,7 @@ function Quiz() {
 												{/* next button */}
 												{(QuestionNumber!==sessionLength-1) &&
 												<button
-												className="cta-button next mb-xs keep-btn-width fit"
+												className={`cta-button next ${QuestionNumber!==0?'last':''} mb-xs keep-btn-width fit`}
 												type="button"
 												onClick={(e)=>setQuestionNumber(prev => prev + 1)}>
 													Next ▶
@@ -963,8 +970,8 @@ function Quiz() {
 								<button
 									style={{margin: deviceInfo.label === "mobile"?'1rem 1rem 0 3rem':'1rem 1rem 0 5rem'}}
 									type="submit"
-									disabled={(!isSubmitted&&!selectedAnswers.length)}
-									className="cta-button text-nowrap">
+									disabled={(!isSubmitted&&!selectedAnswers.length)||(isSubmitted&&!canRetakeTest)||loading}
+									className={`cta-button text-nowrap ${(!isSubmitted || canRetakeTest)?'':'d-none'}`}>
 										{loading ?
 											<Spinner type={'dot'} /> :
 											isSubmitted?'Retake Quiz':'Submit'}
@@ -986,7 +993,7 @@ function Quiz() {
 						</form>
 
 						{/* timer and question list section */}
-						<div className="align-self-baseline mb-0 ultra-small-devices-ans">
+						<div className={`${deviceInfo.label === "mobile"?'':'align-self-baseline'} mb-0 ultra-small-devices-ans`}>
 							<div className="stat-card glass">
 								{/* <div className="stat-number">150+</div> */}
 								{deviceInfo.label !== "mobile" ?
