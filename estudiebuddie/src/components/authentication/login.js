@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from "../../hooks/authContext";
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
+import { useLogout } from "./logout";
 
 const formValues = {
 	email: "",
@@ -32,6 +33,7 @@ const formHead = [
 ]
 
 function Login() {
+	const logoutUser = useLogout()
 	const [loadingPage, setLoadingPage] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate()
@@ -58,7 +60,7 @@ function Login() {
 		console.log({formData})
 
 		const endpoint = 'api/token'
-		const res = await FetchFromServer(endpoint, 'POST', cleanedData, true)
+		const res = await FetchFromServer(endpoint, 'POST', cleanedData, true, logoutUser)
 		console.log(
 			'Form submitted with data:',
 			{
@@ -133,6 +135,7 @@ function Login() {
 					})}
 					<button
 					type="submit"
+					disabled={loading}
 					className="cta-button">
 						{loading ?
 							<Spinner type={'dot'} /> :
