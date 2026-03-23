@@ -963,6 +963,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 				<div className={`${(pullStaffsLoading)?'':'d-none'}`}>
 					<SpinnerBarForPage />
 				</div>
+				{pullResponse===null && <h3 className="no-result">Nothing to display</h3>}
 				<ul className={`${(pullResponse&&!isUserDetailPage)?'':'d-none'}`}>
 					{pullResponse?.length ?
 					pullResponse?.map((user, uIdx) => {
@@ -983,7 +984,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 							</li>
 						)
 					})
-					:<h3>No staff record created yet</h3>}
+					:<h3  className="no-result">No staff record created yet</h3>}
 				</ul>
 				<div className={`${(pullResponse?.length&&isUserDetailPage&&staffsPage==='')?'w-100 very-small-mob':'d-none'}`}>
 					<div className="d-flex flex-column gap-2">
@@ -1294,7 +1295,7 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 						)
 					})
 					:
-					<h3>No Saved Sessions</h3>}
+					<h3 className="no-result">No Saved Sessions</h3>}
 				</ul>
 			</div>
 		</div>
@@ -1386,7 +1387,7 @@ function ScramblePageComp({currentPage, scrambledPage, setScrambledLoading, setI
 						)
 					})
 					:
-					<h3>No Recent Activity</h3>}
+					<h3 className="no-result">No Recent Activity</h3>}
 				</ul>
 			</div>
 		</div>
