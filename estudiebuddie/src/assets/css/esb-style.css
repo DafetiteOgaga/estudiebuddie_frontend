@@ -206,6 +206,9 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 /* ########################################### */
+.no-result{
+    margin-top: 4rem !important;
+}
 .pl-color {
     color: var(--placeholder) !important;
 }
@@ -1012,7 +1015,8 @@ nav.sticky {
 .cta-button.modal {
     padding: 10px 16px;
 }
-.cta-button:hover {
+.cta-button:hover,
+.cta-button:active {
     background: rgba(255, 255, 255, 0.3);
     transform: translateY(-3px);
     box-shadow: 0 10px 25px var(--lightDarkShadow);
@@ -1021,7 +1025,8 @@ nav.sticky {
     padding: 3px 8px;
     font-size: 14.5px;
 }
-.cta-button:hover.btn-sm {
+.cta-button:hover.btn-sm,
+.cta-button:active.btn-sm {
     background: rgba(255, 255, 255, 0.3);
     transform: none;
     box-shadow: 0 10px 25px var(--lightDarkShadow);
