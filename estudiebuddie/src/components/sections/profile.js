@@ -440,7 +440,9 @@ function Profile() {
 
 							{/* get school code button */}
 							<button
-							className={`cta-button profile mr-05 ${(activeView==='profile'&&is_super_admin)?'':'d-none'}`}
+							className={`cta-button profile
+										${(activeView==='profile'&&is_super_admin)?'':'d-none'}
+										${contributor?'first':'mr-05'}`}
 							type="button"
 							onClick={(e)=>setIsGenSchCode(true)}>
 								{'Gen sch code'}
@@ -448,7 +450,7 @@ function Profile() {
 
 							{/* contribute button */}
 							<button
-							className={`cta-button profile mr-05 ${(activeView==='profile'&&contributor)?'':'d-none'}`}
+							className={`cta-button profile ${(activeView==='profile'&&contributor)?'middle':'d-none'}`}
 							type="button"
 							onClick={(e)=>navigate(`contribute-questions`)}>
 								{'Contribute Questions'}
@@ -456,7 +458,7 @@ function Profile() {
 
 							{/* edit and back button */}
 							<button
-							className={`cta-button profile text-nowrap
+							className={`cta-button profile ${(contributor&&(activeView!=='avatar'&&activeView!=='password'))?'last':'text-nowrap'}
 										${activeView==='edit'?'last':''}`}
 							type="button"
 							onClick={(e)=>setActiveView(prev=>{
