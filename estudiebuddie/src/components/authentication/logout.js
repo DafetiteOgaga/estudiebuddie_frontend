@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const authPages = [
 	'profile',
 	'scramble-questions',
+	'dashboard',
 ]
 function useLogout() {
 	const navigate = useNavigate()
@@ -17,7 +18,7 @@ function useLogout() {
 
 	const logout = () => {
 		console.log('logging out now')
-		lStorage.logout();
+		lStorage.removeAllItems();
 		setLoggedIn(false);
 		console.log('logout success')
 		toast.success("Logout successful");
