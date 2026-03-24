@@ -514,6 +514,12 @@ function Profile() {
 								<h3 className="text-center profile-h3">{titleCase(last_name)}</h3>
 								<h3 className="text-center profile-h3">{username}</h3>
 							</div>
+							{(school?.name)?
+							<div className="d-flex align-items-baseline justify-content-center">
+								<p className="role text-center text-italic m-0 white-space-pre">{titleCase(school?.name)||notAvailable} </p>
+								<p className="role text-center text-italic m-0">({school?.acronym||notAvailable})</p>
+								{/* <p className="role white-space-pre font-small"> ID:{id}</p> */}
+							</div>:null}
 							<div className="d-flex align-items-baseline justify-content-center">
 								<p className="role text-center">{titleCase(role)||notAvailable}</p>
 								<p className="role white-space-pre font-small"> ID:{id}</p>
