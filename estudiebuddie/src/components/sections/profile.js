@@ -9,6 +9,7 @@ import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit";
 import { useCreateStorage } from "../../hooks/persistToStorage";
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
 import { useNavigate } from "react-router-dom"
+import { useDeviceInfo } from "../../hooks/deviceType";
 
 const roleArray = [
 	'student',
@@ -139,6 +140,8 @@ const handleCopy = async (content, isCopied) => {
 const copyDelayDuration = 800
 
 function Profile() {
+	const deviceInfo = useDeviceInfo()
+	const isMobileDev = deviceInfo.width<=900
 	const navigate = useNavigate()
 	const [copied, setCopied] = useState(false);
 	const [isGenSchCode, setIsGenSchCode] = useState(false)
@@ -441,11 +444,12 @@ function Profile() {
 							{/* get school code button */}
 							<button
 							className={`cta-button profile
+										white-space-pre
 										${(activeView==='profile'&&is_super_admin)?'':'d-none'}
 										${contributor?'first':'mr-05'}`}
 							type="button"
 							onClick={(e)=>setIsGenSchCode(true)}>
-								{'Gen sch code'}
+								{`${isMobileDev?'':'Gen '}sch code`}
 							</button>
 
 							{/* contribute button */}
@@ -453,7 +457,7 @@ function Profile() {
 							className={`cta-button profile ${(activeView==='profile'&&contributor)?'middle':'d-none'}`}
 							type="button"
 							onClick={(e)=>navigate(`contribute-questions`)}>
-								{'Contribute Questions'}
+								{`Contribute${isMobileDev?'':' Questions'}`}
 							</button>
 
 							{/* edit and back button */}
@@ -468,7 +472,7 @@ function Profile() {
 								else if (prev==='avatar') return 'edit'
 								else if (prev==='password') return 'edit'
 							})}>
-								{(activeView==='edit'||activeView==='avatar'||activeView==='password')?'◀ Back':'Edit Profile'}
+							{(activeView==='edit'||activeView==='avatar'||activeView==='password')?'◀ Back':`Edit${isMobileDev?'':' Profile'}`}
 							</button>
 						</div>
 					</div>
