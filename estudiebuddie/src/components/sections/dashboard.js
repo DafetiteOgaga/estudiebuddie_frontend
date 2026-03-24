@@ -797,7 +797,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 		<div className={`StaffPageComp ${currentPage==='staffs'?'':'d-none'}`}>
 
 			<div className={`d-flex justify-content-between pb-1 ${isMobileDev?'flex-column':''}`}>
-				<h2 className={`${isUserDetailPage?'':'d-none'}`}>{titleCase(isMobileDev?`${userDetail?.role}`:`${userDetail?.first_name} (${userDetail?.role})`)}</h2>
+				<h2 className={`${isUserDetailPage?'':'d-none'}`}>{titleCase(isMobileDev?`${userDetail?.role}`:`${(userInfo?.id===userDetail?.id)?'You':userDetail?.first_name} (${userDetail?.role})`)}</h2>
 				<h1 className={`${!isUserDetailPage?'':'d-none'}`}>{titleCase(currentPage)}</h1>
 				<div className={`d-flex align-items-center ${isMobileDev?'justify-content-center':''}`}>
 
@@ -894,7 +894,8 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 						type="button"
 						disabled={pullStaffsLoading||submittedQuestionsLoading}
 						className={`cta-button
-									${(pullResponse?.length&&isUserDetailPage&&staffsPage==='pull-submitted')?'middle':'first'}
+									${(!submittedQuestionsResponse?.length)?'first':
+									(pullResponse?.length&&isUserDetailPage&&staffsPage==='pull-submitted')?'middle':'first'}
 									${(!isUserDetailPage||staffsPage==='pull-submitted')?'':'d-none'}`}>
 							{(pullStaffsLoading||submittedQuestionsLoading) ?
 								<Spinner type={'dot'} /> :
@@ -960,7 +961,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 			</div>
 			{/* initial sub page */}
 			<div className={`StaffsListPage justify-content-center ${(staffsPage===''||staffsPage==='pull-submitted')?'d-flex':'d-none'}`}>
-				<div className={`${(pullStaffsLoading)?'':'d-none'}`}>
+				<div className={`loader-margin-bottom ${(pullStaffsLoading)?'':'d-none'}`}>
 					<SpinnerBarForPage />
 				</div>
 				{pullResponse===null && <h3 className="no-result">Nothing to display</h3>}
@@ -976,7 +977,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 							className="no-list-style glass my-05">
 								<span>{uIdx+1}.</span>
 								<span>{titleCase(user.first_name)||not_available}</span>
-								<span>{titleCase(user.last_name)||not_available}</span>
+								<span>{(userInfo?.id===user?.id)?'(You)':titleCase(user.last_name)||not_available}</span>
 								<span>{user.gender.toUpperCase().slice(0, 1)||not_available}</span>
 								{!isMobileDev?<span>{user.mobile_no||not_available}</span>:null}
 								<span className={`${user.role.toLowerCase()==='head'?'font-gold font-bold'
@@ -1001,6 +1002,12 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 							<h3 className="text-center profile-h3">{titleCase(userDetail?.last_name)}</h3>
 							<h3 className="text-center profile-h3">({userDetail?.gender?.toUpperCase()?.slice(0, 1)})</h3>
 						</div>
+						{(userInfo?.school?.name)?
+						<div className="d-flex align-items-baseline justify-content-center">
+							<p className="role text-center text-italic m-0 white-space-pre">{titleCase(userInfo?.school?.name)||notAvailable} </p>
+							<p className="role text-center text-italic m-0">({userInfo?.school?.acronym||notAvailable})</p>
+							{/* <p className="role white-space-pre font-small"> ID:{id}</p> */}
+						</div>:null}
 						<div className="d-flex align-items-baseline justify-content-center">
 							<p className="role text-center">{titleCase(userDetail?.role)||notAvailable}</p>
 							<p className="role white-space-pre font-small"> ID:{userDetail?.id}</p>
@@ -1134,7 +1141,8 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 							})
 						}}
 						type="button"
-						disabled={submitAllSavedQuestionsLoading}
+						disabled={submitAllSavedQuestionsLoading||
+									!savedQuestionsResponse?.length}
 						className={`cta-button first white-space-pre`}>
 							{(submitAllSavedQuestionsLoading) ?
 								<Spinner type={'dot'} /> :
@@ -1160,7 +1168,8 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 							})
 						}}
 						type="button"
-						disabled={deleteAllSavedQuestionsLoading}
+						disabled={deleteAllSavedQuestionsLoading||
+									!savedQuestionsResponse?.length}
 						className={`cta-button middle bg-red-warn white-space-pre`}>
 							{(deleteAllSavedQuestionsLoading) ?
 								<Spinner type={'dot'} /> :
@@ -1195,7 +1204,7 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 
 			{/* initial sub page */}
 			<div className={`2 justify-content-center ${savedQuestionsPage===''?'d-flex':'d-none'}`}>
-				<div className={`${(savedQuestionsLoading)?'':'d-none'}`}>
+				<div className={`loader-margin-bottom ${(savedQuestionsLoading)?'':'d-none'}`}>
 					<SpinnerBarForPage />
 				</div>
 				<ul className={`${(!savedQuestionsLoading)?'':'d-none'}`}>
@@ -1334,7 +1343,7 @@ function ScramblePageComp({currentPage, scrambledPage, setScrambledLoading, setI
 
 			{/* initial sub page */}
 			<div className={`ScramblePageComp-body justify-content-center ${scrambledPage===''?'d-flex':'d-none'}`}>
-				<div className={`${(scrambledLoading)?'':'d-none'}`}>
+				<div className={`loader-margin-bottom ${(scrambledLoading)?'':'d-none'}`}>
 					<SpinnerBarForPage />
 				</div>
 				<ul className={`${(!scrambledLoading)?'':'d-none'}`}>
