@@ -1032,8 +1032,8 @@ nav.sticky {
 } */
 /* Tactile feedback for touch — resets immediately on finger lift */
 .cta-button:active {
-    /* background: rgba(255, 255, 255, 0.3); */
-    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(0);
     box-shadow: 0 10px 25px var(--lightDarkShadow);
 }
 
