@@ -12,6 +12,9 @@
 }
 
 @media (max-width: 1160px) {
+    .login-form.w33percent {
+        width: auto;
+    }
     .logo-text {
         /* font-size: 35px; */
         font-size: 20px;
@@ -19,6 +22,9 @@
 }
 
 @media (max-width: 1024px) {
+    /* .login-form.w33percent {
+        width: auto;
+    } */
     header.sticky {
         padding: 0.1px;
     }
@@ -156,9 +162,9 @@
         margin: 0 !important;
         margin-bottom: 10rem !important;
     }
-    .login-form.w33percent {
+    /* .login-form.w33percent {
         width: auto;
-    }
+    } */
     .form-group input, .form-group textarea, .form-group select {
         padding: 12px;
         border-radius: 6px;
