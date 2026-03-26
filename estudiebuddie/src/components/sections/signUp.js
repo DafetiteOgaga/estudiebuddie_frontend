@@ -190,47 +190,49 @@ function SignUp() {
 			setInitRole(formData?.role)
 			setFormHead(prev => {
 				const exists = prev.some(field => field.name === 'esb_code')
+				let codeField = []
 				if (!exists) {
-					const updated = prev.map(field => {
-						if (field.name === 'role') {
-							return {
-								...field,
-								options: ['Head']
-							}
-						}
-						return field
-					})
-					const codeField = [{
-						name: "esb_code",
-						required: true,
-						disabled: false,
-						type: "text",
-						placeholder: "E.g ESB-OYLC0X",
-						width: "70%",
-						case: null,
-					},
-					{
-						name: "school",
-						required: true,
-						disabled: false,
-						type: "text",
-						placeholder: "Full school name",
-						width: "100%",
-						case: null,
-					},
-					{
-						name: "acronym",
-						required: true,
-						disabled: false,
-						type: "text",
-						placeholder: "Acronym e.g unilag, futa",
-						width: "50%",
-						case: null,
-					}
-				]
-					return [...codeField, ...updated]
+					// const updated = prev.map(field => {
+					// 	if (field.name === 'role') {
+					// 		return {
+					// 			...field,
+					// 			options: ['Head']
+					// 		}
+					// 	}
+					// 	return field
+					// })
+					codeField = [
+						{
+							name: "esb_code",
+							required: true,
+							disabled: false,
+							type: "text",
+							placeholder: "E.g ESB-OYLC0X",
+							width: "70%",
+							case: null,
+						},
+						// {
+						// 	name: "school",
+						// 	required: true,
+						// 	disabled: false,
+						// 	type: "text",
+						// 	placeholder: "Full school name",
+						// 	width: "100%",
+						// 	case: null,
+						// },
+						// {
+						// 	name: "acronym",
+						// 	required: true,
+						// 	disabled: false,
+						// 	type: "text",
+						// 	placeholder: "Acronym e.g unilag, futa",
+						// 	width: "50%",
+						// 	case: null,
+						// }
+					]
+					// return [...codeField]
 				}
-				return prev
+				return [...codeField, ...prev]
 			})
 			setFormData(prev => {
 				return {
@@ -250,7 +252,10 @@ function SignUp() {
 					}
 					return field
 				})
-				.filter(field => field.name!=='esb_code'&&field.name!=='school'&&field.name!=='acronym') // remove esb_code
+				.filter(field =>
+					field.name!=='esb_code'&&
+					field.name!=='school'&&
+					field.name!=='acronym') // remove esb_code
 			})
 			setFormData(prev => {
 				const {esb_code, school, acronym, ...rest} = prev
@@ -262,6 +267,77 @@ function SignUp() {
 			setInitRole('')
 		}
 	}, [hasCode])
+	useEffect(() => {
+		if (!formData.esb_code) return
+
+		let roleType = 'head'
+		const codeRole = formData?.esb_code?.split("-")[0]
+		console.log({codeRole})
+		if (codeRole?.length===4) {
+			if (codeRole.endsWith("A")) {
+				roleType = 'admin'
+			} else if (codeRole.endsWith("T")) {
+				roleType = 'teacher'
+			}
+		}
+		console.log({roleType})
+		setFormHead(prev => {
+			// const exists = prev.some(field => field.name === 'esb_code')
+			if (formData.esb_code.length>=10) {
+				// if ()
+				const updated = prev.map(field => {
+					if (field.name === 'role') {
+						return {
+							...field,
+							options: [roleType]
+						}
+					}
+					return field
+				})
+				let codeField = []
+				const schoolExists = prev.some(f => f.name === 'school')
+				const acronymExists = prev.some(f => f.name === 'acronym')
+				if (roleType==='head') {
+					if (!schoolExists || !acronymExists) {
+						codeField = [
+							{
+								name: "school",
+								required: true,
+								disabled: false,
+								type: "text",
+								placeholder: "Full school name",
+								width: "100%",
+								case: null,
+							},
+							{
+								name: "acronym",
+								required: true,
+								disabled: false,
+								type: "text",
+								placeholder: "Acronym e.g unilag, futa",
+								width: "50%",
+								case: null,
+							}
+						]
+					}
+					const first = updated.slice(0, 1)
+					const rest = updated.slice(1)
+					return [...first, ...codeField, ...rest]
+				} else {
+					return updated.filter(
+						field => field.name !== 'school' && field.name !== 'acronym'
+					)
+				}
+			}
+			return prev
+		})
+		setFormData(prev => {
+			return {
+				...prev,
+				role: roleType,
+			}
+		})
+	}, [formData?.esb_code])
 	if (deviceInfo.label === "mobile") {
 		console.log('mobile'.repeat(5))
 		formHead.forEach(obj => {
@@ -396,6 +472,7 @@ function SignUp() {
 		formData,
 		hasCode,
 		initRole,
+		codeLen: formData?.esb_code?.length
 	})
 	return (
 		<>
