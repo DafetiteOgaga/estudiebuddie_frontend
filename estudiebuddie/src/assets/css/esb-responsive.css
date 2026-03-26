@@ -12,6 +12,11 @@
 }
 
 @media (max-width: 1160px) {
+    .cta-button:active {
+        /* background: rgba(255, 255, 255, 0.3); */
+        transform: translateY(-3px);
+        /* box-shadow: 0 10px 25px var(--lightDarkShadow); */
+    }
     .login-form.w33percent {
         width: auto;
     }
