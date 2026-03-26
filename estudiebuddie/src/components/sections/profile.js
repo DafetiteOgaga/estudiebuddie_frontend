@@ -11,10 +11,10 @@ import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
 import { useNavigate } from "react-router-dom"
 import { useDeviceInfo } from "../../hooks/deviceType";
 
-const roleArray = [
-	'student',
-	'teacher'
-]
+// const roleArray = [
+// 	'student',
+// 	'teacher'
+// ]
 const formHead = [
 	{
 		name: "last_name",
@@ -34,16 +34,16 @@ const formHead = [
 		width: "70%",
 		case: null,
 	},
-	{
-		name: "role",
-		required: false,
-		disabled: false,
-		type: "select",
-		placeholder: "Role",
-		width: "11%",
-		options: roleArray,
-		case: "title",
-	},
+	// {
+	// 	name: "role",
+	// 	required: false,
+	// 	disabled: false,
+	// 	type: "select",
+	// 	placeholder: "Role",
+	// 	width: "11%",
+	// 	options: roleArray,
+	// 	case: "title",
+	// },
 	{
 		name: "username",
 		required: false,
@@ -178,7 +178,7 @@ function Profile() {
 		last_name: last_name||"",
 		username: username||"",
 		mobile_no: mobile_no||"",
-		role: role||"",
+		// role: role||"",
 		old_password: "",
 		password: "",
 		confirm_password: "",
