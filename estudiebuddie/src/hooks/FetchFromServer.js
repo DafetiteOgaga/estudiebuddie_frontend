@@ -205,7 +205,10 @@ async function FetchFromServer(endpoint, method = 'GET', body = null, keepForm=f
 		if (data?.access||data?.refresh) {
 			console.log('setting user to storage')
 			lStorage.setItem('user', data?.user)
-			data = "Success"
+			data = {
+				must_change_password: data?.user?.must_change_password,
+				id: data?.user?.id,
+			}
 		}
 		console.log('✅ completed with normal process ✅')
 		return {
