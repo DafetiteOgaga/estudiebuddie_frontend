@@ -11,7 +11,8 @@ function Index() {
 	const isMobileDev = deviceInfo.width<=768
 	// console.log({isOver2000Width,})
 	const page = useLocation().pathname.split('/')[1]
-	const centerWrapper = page==='login' || page==='signup' || page==='leaderboard'
+	const centerWrapper = page==='login' || page==='signup' || page==='leaderboard' || page==='complete-registration'
+	const showHeaderAndFooter = page !== "complete-registration"
 	// console.log({centerWrapper})
 	const [isSticky, setIsSticky] = useState(false);
     const [scrollY, setScrollY] = useState(window.scrollY);
@@ -46,9 +47,10 @@ function Index() {
 			<Shapes />
 
 			{/* header */}
-			<Header {...headerArgs}/>
+			{showHeaderAndFooter &&
+			<Header {...headerArgs}/>}
 
-			<div className="page"
+			<div className={`page ${!showHeaderAndFooter?'mt-10':''}`}
 			style={(page==="dashboard"&&isMobileDev)?{padding: '0 4px'}:{}}>
 				<div className={`${isOver2000Width?'max-w-auto':'container'}`}>
 					<div className={`content-wrapper ${isSticky?'dy-scroll-top':''} ${centerWrapper?'center-login':''}`}>
@@ -59,7 +61,8 @@ function Index() {
 			</div>
 
 			{/* footer */}
-			<Footer />
+			{showHeaderAndFooter &&
+			<Footer />}
 			{/* {centerWrapper?null:<Footer />} */}
 		</>
 		// // <section className="set-bg" data-setbg="img/bg.jpg"
