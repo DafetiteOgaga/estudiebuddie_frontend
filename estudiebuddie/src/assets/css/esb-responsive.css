@@ -156,6 +156,17 @@
         margin: 0 !important;
         margin-bottom: 10rem !important;
     }
+    .login-form.w33percent {
+        width: auto;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+        padding: 12px;
+        border-radius: 6px;
+        font-size: 15px;
+    }
+    .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
+        font-size: 0.60rem;
+    }
     /* .cta-button.question {
         padding: initial;
     } */
