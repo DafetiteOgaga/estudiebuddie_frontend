@@ -1,4 +1,5 @@
 import { DafetiteFooter } from "../../hooks/dafetiteFooter/dafetiteFooter";
+// import { useLocation } from "react-router-dom";
 
 function Footer() {
 	return (

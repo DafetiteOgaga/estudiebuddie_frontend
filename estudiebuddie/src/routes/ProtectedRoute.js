@@ -1,5 +1,5 @@
-// import { useRef } from "react";
-import { Navigate, Outlet, useLocation, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { Navigate, Outlet, useLocation, useParams, useNavigate } from "react-router-dom";
 import { useCreateStorage } from "../hooks/persistToStorage";
 import { toast } from 'react-toastify'
 
@@ -26,6 +26,12 @@ function ProtectedRoute({ children, requireMatch = false }) {
 	if (!currentUser) {
 		console.log(protectedroute, "User not logged in, redirecting to /login");
 		return <Navigate to="/login" state={{ from: location }} replace />;
+	}
+
+	// to force password change
+	if (currentUser?.must_change_password) {
+		console.log(protectedroute, "User must change password — redirecting to /complete-registration");
+		return <Navigate to="/complete-registration" replace />;
 	}
 
 	// Masking protection — if route contains a userID param
@@ -93,16 +99,27 @@ function PublicRoute({ children }) {
 	const location = useLocation()
 	const pathname = location.pathname
 	const { lStorage } = useCreateStorage();
+	const navigate = useNavigate()
 	// const loginRegisterRef = useRef(true)
 
 	// Retrieve user and location info
 	const currentUser = lStorage.getItem('user');
 	console.log(publicroute, "location =", location);
+	console.log(publicroute, "currentUser", currentUser);
 	console.log(publicroute, "currentUser.id =", currentUser?.id);
 	console.log(publicroute, "children =", children);
+	console.log({pathname})
+
+	// to force password change
+	useEffect(() => {
+		if (currentUser?.must_change_password && location.pathname !== "/complete-registration") {
+			console.log(publicroute, "User must change password — redirecting to /complete-registration");
+			navigate("/complete-registration", { replace: true });
+		}
+	}, [currentUser, location.pathname, navigate]);
 
 	// Logged in and location is login/signup — redirect to home
-	if (currentUser?.id && (pathname === "/login" || pathname === "/signup")) {
+	if (currentUser?.id && (pathname === "/login" || pathname === "/signup") && pathname !== "/complete-registration") {
 		console.log(publicroute, "User logged in and trying to access login/signup, redirecting to /");
 		// if (pathname === "/login") {
 		// 	toast.info('You are already logged in.')

@@ -16,6 +16,7 @@ import { SignUp } from '../components/sections/signUp';
 import { Leaderboard } from '../components/sections/leaderboard';
 import { Profile } from '../components/sections/profile';
 import { Dashboard } from '../components/sections/dashboard';
+import { CompleteRegistration } from '../components/sections/completeRegistration';
 
 function AppRoutes() {
 	return (
@@ -34,6 +35,7 @@ function AppRoutes() {
 					<Route path="profile/:id/contribute-questions" element={<ContributeQuestionsComponent />} />
 					<Route path="profile/:id" element={<Profile />} />
 					<Route path="dashboard/:id" element={<Dashboard />} />
+					{/* <Route path="complete-registration/:id" element={<CompleteRegistration />} /> */}
 					{/* <Route path="dashboard/:id" element={<Dashboard />} /> */}
 				</Route>
 
@@ -51,6 +53,8 @@ function AppRoutes() {
 					{/* quiz */}
 					<Route path="quiz" element={<Quiz />} />
 					{/* leaderboard */}
+					{/* registration completion */}
+					<Route path="complete-registration" element={<CompleteRegistration />} />
 					<Route path="leaderboard" element={<Leaderboard />} />
 					{/* unauthorised */}
 					<Route path="unauthorised" element={<Unauthorized />} />

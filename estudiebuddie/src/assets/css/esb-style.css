@@ -680,6 +680,9 @@ fieldset {
 .mt-5 {
     margin-top: 5rem !important;
 }
+.mt-10 {
+    margin-top: 10rem !important;
+}
 .pl-0 {
     padding-left: 0 !important;
 }
@@ -778,6 +781,9 @@ fieldset {
 }
 .white-space-pre {
     white-space: pre;
+}
+.w-auto {
+    width: auto !important;
 }
 .w-0 {
     width: 0 !important;
@@ -1018,11 +1024,26 @@ nav.sticky {
 .cta-button.modal {
     padding: 10px 16px;
 }
-.cta-button:hover,
+/* .cta-button:active, */
+/* .cta-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px var(--lightDarkShadow);
+} */
+/* Tactile feedback for touch — resets immediately on finger lift */
 .cta-button:active {
     background: rgba(255, 255, 255, 0.3);
     transform: translateY(-3px);
     box-shadow: 0 10px 25px var(--lightDarkShadow);
+}
+
+/* Full hover effect only on real pointer devices */
+@media (hover: hover) and (pointer: fine) {
+    .cta-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px var(--lightDarkShadow);
+    }
 }
 .cta-button.btn-sm {
     padding: 3px 8px;
@@ -1160,6 +1181,14 @@ button[type="submit"] {
     display: inline-block;
     width: 8px;
     height: 8px;
+    background-color: #facc15;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+.must-change-password-notification-dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
     background-color: #facc15;
     border-radius: 50%;
     transition: all 0.3s ease;
@@ -1638,6 +1667,9 @@ button[type="submit"] {
     justify-content: center;
     padding: 40px;
     width: 35%;
+}
+.login-form.w33percent {
+    width: 33.1%;
 }
 .login-form h2 {
     color: white;

@@ -78,6 +78,8 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 	}, [isMenuOpen]);
 	const navigate = useNavigate()
 	const location = useLocation().pathname.split('/')[1];
+	// const hideHeader = location === "complete-registration"
+	console.log({location})
 	// console.log({userInfo, headerMenu, isOver2000Width, isSticky, scrollY})
 	let mobileHeaderMenu = moveByIndex(headerMenu, 0, 3)
 	// console.log({firstMHM: mobileHeaderMenu})

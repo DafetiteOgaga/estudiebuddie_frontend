@@ -194,6 +194,16 @@ async function FetchFromServer(endpoint, method = 'GET', body = null, keepForm=f
 		}
 
 		console.log('Success:', data);
+		if (data?.update_user_must_change_password) {
+			console.log('granting user access')
+			const currentUser = lStorage.getItem("user")
+			if (currentUser) {
+				currentUser.must_change_password = data.must_change_password
+				currentUser.username = data.username
+				lStorage.setItem("user", currentUser)
+			}
+			// lStorage.setItem('access_token', data.access);
+		}
 		if (data?.access) {
 			console.log('setting access to storage')
 			lStorage.setItem('access_token', data.access);
@@ -205,7 +215,10 @@ async function FetchFromServer(endpoint, method = 'GET', body = null, keepForm=f
 		if (data?.access||data?.refresh) {
 			console.log('setting user to storage')
 			lStorage.setItem('user', data?.user)
-			data = "Success"
+			data = {
+				must_change_password: data?.user?.must_change_password,
+				id: data?.user?.id,
+			}
 		}
 		console.log('✅ completed with normal process ✅')
 		return {

@@ -66,12 +66,18 @@ const getAbbrObject = {
 		"third": "3rd",
 	}
 }
-function getSubjectAbbr(subject) {
-	return getAbbrObject.subjectAbbr[subject.trim().toLowerCase()] || subject;
+const getAbbr = (category, value) => {
+	if (!value) return value
+
+	const key = value.trim().toLowerCase()
+	return getAbbrObject[category]?.[key] || value
 }
-function getTermAbbr(term) {
-	return getAbbrObject.termAbbr[term.trim().toLowerCase()] || term;
-}
+// function getSubjectAbbr(subject) {
+// 	return getAbbrObject.subjectAbbr[subject.trim().toLowerCase()] || subject;
+// }
+// function getTermAbbr(term) {
+// 	return getAbbrObject.termAbbr[term.trim().toLowerCase()] || term;
+// }
 
 const formValues = {
 	first_name: "",
@@ -615,7 +621,7 @@ function CreateStaff({staffCreationLoading, setStaffCreationLoading, deviceInfo}
 			});
 		if (res.ok) {
 			toast.success('Success')
-			// setFormData(formValues)
+			setFormData(formValues)
 		}
 		setStaffCreationLoading(false)
 	};
@@ -932,7 +938,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 					}}
 					type="button"
 					disabled={submittedQuestionsLoading}
-					className={`cta-button ${userDetail?.role==='head'?'first':'middle'} fit white-space-pre
+					className={`cta-button ${(userDetail?.role==='head'||!userDetail?.must_change_password)?'first':'middle'} fit white-space-pre
 								${((pullResponse?.length&&isUserDetailPage&&
 								staffsPage!=='pull-submitted'))?'':'d-none'}
 								`}>
@@ -981,7 +987,11 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 								<span>{user.gender.toUpperCase().slice(0, 1)||not_available}</span>
 								{!isMobileDev?<span>{user.mobile_no||not_available}</span>:null}
 								<span className={`${user.role.toLowerCase()==='head'?'font-gold font-bold'
-													:user.role.toLowerCase()==='admin'?'font-gold':''}`}>{titleCase(user.role)||not_available}</span>
+													:user.role.toLowerCase()==='admin'?'font-gold':''}`}>{titleCase(user.role)||not_available}
+									<sup
+									className={`must-change-password-notification-dot ${(user?.must_change_password)?'':'d-none'}`}
+									/>
+								</span>
 							</li>
 						)
 					})
@@ -1050,13 +1060,13 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 									<span className="white-space-pre">{sIdx+1}.</span>
 									<span className="white-space-pre">{
 											// titleCase(submitted?.session_subject)
-											getSubjectAbbr(submitted?.session_subject)
+											getAbbr("subjectAbbr", submitted?.session_subject)
 											}</span>
 									{/* <span>for</span> */}
 									<span className="white-space-pre">{submitted?.session_class?.toUpperCase()}</span>
 									<span className="white-space-pre">{
 											// titleCase(submitted?.session_term)
-											getTermAbbr(submitted?.session_term)
+											getAbbr("termAbbr", submitted?.session_term)
 											}-term</span>
 									<span className="time-ago font-15 white-space-pre">
 										{(isMobileDev?(
@@ -1224,12 +1234,12 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 									<span className={`${preStyle}`}>{sIdx+1}.</span>
 									<span className={`${preStyle}`}>{
 											// titleCase(saved?.subject)
-											getSubjectAbbr(saved?.subject)
+											getAbbr("subjectAbbr", saved?.subject)
 											}</span>
 									<span className={`${preStyle}`}>{saved?.class?.toUpperCase()}</span>
 									<span className={`${preStyle}`}>{
 											// titleCase(saved?.term)
-											getTermAbbr(saved?.term)
+											getAbbr("termAbbr", saved?.term)
 											}-term</span>
 									<span className={`${preStyle}`}>{`${isMobileDev?'Q':'Questions'}: ${saved?.questions}`}</span>
 									<span className={`${preStyle} time-ago font-smb`}>{(saved?.has_submitted)?(isMobileDev?(
@@ -1366,7 +1376,7 @@ function ScramblePageComp({currentPage, scrambledPage, setScrambledLoading, setI
 									<span className="mob-pad d-flex gap-1 align-items-center"
 									style={{cursor: "none"}}>
 										{/* {subject} */}
-										{getSubjectAbbr(subject)}
+										{getAbbr("subjectAbbr", subject)}
 									</span>
 									<span className="d-flex gap-1 align-items-center"
 									style={{cursor: "none"}}>
