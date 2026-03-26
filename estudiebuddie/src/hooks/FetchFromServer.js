@@ -194,6 +194,16 @@ async function FetchFromServer(endpoint, method = 'GET', body = null, keepForm=f
 		}
 
 		console.log('Success:', data);
+		if (data?.update_user_must_change_password) {
+			console.log('granting user access')
+			const currentUser = lStorage.getItem("user")
+			if (currentUser) {
+				currentUser.must_change_password = data.must_change_password
+				currentUser.username = data.username
+				lStorage.setItem("user", currentUser)
+			}
+			// lStorage.setItem('access_token', data.access);
+		}
 		if (data?.access) {
 			console.log('setting access to storage')
 			lStorage.setItem('access_token', data.access);
