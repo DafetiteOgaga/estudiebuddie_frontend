@@ -52,6 +52,7 @@ const ImageCropAndCompress = forwardRef(({onComplete,
 	// console.log('cropping image...')
 	// console.log({imageId})
 	// console.log({onClearSelection})
+	console.log({disableBtn})
 	const [imageSrc, setImageSrc] = useState(null);
 	const [crop, setCrop] = useState({ x: 0, y: 0 });
 	const [zoom, setZoom] = useState(1);
