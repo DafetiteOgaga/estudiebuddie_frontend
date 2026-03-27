@@ -4,7 +4,7 @@ import { useCreateStorage } from './persistToStorage';
 import { useAuth } from './authContext';
 import { useNavigate } from 'react-router-dom';
 
-const originUrl = (api=false) => {
+const originUrl = (api=false, dev=false) => {
 	if (api) {
 		return 'https://dafetiteapiendpoint.pythonanywhere.com';
 	}
@@ -12,6 +12,9 @@ const originUrl = (api=false) => {
 	const host = window.location.hostname;
 	if (host === 'localhost' || host === '127.0.0.1') {
 		console.log('Running in development mode');
+		if (dev) {
+			return dev
+		}
 		// /dafetite_brevo_api_key/dafetite_brevo_api
 		return 'http://127.0.0.1:8000/';
 	}
@@ -306,4 +309,4 @@ function useImageKitAPIs() {
   	return { data, loading, error };  // return something usable
 }
 
-export { FetchFromServer, buildFormData, serverOrigin, useImageKitAPIs };
+export { FetchFromServer, buildFormData, serverOrigin, useImageKitAPIs, originUrl };
