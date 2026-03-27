@@ -18,7 +18,7 @@
         /* box-shadow: 0 10px 25px var(--lightDarkShadow); */
     }
     .login-form.w33percent {
-        width: auto;
+        width: 40%;
     }
     .logo-text {
         /* font-size: 35px; */
@@ -68,6 +68,9 @@
 }
 
 @media (max-width: 900px) {
+    .login-form.w33percent {
+        width: 45%;
+    }
     .dashboard-content .dashboard {
         grid-template-columns: auto;
     }
@@ -130,6 +133,9 @@
     }
 }
 @media (max-width: 800px) {
+    .login-form.w33percent {
+        width: 50%;
+    }
     .logo-text {
         display: none;
     }
@@ -158,6 +164,9 @@
 }
 
 @media (max-width: 768px) {
+    /* .login-form.w33percent {
+        width: 50%;
+    } */
     .no-result{
         margin-top: 0 !important;
         margin: 3.5rem 0 !important;
@@ -378,7 +387,7 @@
         margin-right: 0rem !important;
     }
     .left-45-mobile {
-        left: 45% !important;
+        left: 55% !important;
     }
     .leaderboard-page {
         margin: 0;
@@ -543,7 +552,64 @@
     }
 }
 
+@media (max-width: 696px) {
+    .left-45-mobile {
+        left: 51% !important;
+    }
+}
+@media (max-width: 680px) {
+    .login-form.w33percent {
+        width: 55%;
+    }
+}
+@media (max-width: 630px) {
+    .left-45-mobile {
+        left: 45% !important;
+    }
+}
+@media (max-width: 600px) {
+    .login-form.w33percent {
+        width: 60%;
+    }
+}
+@media (max-width: 590px) {
+    .left-45-mobile {
+        left: 40% !important;
+    }
+}
+@media (max-width: 578px) {
+    .left-45-mobile {
+        left: 70% !important;
+    }
+}
+@media (max-width: 530px) {
+    .login-form.w33percent {
+        width: 68%;
+    }
+    .left-45-mobile {
+        left: 67% !important;
+    }
+}
+@media (max-width: 480px) {
+    .login-form.w33percent {
+        width: 80%;
+    }
+    .left-45-mobile {
+        left: 63% !important;
+    }
+}
+@media (max-width: 430px) {
+    .left-45-mobile {
+        left: 58% !important;
+    }
+}
 @media (max-width: 412px) {
+    .left-45-mobile {
+        left: 57% !important;
+    }
+    .login-form.w33percent {
+        width: 100%;
+    }
     .dashboard-p-05 {
         padding: 0.8rem 0.1rem !important;
     }
@@ -653,7 +719,20 @@
     }
 }
 
-@media (max-width: 361px) {
+@media (max-width: 390px) {
+    .left-45-mobile {
+        left: 54% !important;
+    }
+}
+@media (max-width: 380px) {
+    .left-45-mobile {
+        left: 50% !important;
+    }
+}
+@media (max-width: 360px) {
+    .left-45-mobile {
+        left: 50% !important;
+    }
     .logo-text {
         font-size: 20px;
     }

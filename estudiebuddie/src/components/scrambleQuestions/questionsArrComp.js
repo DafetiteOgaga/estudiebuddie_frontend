@@ -383,7 +383,8 @@ function QuestionBlock ({diagramStageRefs,
 									imageId={qIdx}
 									btnStyle='rm-fuc'
 									imgType="question"
-									disableBtn={isDiagramActive} />
+									// disableBtn={isDiagramActive}
+									disableBtn={true} />
 								</div>
 
 								<div className='d-flex'>
@@ -980,7 +981,8 @@ function MathAndDiagBtns ({toggleMode, isMathActive, within60Questions, isDiagra
 			<button
 			type="button"
 			onClick={() => toggleMode(qIdx, 'diagram')}
-			disabled={isImage}
+			// disabled={isImage}
+			disabled={true}
 			className={`cta-button question ${isDiagramActive?'highlight':''} ${within60Questions?'':'d-none'} ${isMobile?'fit':''}`}>
 				Diagram
 			</button>
