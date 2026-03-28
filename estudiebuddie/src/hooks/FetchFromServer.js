@@ -309,4 +309,4 @@ function useImageKitAPIs() {
   	return { data, loading, error };  // return something usable
 }
 
-export { FetchFromServer, buildFormData, serverOrigin, useImageKitAPIs, originUrl };
+export { FetchFromServer, buildFormData, serverOrigin, useImageKitAPIs };
