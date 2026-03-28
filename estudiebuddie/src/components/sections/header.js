@@ -7,7 +7,7 @@ import { useAuth } from "../../hooks/authContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getGender } from "./profile";
 import { useDeviceInfo } from "../../hooks/deviceType";
-import { originUrl } from "../../hooks/FetchFromServer";
+import { serverOrigin } from "../../hooks/FetchFromServer";
 
 const moveByIndex = (arr, fromIndex, toIndex) => {
 	const copy = [...arr];                // do not mutate original
@@ -23,8 +23,8 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 	const { lStorage, sStorage } = useCreateStorage()
 	const userInfo = lStorage.getItem('user') || {}
 	const deviceInfo = useDeviceInfo()
-	const isDev = originUrl(false, true)
-	console.log({isDev})
+	const isDev = serverOrigin === 'http://127.0.0.1:8000/'
+	console.log({isDev, serverOrigin})
 	let {
 		about,
 		email,
@@ -101,7 +101,7 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 							<AppLogo />
 						</div>
 						<AppName />
-						{isDev ? <span className='white-space-pre'> {deviceInfo.width}px</span>:null}
+						{isDev ? <span className='white-space-pre font-sm'> {deviceInfo.width}px</span>:null}
 					</div>
 					<div className="nav-links is-desktop">
 						{headerMenu.map((header, hIdx) => {
