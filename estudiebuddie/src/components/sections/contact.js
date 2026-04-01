@@ -29,36 +29,36 @@ function Contact() {
 							</form>
 						</div>
 
-						<div className="contact-info glass">
+						<div className="contact-page-info glass">
 							<h2>Contact Information</h2>
 							
-							<div className="contact-item">
-								<div className="contact-item-icon">📧</div>
-								<div className="contact-item-text">
+							<div className="contact-page-item">
+								<div className="contact-page-item-icon">📧</div>
+								<div className="contact-page-item-text">
 									<h4>Email</h4>
 									<p>hello@glossytouch.com</p>
 								</div>
 							</div>
 
-							<div className="contact-item">
-								<div className="contact-item-icon">📞</div>
-								<div className="contact-item-text">
+							<div className="contact-page-item">
+								<div className="contact-page-item-icon">📞</div>
+								<div className="contact-page-item-text">
 									<h4>Phone</h4>
 									<p>+1 (555) 123-4567</p>
 								</div>
 							</div>
 
-							<div className="contact-item">
-								<div className="contact-item-icon">📍</div>
-								<div className="contact-item-text">
+							<div className="contact-page-item">
+								<div className="contact-page-item-icon">📍</div>
+								<div className="contact-page-item-text">
 									<h4>Address</h4>
 									<p>123 Design Street<br />Creative District, CD 12345</p>
 								</div>
 							</div>
 
-							<div className="contact-item">
-								<div className="contact-item-icon">🕒</div>
-								<div className="contact-item-text">
+							<div className="contact-page-item">
+								<div className="contact-page-item-icon">🕒</div>
+								<div className="contact-page-item-text">
 									<h4>Business Hours</h4>
 									<p>Mon-Fri: 9AM-6PM<br />Sat-Sun: 10AM-4PM</p>
 								</div>
@@ -66,8 +66,8 @@ function Contact() {
 						</div>
 					</section>
 
-					<section className="contact-map-section">
-						<div className="contact-map glass">
+					<section className="contact-page-map-section">
+						<div className="contact-page-map glass">
 							<h2>Find Us</h2>
 							<div className="map-container">
 								<div className="map-placeholder">
