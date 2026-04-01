@@ -13,6 +13,7 @@ import { toast } from 'react-toastify'
 import { useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CheckBoxBtnUI } from "../sections/signUp";
+import { TheoryBuilder } from "./theoryQuestions";
 
 let formValues = {
 	// school: "",
@@ -263,6 +264,23 @@ function customFindLast(arr, predicate) {
 	return undefined;
 }
 
+function normalizeTheory(data) {
+	// Step 1: convert object with numeric keys to array
+	const arr = Array.isArray(data)
+		? data
+		: Object.keys(data)
+			.sort((a, b) => a - b)
+			.map(key => data[key][0]); // because each key holds an array
+
+	// Step 2: recursively fix children
+	return arr.map(node => ({
+		...node,
+		children: node.children
+			? normalizeTheory(node.children)
+			: []
+	}));
+}
+
 function ScrambleQuestionsComponent() {
 	const levelRef = useRef('')
 	const classRef = useRef('')
@@ -304,8 +322,40 @@ function ScrambleQuestionsComponent() {
 	const [savedSession, setSavedSession] = useState(null)
 	const [hasSubmitted, setHasSubmitted] = useState({})
 	const diagramStageRefs = useRef({});
-	// const isDuplicate = useRef(false)
+	const [removeObjectives, setRemoveObjectives] = useState(false)
+	const [theory, setTheory] = useState([])
+	const [addTheory, setAddTheory] = useState(false)
+	const theoryQuestionsRef = useRef(null)
 
+	const updateTheoryState = (data) => {
+		setTheory(data)
+	}
+	useEffect(() => {
+		if (!addTheory) {
+			setTheory([])
+			setFormData(prev => {
+				const {theory, ...rest} = prev
+				return rest
+			})
+		}
+	}, [addTheory])
+
+	useEffect(() => {
+			if (addTheory) {
+				setFormData(prev => {
+					return { ...prev, theory: theory }
+				})
+			}
+	}, [theory])
+	// useEffect(() => {
+	// 	if (!addTheory) {
+	// 		updateTheoryState([])
+	// 	} else {
+	// 		setFormData(prev => {
+	// 			return {...prev, theory: theory}
+	// 		})
+	// 	}
+	// }, [addTheory,theory])
 	const handleDeptSet = (value='') => {
 		if (value===null||value===undefined) return ''
 		setDept(value)
@@ -382,13 +432,67 @@ function ScrambleQuestionsComponent() {
 	}, [hasDiffSchool])
 
 	useEffect(() => {
-		console.log('effecting')
+		// console.log({formHeadState})
+		if (!removeObjectives) {
+			// adding objectives
+				setFormHeadState(prev=> {
+					const totalQsExists = prev.some(fh => fh.name === 'totalQs');
+					console.log({totalQsExists})
+					let returnedPrev = [...prev]
+					if (!totalQsExists) {
+						returnedPrev =  [
+							{
+								name: "totalQs",
+								required: true,
+								disabled: false,
+								type: "text",
+								placeholder: "No. of Questions",
+								width: "20%",
+								case: null,
+							},
+							...returnedPrev,
+						]
+					}
+					return returnedPrev
+				})
+				// setFormData(prev => ({
+				// 	...prev,
+				// 	totalQs: 1,
+				// }))
+				console.log('🏆'.repeat(10))
+				// setTotalNoOfQs(2)
+				// console.log('❎'.repeat(10))
+				// setTotalNoOfQs(prev => {
+				// 	if (prev !== 1) {
+				// 		console.log('❎'.repeat(10))
+				// 		return 1;
+				// 	}
+				// 	console.log('♻'.repeat(10))
+				// 	return prev;
+				// });
+				setTotalNoOfQs(1)
+		} else {
+			// removing objectives
+			setFormHeadState(prev => prev.filter(fh => fh.name !== 'totalQs'));
+			setQuestionFormData([])
+			setFormData(prev => ({
+				...prev,
+				totalQs: '',
+				questions: []
+			}))
+			setTotalNoOfQs(0)
+		}
+		// console.log({formHeadState})
+	}, [removeObjectives])
+
+	useEffect(() => {
+		// console.log('effecting')
 		setFormHeadState(prev => {
-			console.log('setting fh state')
+			// console.log('setting fh state')
 			return prev.map(obj => {
-				console.log('mapping')
+				// console.log('mapping')
 				if (obj.name.toLowerCase() === "class" && levelRef.current!==formData.level) {
-					console.log("class obj found");
+					// console.log("class obj found");
 					// console.log({level: formData.level})
 			
 					let options = obj.options;
@@ -409,7 +513,7 @@ function ScrambleQuestionsComponent() {
 					}
 					
 					if (!hasLocalSavedClassRef.current.class) {
-						console.log('clearing class and subject')
+						// console.log('clearing class and subject')
 						setFormData(prev=>({
 							...prev,
 							class: '',
@@ -422,43 +526,43 @@ function ScrambleQuestionsComponent() {
 				} else if (obj.name.toLowerCase() === "subject"
 				// && classRef.current!==formData.class
 				) {
-					console.log("subject obj found");
+					// console.log("subject obj found");
 					// console.log({classobj: formData.class})
 			
 					let options = obj.options;
 					let lcase = obj.case
 			
 					if (formData.class.toLowerCase().includes("basic")) {
-						console.log("running for basic subjects");
+						// console.log("running for basic subjects");
 						options = basicClassSubjects;
 						lcase = 'title'
 					} else if (formData.level.toLowerCase().includes("jss")) {
-						console.log("running for jss subjects");
+						// console.log("running for jss subjects");
 						options = juniorSecondarySubjects;
 						lcase = 'title'
 					} else if (formData.level.toLowerCase().includes("sss")) {
-						console.log("running for sss class");
+						// console.log("running for sss class");
 						if (!dept) {
-							console.log('no dept')
+							// console.log('no dept')
 							options = [selectDept]
 							lcase = 'sentence'
 						} else {
-							console.log('dept valid')
+							// console.log('dept valid')
 							if (dept==='art') {
-								console.log({dept})
+								// console.log({dept})
 								options = artsSubjects;
 							} else if (dept==='commercial') {
-								console.log({dept})
+								// console.log({dept})
 								options = commercialSubjects
 							} else if (dept==='science') {
-								console.log({dept})
+								// console.log({dept})
 								options = scienceSubjects
 							}
 							lcase = 'title'
 						}
 					}
 					if (!hasLocalSavedClassRef.current.subject) {
-						console.log('clearing subject only')
+						// console.log('clearing subject only')
 						setFormData(prev=>({...prev, subject: ''}))
 						hasLocalSavedClassRef.current.subject = false
 					}
@@ -476,7 +580,7 @@ function ScrambleQuestionsComponent() {
 	useEffect(() => {
 		if (deviceTypeCheckRef.current) return
 		if (deviceInfo.label === "mobile") {
-			console.log('mobile'.repeat(5), formHeadState)
+			// console.log('mobile'.repeat(5), formHeadState)
 			setFormHeadState(prev =>
 				prev.map(obj => {
 					  // create a shallow copy of obj
@@ -516,16 +620,16 @@ function ScrambleQuestionsComponent() {
 		let savedQuestionsArr
 		if (typeof scramble_session_data.questions === "object" &&
 			!Array.isArray(scramble_session_data.questions)) {
-				console.log('converting from obj to arr')
+				// console.log('converting from obj to arr')
 				// ? Object.values(scramble_session_data.questions).flat() // flatten arrays
 				savedQuestionsArr = Object.values(scramble_session_data.questions).flat()
 				.map(item=>{
 					if (item?.question) {
-						console.log('found: question', {question: item.question})
+						// console.log('found: question', {question: item.question})
 						item.question = Object.values(item?.question).flat()
-						console.log({typeOfItem: typeof (item.question)})
+						// console.log({typeOfItem: typeof (item.question)})
 						const hasDiagram = item.question.some(dia=>dia.type==="diagram")
-						console.log({hasDiagram})
+						// console.log({hasDiagram})
 						if (hasDiagram) {
 							// handle group and ungrouping here too
 							const diagramIndex = item.question.findIndex(q => q.type === "diagram")
@@ -533,36 +637,59 @@ function ScrambleQuestionsComponent() {
 							const diagramObject = Object
 												.values(item.question[diagramIndex].value.diagramShapes)
 												.flat()
-							console.log('found diagram', {diagramObject})
+							// console.log('found diagram', {diagramObject})
 							item.question[diagramIndex].value.diagramShapes = diagramObject
 							// const dObject = Object.values(diagramObject).flat()
 							// console.log({dObject})
 						}
-						console.log({question: item?.question})
+						// console.log({question: item?.question})
 					}
 					if (item?.question_mode) {
-						console.log('found: mode')
+						// console.log('found: mode')
 						item.question_mode = Object.values(item?.question_mode).flat()
-						console.log({mode: item?.question_mode})
+						// console.log({mode: item?.question_mode})
 					}
 					return item
 				})
-				console.log({converted_savedQuestionsArr: savedQuestionsArr})
+				// console.log({converted_savedQuestionsArr: savedQuestionsArr})
 		} else {
 			savedQuestionsArr = scramble_session_data.questions;
-			console.log({not_converted_savedQuestionsArr: savedQuestionsArr})
+			// console.log({not_converted_savedQuestionsArr: savedQuestionsArr})
 		}
-		console.log({savedQuestionsArr})
+		// if (scramble_session_data) {
+		let theoryQuestions = scramble_session_data?.theory||[]
+		if (typeof theoryQuestions === "object") {
+			theoryQuestions = normalizeTheory(theoryQuestions)
+		}
+		console.log({theoryQuestions})
+		if (theoryQuestions.length) {
+			theoryQuestionsRef.current = theoryQuestions
+			setAddTheory(true)
+		}
+		// if (scramble_session_data?.questions) {
+		// 	setRemoveObjectives(false)
+		// }
+		const isObj = Object.keys(scramble_session_data?.questions||{})
+		setRemoveObjectives(!isObj?.length)
+		console.log({
+			scramble_session_data,
+			isObj,
+			length: isObj?.length,
+			bool: !isObj?.length
+		})
+		// }
+		// console.log({savedQuestionsArr})
 		setFormData(prev => {
 			// console.log({prev})
 			const updatedFormData = {
 				...prev,
 				...{
 					...scramble_session_data,
-					questions: savedQuestionsArr
+					questions: savedQuestionsArr,
+					theory: theoryQuestions,
 				}
 			}
-			console.log({updatedFormData})
+			// console.log({updatedFormData})
 			return updatedFormData
 		})
 		handleDeptSet(scramble_session_data?.department)
@@ -585,16 +712,16 @@ function ScrambleQuestionsComponent() {
 
 	const handleQuestionChange = (e=null, data=null, index, mode='+') => {
 		// console.log('question refs:', questionFormData.map(q => q.question))
-		console.log('in handle question change fxn...', {data, index})
+		// console.log('in handle question change fxn...', {data, index})
 		// if (!e && !data?.files?.[0]) return
 		if (!e && data?.name!=='image') return
 		let { name, value, files, type } = (e&&e?.target) ? e.target : data
-		console.log({name, value, files, type, index, questionFormData, mode})
+		// console.log({name, value, files, type, index, questionFormData, mode})
 		// let updatedQuestions = [...questionFormData];
 		let updatedQuestions = [...questionFormData];
 		let currentQuestion = structuredClone(updatedQuestions[index]); // deep copy THIS question
 		if (!currentQuestion) return
-		console.log({updatedQuestions, questionFormData, currentQuestion})
+		// console.log({updatedQuestions, questionFormData, currentQuestion})
 		updatedQuestions[index] = currentQuestion;
 		// updatedQuestions[index] = currentQuestion;
 		// if (totalFileUploadQuestions) updatedQuestions = [...fileUploadQuestions]
@@ -602,9 +729,9 @@ function ScrambleQuestionsComponent() {
 		let file;
 		// console.log({name})
 		if (name === "image") {
-			console.log('in image mod')
+			// console.log('in image mod')
 			file = files[0];
-			console.log({file})
+			// console.log({file})
 			if (!file) {
 				updatedQuestions[index].image = null; // assign image file object
 				updatedQuestions[index].previewImage = null; // assign preview URL for the image
@@ -612,7 +739,7 @@ function ScrambleQuestionsComponent() {
 				updatedQuestions[index].image = file; // assign image file object
 				updatedQuestions[index].previewImage = URL.createObjectURL(file); // assign preview URL for the image
 			}
-			console.log({updatedQuestions: updatedQuestions[index]})
+			// console.log({updatedQuestions: updatedQuestions[index]})
 		} else if (name === "question_text") {
 			const textBlock = customFindLast(updatedQuestions[index].question, b => b.type === "text");
 			if (textBlock) {
@@ -739,7 +866,7 @@ function ScrambleQuestionsComponent() {
 	const handleChange = (e=null, data=null, mode='+') => {
 		if (!e && !data?.files?.[0]) return
 		let { name, value, files, type } = e ? e.target : data
-		console.log({name, value, files, type, mode})
+		// console.log({name, value, files, type, mode})
 		let file
 		let previewLogo
 		if (name === "logo") {
@@ -786,7 +913,7 @@ function ScrambleQuestionsComponent() {
 	};
 
 	useEffect(() => {
-		// console.log('duplicate useeffect...')
+		console.log('🔥 totalNoOfQs changed:', totalNoOfQs);
 			const newQuestions = []
 			for (let i=0; i<totalNoOfQs; i++) {
 				// console.log('adding...')
@@ -804,7 +931,7 @@ function ScrambleQuestionsComponent() {
 	const submitHandler = async (e, isRemember=false, isSubmitToSch=false) => {
 		e.preventDefault(); // prevent default page refresh
 
-		console.log({isRemember})
+		console.log({isRemember, isSubmitToSch})
 		// return
 		// setLoading(true)
 
@@ -825,7 +952,7 @@ function ScrambleQuestionsComponent() {
 			});
 			}
 		});
-		console.log({fd})
+		console.log({updatedFormData: fd})
 
 		if (isRemember||isSubmitToSch) {
 			if (isRemember) {
@@ -902,30 +1029,10 @@ function ScrambleQuestionsComponent() {
 				fetchDownloadLinkss({endpoint, setDownloadLink})
 				setIsNewDownload(true)
 			} else {
-				// const localSaved = lStorage.getItem('saved-questions')
-				// console.log({localSaved, fetchID})
-				// if (localSaved) {
-				// 	const filteredLocal = localSaved.filter(saved=>{
-				// 		console.log({saved, id: saved.id, eq: saved.id===fetchID})
-				// 		return saved.id!==fetchID
-				// 	})
-				// 	lStorage.setItem('saved-questions', filteredLocal)
-				// 	console.log({filteredLocal})
-				// 	console.log('saved-questions updated')
-				// }
 				lStorage.removeItem('saved-questions')
 				lStorage.removeItem(`saved-detail-${fetchID}`)
 				toast.success(`${res?.data?.success}!.`)
 			}
-			
-			// subpoint = 'get-links'
-			// const downloadLinks = await FetchFromServer(`${endpoint}/${subpoint}`)
-			// if (downloadLinks.ok) {
-			// 	console.log({data: downloadLinks?.data})
-			// 	setDownloadLink(downloadLinks?.data)
-			// }
-			
-			// deleteIndexArray.current = [];
 		}
 		setRememberLoading(false)
 		setScrambleLoading(false)
@@ -934,6 +1041,8 @@ function ScrambleQuestionsComponent() {
 
 	const args = {
 		// handleChange,
+		addTheory,
+		formData,
 		setFormData,
 		questionObject,
 		generateUniqueId,
@@ -972,7 +1081,7 @@ function ScrambleQuestionsComponent() {
 		savedSession,
 		// hasSubmitted,
 		// questionObject,
-		// questionFormData,
+		questionFormData,
 		// canRememberOrSubmit,
 		// formValues,
 		// dept,
@@ -984,6 +1093,8 @@ function ScrambleQuestionsComponent() {
 		// 	}
 		// 	return formData?.questions?.every(question=> question[field]!=='')
 		// })
+		addTheory,
+		theory,
 	})
 	return (
 			<>
@@ -994,7 +1105,19 @@ function ScrambleQuestionsComponent() {
 				onSubmit={submitHandler}
 				className={`form-head scramble-question-text glass ${loadingPage?'d-none':''}`}>
 					<div className="d-flex justify-content-between align-items-center">
-						<h1 className="shuffle-question-head1">Shuffle Questions</h1>
+						<div>
+							<h1 className="shuffle-question-head1">Shuffle Questions</h1>
+							{/* mobile */}
+							{(formData.level.toLowerCase().includes('sss')&&
+								formData.class.toLowerCase().includes('sss') &&
+								deviceInfo.width <= 768) &&
+								<div className="d-flex justify-self-start">
+							<ToggleDepartment
+							deptStyle={'d-flex pb-01'}
+							deviceInfo={deviceInfo}
+							dept={dept} handleDeptSet={handleDeptSet} />
+							</div>}
+						</div>
 						<div className="d-flex flex-row align-items-center gap-1 chk-box-pad-r">
 							{/* desktop */}
 							{(formData.level.toLowerCase().includes('sss')&&
@@ -1002,23 +1125,37 @@ function ScrambleQuestionsComponent() {
 								deviceInfo.width > 768) &&
 							<ToggleDepartment
 							dept={dept} handleDeptSet={handleDeptSet} />}
-							<CheckBoxBtnUI
-							chkText="Different School?"
-							spanClass='pl-color got-a-code'
-							checkState={hasDiffSchool}
-							setCheckState={setHasDiffSchool} />
+							<div className="d-flex flex-column">
+								<CheckBoxBtnUI
+								chkText="New School?"
+								spanClass='pl-color got-a-code align-self-end'
+								checkState={hasDiffSchool}
+								setCheckState={setHasDiffSchool} />
+
+								<CheckBoxBtnUI
+								chkText="Remove Obj?"
+								spanClass='pl-color got-a-code align-self-end'
+								checkState={removeObjectives}
+								setCheckState={setRemoveObjectives} />
+
+								<CheckBoxBtnUI
+								chkText="Add Theory?"
+								spanClass='pl-color got-a-code align-self-end'
+								checkState={addTheory}
+								setCheckState={setAddTheory} />
+							</div>
 						</div>
 					</div>
 						{/* mobile */}
-						{(formData.level.toLowerCase().includes('sss')&&
+						{/* {(formData.level.toLowerCase().includes('sss')&&
 							formData.class.toLowerCase().includes('sss') &&
 							deviceInfo.width <= 768) &&
-							<div className="d-flex justify-content-end">
+							<div className="d-flex justify-self-start">
 						<ToggleDepartment
-						deptStyle={'d-flex justify-content-end pr-1 pb-01'}
+						deptStyle={'d-flex pb-01'}
 						deviceInfo={deviceInfo}
 						dept={dept} handleDeptSet={handleDeptSet} />
-						</div>}
+						</div>} */}
 
 					<fieldset className="questions-header">
 						{formHeadState?.map((input, inpIdx) => {
@@ -1095,45 +1232,31 @@ function ScrambleQuestionsComponent() {
 					{/* {(totalNumberOfQuestions&&!isFile) ? */}
 					{/* <div> */}
 					<QuestionsArrComp args={args} />
+					{(addTheory&&!removeObjectives)?
+						<>
+							<br/><br/><br/>
+						</>:''}
+					{addTheory ? <TheoryBuilder updateState={updateTheoryState} updateFromSavedTheory={theoryQuestionsRef.current} />: null}
 					{/* </div> */}
 						{/* : */}
-						<div className="">
-							<div className={`${deviceInfo.width<=768?'d-flex justify-content-center':''}`}>
-								{/* <div style={{
-										display: 'flex',
-										alignItems: 'center',
-										gap: 3,
-									}}> */}
-									{/* <MoreInfo info="Upload information ..." /> */}
-									<button
+						{/* <div className="">
+							<div className={`${deviceInfo.width<=768?'d-flex justify-content-center':''}`}> */}
+
+									{/* <button
 									style={{margin: '0 5rem'}}
 									className={`cta-button mb-xs q-mx fit ${''}`}
 									type="button"
 									disabled={true}
 									onClick={() => null}>
 										Upload File
-									</button>
-								{/* </div> */}
-								{/* {isFile ?
-									<div>
-										<input className="" type="file" accept=".txt,.docx" onChange={handleFileChange}/>
-									</div>
-									:
-									null} */}
-							</div>
-							{/* {isFile ?
-								<>
-									<div>
-										<ShuffleQuestions {...args} fileMargin={{margin: 'auto'}} type="file" text={text} />
-									</div>
-								</>
-								:
-								null} */}
-						</div>
+									</button> */}
+
+							{/* </div>
+						</div> */}
 					{/* download file button */}
 					{/* <div className=""> */}
 					{hasSingleLink ?
-						<div className="download-btn-not-dropdown">
+						<div className={`download-btn-not-dropdown mt-1`}>
 							<DownloadBtn tick={tick}
 							item={downloadLink?.[0]}
 							single={true} />
@@ -1143,7 +1266,7 @@ function ScrambleQuestionsComponent() {
 						(<div
 							onMouseEnter={(e)=>setIsNewDownload(false)}
 							// style={{margin: '0 5rem',}}
-							className={`download-btn-dropdown
+							className={`download-btn-dropdown mt-1
 										${deviceInfo.width>1024?'mx-5':
 										deviceInfo.width>900?'mx-3':'mx-1'}`}>
 							<button
@@ -1170,7 +1293,7 @@ function ScrambleQuestionsComponent() {
 					: null}
 
 					{/* submit button */}
-					<div className={`d-flex justify-content-center ${isMobileDev?'scramble-btns-pt-05 gap-0p3':'pt-05'}`}>
+					<div className={`d-flex justify-content-center ${addTheory?'pt-2':''} ${isMobileDev?'scramble-btns-pt-05 gap-0p3':'pt-05'}`}>
 						{userInfo?.school ?
 						<>
 							<button
@@ -1180,7 +1303,7 @@ function ScrambleQuestionsComponent() {
 							disabled={submittingTToSchLoading
 								// ||!canRememberOrSubmit
 							}
-							className={`cta-button scramble-submit-mobile font-gold ${questionFormData?.length?'':'d-none'}`}>
+							className={`cta-button scramble-submit-mobile font-gold ${(questionFormData?.length||addTheory)?'':'d-none'}`}>
 								{submittingTToSchLoading ?
 									<Spinner type={'dot'} /> :
 									(hasSubmitted?.[fetchID])?'Update Submission':`Submit to ${userInfo.school.acronym}`}
@@ -1192,7 +1315,7 @@ function ScrambleQuestionsComponent() {
 							disabled={rememberLoading
 								// ||!canRememberOrSubmit
 							}
-							className={`cta-button scramble-submit-mobile ${questionFormData?.length?'':'d-none'}`}>
+							className={`cta-button scramble-submit-mobile ${(questionFormData?.length||addTheory)?'':'d-none'}`}>
 								{rememberLoading ?
 									<Spinner type={'dot'} /> :
 									isFetch?'Update Saved':'Remember'}
@@ -1204,7 +1327,7 @@ function ScrambleQuestionsComponent() {
 						disabled={scrambleLoading
 							// ||!canRememberOrSubmit
 						}
-						className={`cta-button scramble-submit-mobile ${questionFormData?.length?'':'d-none'}`}>
+						className={`cta-button scramble-submit-mobile ${(questionFormData?.length||addTheory)?'':'d-none'}`}>
 							{scrambleLoading ?
 								<Spinner type={'dot'} /> :
 								`Scramble${deviceInfo.width>768?' Questions':''}`}
@@ -1272,7 +1395,7 @@ function timeAgo(isoString) {
 function ToggleDepartment ({dept, handleDeptSet, deviceInfo=1000, deptStyle=null}) {
 	const isMobile = deviceInfo?.width <= 768
 	return (
-		<div className={deptStyle?deptStyle:''}>
+		<div className={`${deptStyle?deptStyle:''} ${isMobile?'':'align-self-end pr-1 pb-05'}`}>
 			<button
 			type="button"
 			onClick={()=>handleDeptSet('art')}
@@ -1294,4 +1417,5 @@ function ToggleDepartment ({dept, handleDeptSet, deviceInfo=1000, deptStyle=null
 		</div>
 	)
 }
+
 export { ScrambleQuestionsComponent, DownloadBtn, timeAgo, customFindLast };
