@@ -9,7 +9,7 @@ import { useDeviceInfo } from "../../hooks/deviceType";
 import { toast } from 'react-toastify';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { roleArray, genderArray, checkIcons, isValidEmail } from "./signUp";
-import { getGender,handleCopy,notAvailable, copyDelayDuration } from "./profile";
+import { handleCopy,notAvailable, copyDelayDuration } from "./profile";
 import { DownloadBtn, timeAgo } from "../scrambleQuestions/scrambleQuestions";
 
 const getAbbrObject = {
@@ -214,7 +214,6 @@ function Dashboard() {
 	const [backEndpoint, setBackEndpoint] = useState(null)
 	const [userDetail, setUserDetail] = useState(null)
 	const [isUserDetailPage, setIsUserDetailPage] = useState(false)
-	const [avatar] = useState(() => getGender());
 	const [copiedCode, setCopiedCode] = useState(false);
 	const [copiedPassword, setCopiedPassword] = useState(false);
 	const [tick, setTick] = useState(Date.now());
@@ -449,7 +448,7 @@ function Dashboard() {
 		setCopiedPassword, copiedPassword, pullResponse, handleBarPage,
 		setIsUserDetailPage, setUserDetail, profileArr, downloadLoading,
 		setDownloadID, setIsDownloading, downloadResponse, staffCreationLoading,
-		setStaffCreationLoading, avatar, deviceInfo, isMobileDev,
+		setStaffCreationLoading, deviceInfo, isMobileDev,
 	}
 	const questionPageArgs = {
 		currentPage, savedQuestionsPage, savedQuestionsResponse, setSubmitAllSavedQuestionsLoading,
@@ -793,7 +792,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 					setCopiedPassword, copiedPassword, pullResponse, handleBarPage,
 					setIsUserDetailPage, setUserDetail, profileArr, downloadLoading,
 					setDownloadID, setIsDownloading, downloadResponse, staffCreationLoading,
-					setStaffCreationLoading, avatar, submittedQuestionsLoading, deviceInfo,}) {
+					setStaffCreationLoading, submittedQuestionsLoading, deviceInfo,}) {
 	const staffSubPageArgs = {
 			staffCreationLoading,
 			setStaffCreationLoading,
@@ -1005,7 +1004,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 							src={userDetail.image_url}
 							alt={userDetail.first_name} />
 							:
-							<div className="profile-avatar">{userDetail?.avatar_code?userDetail.avatar_code:avatar}</div>
+							<div className="profile-avatar">{(userDetail?.avatar_code)?userDetail.avatar_code:<FontAwesomeIcon icon="user" color="white"/>}</div>
 						}
 						<div className="d-flex m-auto-td gap-1">
 							<h3 className="text-center profile-h3">{titleCase(userDetail?.first_name)||notAvailable}</h3>
@@ -1241,7 +1240,14 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 											// titleCase(saved?.term)
 											getAbbr("termAbbr", saved?.term)
 											}-term</span>
-									<span className={`${preStyle}`}>{`${isMobileDev?'Q':'Questions'}: ${saved?.questions}`}</span>
+									<span>
+										{(saved?.objective_questions)?<span className={`${preStyle}`}>
+											{`${isMobileDev?'Obj':'Objectives'}: ${saved?.objective_questions}`}
+										</span>:null}
+										{(saved?.theory_questions)?<span className={`${preStyle}`}>
+											{`${isMobileDev?'Thr':'Theory'}: ${saved?.theory_questions}`}
+										</span>:null}
+									</span>
 									<span className={`${preStyle} time-ago font-smb`}>{(saved?.has_submitted)?(isMobileDev?(
 										<i className="font-xsm font-bold font-white">
 											<FontAwesomeIcon icon="check" style={{ position: "absolute", right: 3, bottom: 14.5 }} />
