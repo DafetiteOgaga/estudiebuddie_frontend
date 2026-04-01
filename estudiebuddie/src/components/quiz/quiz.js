@@ -9,7 +9,7 @@ import { useDeviceInfo } from "../../hooks/deviceType";
 import { toast } from 'react-toastify';
 
 const formValues = {
-	name: "",
+	// name: "",
 	email: "",
 	type: "",
 	class: "",
@@ -43,22 +43,22 @@ const noOfQsArray = [0, 30, 70].map((increment, idx) => {
 // console.log({noOfQsArray, durationArray})
 
 const preHeadForm = [
-	{
-		name: "name",
-		required: true,
-		disabled: false,
-		type: "text",
-		placeholder: "Name (or fullname)",
-		width: "45%",
-		case: 'title',
-	},
+	// {
+	// 	name: "name",
+	// 	required: true,
+	// 	disabled: false,
+	// 	type: "text",
+	// 	placeholder: "Name (or fullname)",
+	// 	width: "45%",
+	// 	case: 'title',
+	// },
 	{
 		name: "email",
 		required: true,
 		disabled: false,
 		type: "email",
 		placeholder: "Email Address",
-		width: "45%",
+		width: "25%",
 		case: null,
 	},
 	{
@@ -150,6 +150,7 @@ function Quiz() {
 	const [loadingPage, setLoadingPage] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const { lStorage, sStorage } = useCreateStorage()
+	const loggedInDetails = lStorage.getItem("user")
 	const [session, setSession] = useState(blankSession)
 	const [temporaryResponse, setTemporaryResponse] = useState(null)
 	// const [quizQuestions, setQuizQuestions] = useState([])
@@ -161,6 +162,14 @@ function Quiz() {
 	const selectedAnswersRef = useRef([])
 	// check session storage for existing isFirstRender data
 	const isFirstRenderExist = sStorage.getItem('isFirstRender')
+	useEffect(() => {
+		if (loggedInDetails) {
+			console.log({loggedInDetails})
+			setStatePreHeadForm(prev => {
+				return prev.filter(item=>item.name!=="email")
+			})
+		}
+	}, [])
 	if (deviceInfo.label === "smallLaptop") {
 		// console.log('smallTablet'.repeat(5))
 		dyName.forEach(obj => {
@@ -183,8 +192,8 @@ function Quiz() {
 		// console.log('mobile'.repeat(5))
 		statePreHeadForm.forEach(obj => {
 			// let objItem = formHead.find(item => item.name === obj)
-			if (obj.name==="name"||obj.name==="email") {
-				obj.width = '100%'
+			if (obj.name==="email") {
+				obj.width = '50%'
 			} else if (obj.name==="type"||obj.name==="class") {
 				obj.width = '40%'
 			} else if (obj.name==="subject") {
@@ -375,6 +384,9 @@ function Quiz() {
 		setSelectedAnswers([])
 		isSubmitted = false
 
+		if (loggedInDetails) {
+			cleanedData.email = loggedInDetails.email
+		}
 		console.log({cleanedData})
 
 		endpoint = 'take-quiz/pre-quiz'
@@ -423,7 +435,7 @@ function Quiz() {
 						class: formData.class,
 						duration: formData.duration,
 						email: formData.email,
-						name: formData.name,
+						// name: formData.name,
 						subject: formData.subject,
 						type: formData.type,
 					}
