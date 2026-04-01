@@ -27,6 +27,10 @@
 }
 
 @media (max-width: 1024px) {
+    .device-width {
+        margin-top: -5px;
+        font-size: 6.2px;
+    }
     /* .login-form.w33percent {
         width: auto;
     } */
@@ -62,12 +66,18 @@
     .quiz-head1,
     .shuffle-question-head1,
     .profile-info h2,
-    .profile-form h2 {
+    .profile-form h2,
+    .leaderboard-page h3,
+    .dashboard-content h1,
+    .dashboard-content h2 {
         font-size: large;
     }
 }
 
 @media (max-width: 900px) {
+    .device-width {
+        align-self: auto;
+    }
     .login-form.w33percent {
         width: 45%;
     }
@@ -133,6 +143,12 @@
     }
 }
 @media (max-width: 800px) {
+    .device-width {
+        margin-top: 30px;
+    }
+    .nav-links a {
+        font-size: 15px;
+    }
     .login-form.w33percent {
         width: 50%;
     }
@@ -164,6 +180,10 @@
 }
 
 @media (max-width: 768px) {
+    .device-width {
+        margin-top: -7px;
+        align-self: end;
+    }
     /* .login-form.w33percent {
         width: 50%;
     } */
@@ -186,6 +206,7 @@
     }
     .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         font-size: 0.60rem;
+        /* left: 55% !important; */
     }
     /* .cta-button.question {
         padding: initial;
@@ -386,9 +407,6 @@
         margin-left: 0rem !important;
         margin-right: 0rem !important;
     }
-    .left-45-mobile {
-        left: 55% !important;
-    }
     .leaderboard-page {
         margin: 0;
     }
@@ -448,6 +466,9 @@
     .cta-button {
         font-size: 14px;
         padding: 10px 14px;
+    }
+    .cta-button.theory-btn {
+        padding: 10px 8px;
     }
     button[type="submit"],
     .cta-button,
@@ -524,23 +545,23 @@
         font-size: 0.8rem;
         margin: 0 auto;
     }
-    .features {
+    .cards {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 8px;
     }
-    .feature-card {
+    .card-item {
         padding: 8px 5px;
     }
-    .feature-icon {
+    .icon-item {
         width: 30px;
         height: 30px;
         margin: 0 auto 5px;
         font-size: 17px;
     }
-    .feature-card h3 {
+    .card-item h3 {
         font-size: 1.4rem;
     }
-    .feature-card p {
+    .card-item p {
         line-height: 1.4;
         font-size: 1rem;
     }
@@ -553,19 +574,19 @@
 }
 
 @media (max-width: 696px) {
-    .left-45-mobile {
+    /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 51% !important;
-    }
+    } */
 }
 @media (max-width: 680px) {
-    .login-form.w33percent {
+    .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         width: 55%;
     }
 }
 @media (max-width: 630px) {
-    .left-45-mobile {
+    /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 45% !important;
-    }
+    } */
 }
 @media (max-width: 600px) {
     .login-form.w33percent {
@@ -573,40 +594,40 @@
     }
 }
 @media (max-width: 590px) {
-    .left-45-mobile {
+    /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 40% !important;
-    }
+    } */
 }
 @media (max-width: 578px) {
-    .left-45-mobile {
+    /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 70% !important;
-    }
+    } */
 }
 @media (max-width: 530px) {
     .login-form.w33percent {
         width: 68%;
     }
-    .left-45-mobile {
+    /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 67% !important;
-    }
+    } */
 }
 @media (max-width: 480px) {
     .login-form.w33percent {
         width: 80%;
     }
-    .left-45-mobile {
+    /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 63% !important;
-    }
+    } */
 }
 @media (max-width: 430px) {
-    .left-45-mobile {
+    /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 58% !important;
-    }
+    } */
 }
 @media (max-width: 412px) {
-    .left-45-mobile {
+    /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 57% !important;
-    }
+    } */
     .login-form.w33percent {
         width: 100%;
     }
@@ -623,6 +644,9 @@
 
 /* Ultra-small screens <400px */
 @media (max-width: 400px) {
+    /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
+        left: 55% !important;
+    } */
     .mob-dashb.glass {
         background: none;
         border: 1px solid var(--border);
@@ -720,19 +744,22 @@
 }
 
 @media (max-width: 390px) {
-    .left-45-mobile {
+    /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 54% !important;
-    }
+    } */
 }
 @media (max-width: 380px) {
-    .left-45-mobile {
+    /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 50% !important;
-    }
+    } */
 }
 @media (max-width: 360px) {
-    .left-45-mobile {
-        left: 50% !important;
+    .device-width {
+        margin-top: -6px;
     }
+    /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
+        left: 50% !important;
+    } */
     .logo-text {
         font-size: 20px;
     }
