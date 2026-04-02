@@ -48,11 +48,11 @@ const questionObject = {
 
 const levelArray = ['basic', 'jss', 'sss']
 const basicClassArray = [
-	"basic 1",
-	"basic 2",
-	"basic 3",
-	"basic 4",
-	"basic 5",
+	"basic1",
+	"basic2",
+	"basic3",
+	"basic4",
+	"basic5",
 ];
 const jssClassArray = [
 	"jss1",
@@ -295,6 +295,7 @@ function ScrambleQuestionsComponent() {
 	const fetchID = location?.state?.fetchID
 	const { lStorage, sStorage } = useCreateStorage()
 	const userInfo = lStorage.getItem('user')
+	const hasSchool = userInfo?.school
 	const localSavedDetails = lStorage.getItem(`saved-detail-${fetchID}`)
 	const hasLocalSavedClassRef = useRef({
 		class: false,
@@ -399,7 +400,7 @@ function ScrambleQuestionsComponent() {
 
 	useEffect(() => {
 		// console.log({userInfoRef: userInfoRef.current})
-		if (!userInfo?.school?.name) {
+		if (!hasSchool?.name) {
 			// console.log('already ran.')
 			return
 		}
@@ -407,7 +408,7 @@ function ScrambleQuestionsComponent() {
 		// console.log({userInfo})
 		setFormHeadState(prev=> prev.filter(fh => fh.name!=='school'))
 		// console.log({formHeadState})
-	}, [userInfo?.school?.name])
+	}, [hasSchool?.name])
 
 	useEffect(() => {
 		// console.log({formHeadState})
@@ -447,7 +448,7 @@ function ScrambleQuestionsComponent() {
 								disabled: false,
 								type: "text",
 								placeholder: "No. of Questions",
-								width: "20%",
+								width: deviceInfo.label === "mobile"?"40%":"20%",
 								case: null,
 							},
 							...returnedPrev,
@@ -585,7 +586,7 @@ function ScrambleQuestionsComponent() {
 				prev.map(obj => {
 					  // create a shallow copy of obj
 					const updatedObj = { ...obj };
-				
+
 					if (obj.name === "totalQs") {
 						updatedObj.width = "40%";
 					} else if (obj.name === "level") {
@@ -1293,41 +1294,47 @@ function ScrambleQuestionsComponent() {
 					: null}
 
 					{/* submit button */}
-					<div className={`d-flex justify-content-center ${addTheory?'pt-2':''} ${isMobileDev?'scramble-btns-pt-05 gap-0p3':'pt-05'}`}>
-						{userInfo?.school ?
+					<div className={`d-flex justify-content-center ${addTheory?'pt-2':''} ${isMobileDev?'scramble-btns-pt-05':'pt-05'}`}>
+						{hasSchool ?
 						<>
 							<button
-							style={isMobileDev?{}:{margin: '0 0.5rem'}}
+							// style={isMobileDev?{}:{margin: '0 0.5rem'}}
 							onClick={(e)=>submitHandler(e, false, true)}
 							type="button"
 							disabled={submittingTToSchLoading
 								// ||!canRememberOrSubmit
 							}
-							className={`cta-button scramble-submit-mobile font-gold ${(questionFormData?.length||addTheory)?'':'d-none'}`}>
+							className={`cta-button scramble-submit-mobile font-gold
+										${(questionFormData?.length||addTheory)?'':'d-none'}
+										${hasSchool?'first':''}`}>
 								{submittingTToSchLoading ?
 									<Spinner type={'dot'} /> :
-									(hasSubmitted?.[fetchID])?'Update Submission':`Submit to ${userInfo.school.acronym}`}
+									(hasSubmitted?.[fetchID])?'Update Submission':`Submit to ${hasSchool?.acronym}`}
 							</button>
 							<button
-							style={isMobileDev?{}:{margin: '0 0.5rem'}}
+							// style={isMobileDev?{}:{margin: '0 0.5rem'}}
 							onClick={(e)=>submitHandler(e, true)}
 							type="button"
 							disabled={rememberLoading
 								// ||!canRememberOrSubmit
 							}
-							className={`cta-button scramble-submit-mobile ${(questionFormData?.length||addTheory)?'':'d-none'}`}>
+							className={`cta-button scramble-submit-mobile
+										${(questionFormData?.length||addTheory)?'':'d-none'}
+										${hasSchool?'middle':''}`}>
 								{rememberLoading ?
 									<Spinner type={'dot'} /> :
 									isFetch?'Update Saved':'Remember'}
 							</button>
 						</>:null}
 						<button
-						style={isMobileDev?{}:{margin: '0 0.5rem'}}
+						// style={isMobileDev?{}:{margin: '0 0.5rem'}}
 						type="submit"
 						disabled={scrambleLoading
 							// ||!canRememberOrSubmit
 						}
-						className={`cta-button scramble-submit-mobile ${(questionFormData?.length||addTheory)?'':'d-none'}`}>
+						className={`cta-button scramble-submit-mobile
+									${(questionFormData?.length||addTheory)?'':'d-none'}
+									${hasSchool?'last':''}`}>
 							{scrambleLoading ?
 								<Spinner type={'dot'} /> :
 								`Scramble${deviceInfo.width>768?' Questions':''}`}
