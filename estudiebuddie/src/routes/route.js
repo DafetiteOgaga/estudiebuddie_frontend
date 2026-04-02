@@ -3,9 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { ProtectedRoute, PublicRoute } from './ProtectedRoute';
 import { Index } from '../components';
 import { Home } from '../components/home';
-import { About } from '../components/sections/about'
-import { Services } from '../components/sections/services';
-import { Contact } from '../components/sections/contact';
+// import { Contact } from '../components/sections/contact';
 import { PageNotFound } from '../components/sections/pageNotFound';
 import { Unauthorized } from '../components/sections/Unauthorised';
 import { ScrambleQuestionsComponent } from '../components/scrambleQuestions/scrambleQuestions';
