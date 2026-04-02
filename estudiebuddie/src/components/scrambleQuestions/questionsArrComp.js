@@ -67,6 +67,8 @@ function QuestionsArrComp({args}) {
 	const deviceInfo = useDeviceInfo()
 	const [uploadedImg, setUploadedImg] = useState(null)
 	const {
+		addTheory,
+		formData,
 		setFormData,
 		questionObject,
 		generateUniqueId,
@@ -122,7 +124,7 @@ function QuestionsArrComp({args}) {
 	};
 
 	useEffect(() => {
-		console.log({uploadedImg})
+		// console.log({uploadedImg})
 		// const handleImages = (file, index) => [
 			handleQuestionChange(
 				null,
@@ -152,12 +154,14 @@ function QuestionsArrComp({args}) {
 
 	console.log({
 		questionFormData,
-		formQuestions,
-		// uploadedImg,
+		// formQuestions,
+		// // uploadedImg,
+		addTheory
 	})
 	return (
 		<div
 		style={{paddingTop: '1rem'}}>
+			{(formData?.totalQs&&addTheory)?<h3 className='mx-5 q-mx'>Objective Questions</h3>:null}
 			<QuestionBlock
 			diagramStageRefs={diagramStageRefs}
 			questionFormData={questionFormData}
@@ -237,7 +241,7 @@ function QuestionBlock ({diagramStageRefs,
 				// 			isDiagramActive, isDiagramSelected})
 				return (
 					<fieldset key={questionData?.uniqueId}
-					className="form-group mb-2 q-mx border-top-1 pt-1">
+					className="form-group mb-05 q-mx pt-1">
 						{/* textarea separately */}
 						{formQuestions.map((field, fIdx) => {
 							// console.log({name: field.name})

@@ -64,7 +64,7 @@ function Home() {
 									With interactive quizzes, timed practice sessions, smart feedback, and exam-focused
 									questions, <AppName paragragh={true} color1='white' color2="font-gold" /> helps you <strong>learn better, track your progress, and build
 									confidence</strong>, one question at a time.
-									<span className='font-gold'>{deviceInfo.width}px</span>
+									<span className='device-width-home'>{deviceInfo.width}</span>
 								</p>
 								<div className='d-flex gap-1 center-btns'>
 									<Link to={"/quiz"}
@@ -76,12 +76,12 @@ function Home() {
 							</div>
 						</section>
 
-						<section className="features">
+						<section className="cards">
 							{homeCards.map((card, cIdx) => {
 								return (
 									<div key={cIdx}
-									className="feature-card glass">
-										<div className="feature-icon">{card.icon}</div>
+									className="card-item glass">
+										<div className="icon-item">{card.icon}</div>
 										<h3>{card.heading}</h3>
 										<p>{card.para}</p>
 									</div>

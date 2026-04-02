@@ -164,7 +164,7 @@ function SignUp() {
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [emailCheckResponse, setEmailCheckResponse] = useState(null)
 	const [usernameCheckResponse, setUsernameCheckResponse] = useState(null)
-	const { checkExistence, availabilityResponse, availabilityLoading, availabilityError } = useEmailAndUsernameChecker();
+	const { checkExistence, availabilityResponse, availabilityLoading, availabilityError } = useEmailChecker();
 
 	// if (deviceInfo.label === "smallLaptop") {
 	// 	console.log('smallLaptop'.repeat(5))
@@ -368,16 +368,17 @@ function SignUp() {
 			} else if (value) {
 				setEmailCheckResponse('loading')
 			}
-		} else if (name==='username') {
-			console.log('username'.repeat(5))
-			if (value.trim()==='') {
-				console.log('username-empty'.repeat(5))
-				setUsernameCheckResponse(null)
-			} else if (value) {
-				setUsernameCheckResponse('loading')
-			}
 		}
-		if ((name==='email'&&isValidEmail(value))||name==='username') {
+		// else if (name==='username') {
+		// 	console.log('username'.repeat(5))
+		// 	if (value.trim()==='') {
+		// 		console.log('username-empty'.repeat(5))
+		// 		setUsernameCheckResponse(null)
+		// 	} else if (value) {
+		// 		setUsernameCheckResponse('loading')
+		// 	}
+		// }
+		if ((name==='email'&&isValidEmail(value))) {
 			console.log('checking'.repeat(5))
 			const response = await checkExistence(name, value);
 			if (response) {
@@ -390,10 +391,11 @@ function SignUp() {
 				if (name==='email') {
 					console.log('is-email'.repeat(5))
 					setEmailCheckResponse(response?.availabilityResponse)
-				} else {
-					console.log('is-username'.repeat(5))
-					setUsernameCheckResponse(response?.availabilityResponse)
 				}
+				// else {
+				// 	console.log('is-username'.repeat(5))
+				// 	setUsernameCheckResponse(response?.availabilityResponse)
+				// }
 			}
 		}
 	};
@@ -700,7 +702,7 @@ function usePasswordCheck () {
 	return passwordCheck
 }
 
-function useEmailAndUsernameChecker() {
+function useEmailChecker() {
 	const [availabilityResponse, setAvailabilityResponse] = useState(null);
 	const [availabilityLoading, setAvailabilityLoading] = useState(false);
 	const [availabilityError, setAvailabilityErrorError] = useState(null);
@@ -767,14 +769,14 @@ function useEmailAndUsernameChecker() {
 
 function CheckBoxBtnUI({checkState, setCheckState, spanClass='', chkText='checkbox display msg.'}) {
 	return (
-		<span className={spanClass}
+		<label className={`pointer ${spanClass} white-space-pre`}
 		>{chkText}
 		<input
 			type="checkbox"
 			checked={checkState}
 			onChange={(e) => setCheckState(e.target.checked)}
 		/>
-		</span>
+		</label>
 	)
 }
 

@@ -103,17 +103,12 @@ const randomAvatar = [
 	'🗿', '🎃', '✨', '🧩',
 	'🥏', '🎲',
 ]
-const getRandomAvatar = () => {
-	return randomAvatar[Math.floor(Math.random() * randomAvatar.length)];
-};
-const getGender = () => {
-	// if (!gender) return getRandomAvatar()
-	// if (role === 'teacher') {
-	// 	return gender === 'm' ? '👨‍💼' : '👩‍💼';
-	// }
-	// non-teacher (student / others)
-	return getRandomAvatar()
-};
+// const getRandomAvatar = () => {
+// 	return randomAvatar[Math.floor(Math.random() * randomAvatar.length)];
+// };
+// const getGender = () => {
+// 	return getRandomAvatar()
+// };
 const notAvailable = "N/A"
 const cleanFormForSubmit = (arr, formObj) => {
 	return Object.keys(formObj).reduce((acc, key) => {
@@ -191,8 +186,6 @@ function Profile() {
 	if (gender) {
 		gender = gender.toLowerCase()==='m'?'M':'F'
 	}
-	const [avatar] = useState(() => getGender());
-	
 	const uploadToCloud = useUploadToImagekit()
 	const [uploadedProfileImg, setUploadedProfileImg] = useState(null)
 	const [oldPasswordCheckError, setOldPPasswordCheckError] = useState(null)
@@ -511,7 +504,8 @@ function Profile() {
 								src={image_url}
 								alt={first_name} />
 								:
-								<div className="profile-avatar">{avatar_code?avatar_code:avatar}</div>
+								<div className="profile-avatar">{avatar_code?avatar_code:
+									<FontAwesomeIcon icon="user" color="white" />}</div>
 							}
 							<div className="d-flex m-auto-td gap-1">
 								<h3 className="text-center profile-h3">{titleCase(first_name)||notAvailable}</h3>
@@ -845,4 +839,4 @@ function usePasswordCheck () {
 	}
 	return passwordCheck
 }
-export { Profile, getGender, handleCopy, notAvailable, copyDelayDuration };
+export { Profile, handleCopy, notAvailable, copyDelayDuration };

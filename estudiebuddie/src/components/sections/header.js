@@ -5,7 +5,6 @@ import { useLogout } from "../authentication/logout";
 import { useCreateStorage } from "../../hooks/persistToStorage";
 import { useAuth } from "../../hooks/authContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getGender } from "./profile";
 import { useDeviceInfo } from "../../hooks/deviceType";
 import { serverOrigin } from "../../hooks/FetchFromServer";
 
@@ -44,7 +43,6 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 		id,
 		points,
 	} = userInfo
-	const [avatar] = useState(() => getGender());
 
 	const headerMenu = [];
 	// Login / Logout
@@ -100,8 +98,10 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 						<div className="logo-icon">
 							<AppLogo />
 						</div>
-						<AppName />
-						{isDev ? <span className='white-space-pre font-sm'> {deviceInfo.width}px</span>:null}
+						<div className="d-flex flex-column">
+							<AppName />
+							{isDev? <span className='device-width'> {deviceInfo.width}</span>: null}
+						</div>
 					</div>
 					<div className="nav-links is-desktop">
 						{headerMenu.map((header, hIdx) => {
@@ -155,7 +155,7 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 									src={image_url}
 									alt={first_name} />
 									:
-									<div className="bar-avatar m-0">{avatar_code?avatar_code:avatar}</div>
+									<div className="bar-avatar m-0">{avatar_code?avatar_code:<FontAwesomeIcon icon="user" color="white" />}</div>
 								}
 								<p className="p-05 white-space-pre">
 									{id ? username||first_name : 'Anon'}

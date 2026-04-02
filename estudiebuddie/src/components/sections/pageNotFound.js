@@ -7,6 +7,7 @@ import { DancingLion, DancingLion2, TalkingAnimal } from '../animationComps/lott
 import { FetchFromServer } from "../../hooks/FetchFromServer";
 import { useDeviceInfo } from "../../hooks/deviceType";
 import { titleCase } from "../../hooks/changeCase";
+// import { TheoryBuilder } from "../scrambleQuestions/theoryQuestions";
 
 function PageNotFound() {
 	const deviceInfo = useDeviceInfo()
@@ -30,6 +31,10 @@ function PageNotFound() {
 				<h2>Oopsy!</h2>
 				<h1>Page not found</h1>
 			</div>
+
+			{/* <div className="">
+				<TheoryBuilder />
+			</div> */}
 
 			{/* <button
 			type="submit"

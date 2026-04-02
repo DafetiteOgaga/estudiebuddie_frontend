@@ -46,70 +46,70 @@ function About() {
 				</div>
 			</section>
 
-			<section className="team-section">
+			<section className="about-section">
 				<h2>Meet Our Team</h2>
-				<div className="team-grid">
-					<div className="team-member glass">
-						<div className="team-avatar">👨‍💼</div>
+				<div className="about-grid">
+					<div className="about-member glass">
+						<div className="about-avatar">👨‍💼</div>
 						<h3>John Anderson</h3>
 						<p className="role">CEO & Founder</p>
 						<p className="bio">Visionary leader with 15+ years in digital innovation, driving our mission to create exceptional user experiences.</p>
-						<div className="team-social">
+						<div className="about-social">
 							<a href="##" title="Email">📧</a>
 							<a href="##" title="LinkedIn">💼</a>
 							<a href="##" title="Twitter">🐦</a>
 						</div>
 					</div>
-					<div className="team-member glass">
-						<div className="team-avatar">👩‍🎨</div>
+					<div className="about-member glass">
+						<div className="about-avatar">👩‍🎨</div>
 						<h3>Sarah Chen</h3>
 						<p className="role">Creative Director</p>
 						<p className="bio">Award-winning designer specializing in modern UI/UX, bringing artistic vision to every project.</p>
-						<div className="team-social">
+						<div className="about-social">
 							<a href="##" title="Email">📧</a>
 							<a href="##" title="LinkedIn">💼</a>
 							<a href="##" title="Portfolio">🎨</a>
 						</div>
 					</div>
-					<div className="team-member glass">
-						<div className="team-avatar">👨‍💻</div>
+					<div className="about-member glass">
+						<div className="about-avatar">👨‍💻</div>
 						<h3>Michael Torres</h3>
 						<p className="role">Lead Developer</p>
 						<p className="bio">Full-stack expert passionate about clean code and innovative web technologies.</p>
-						<div className="team-social">
+						<div className="about-social">
 							<a href="##" title="Email">📧</a>
 							<a href="##" title="LinkedIn">💼</a>
 							<a href="##" title="GitHub">💻</a>
 						</div>
 					</div>
-					<div className="team-member glass">
-						<div className="team-avatar">👩‍💻</div>
+					<div className="about-member glass">
+						<div className="about-avatar">👩‍💻</div>
 						<h3>Emma Wilson</h3>
 						<p className="role">Senior Developer</p>
 						<p className="bio">Frontend specialist with expertise in React and modern JavaScript frameworks.</p>
-						<div className="team-social">
+						<div className="about-social">
 							<a href="##" title="Email">📧</a>
 							<a href="##" title="LinkedIn">💼</a>
 							<a href="##" title="GitHub">💻</a>
 						</div>
 					</div>
-					<div className="team-member glass">
-						<div className="team-avatar">👨‍🎨</div>
+					<div className="about-member glass">
+						<div className="about-avatar">👨‍🎨</div>
 						<h3>David Kim</h3>
 						<p className="role">UX Designer</p>
 						<p className="bio">User experience expert focused on creating intuitive and accessible digital products.</p>
-						<div className="team-social">
+						<div className="about-social">
 							<a href="##" title="Email">📧</a>
 							<a href="##" title="LinkedIn">💼</a>
 							<a href="##" title="Behance">🎨</a>
 						</div>
 					</div>
-					<div className="team-member glass">
-						<div className="team-avatar">👩‍💼</div>
+					<div className="about-member glass">
+						<div className="about-avatar">👩‍💼</div>
 						<h3>Lisa Martinez</h3>
 						<p className="role">Project Manager</p>
 						<p className="bio">Certified PMP with a track record of delivering complex projects on time and budget.</p>
-						<div className="team-social">
+						<div className="about-social">
 							<a href="##" title="Email">📧</a>
 							<a href="##" title="LinkedIn">💼</a>
 							<a href="##" title="Calendar">📅</a>

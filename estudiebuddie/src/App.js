@@ -10,13 +10,15 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEye, faEyeSlash, faCircleCheck, faCheck, faTimes,
   faBars, faCopy, faArrowsRotate, faDownload, faGear, faCogs,
   faFileCirclePlus, faTrash, faTrashCan, faEraser, faXmark,
-  faPaperPlane, faCheckCircle, } from "@fortawesome/free-solid-svg-icons";
+  faPaperPlane, faCheckCircle, faUser, faPlus, faMinus,
+  faCirclePlus, } from "@fortawesome/free-solid-svg-icons";
 library.add(
   faEye, faEyeSlash, faCircleCheck, faCheck,
   faTimes, faBars, faCopy, faArrowsRotate,
   faDownload, faGear, faCogs, faFileCirclePlus,
   faTrash, faTrashCan, faEraser, faXmark,
-  faPaperPlane, faCheckCircle,
+  faPaperPlane, faCheckCircle, faUser, faPlus,
+  faMinus, faCirclePlus,
 );
 
 function App() {
