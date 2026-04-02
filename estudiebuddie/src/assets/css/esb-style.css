@@ -266,11 +266,23 @@ h1, h2, h3, h4, h5, h6, p {
 .font-smb {
     font-size: 15px !important;
 }
+.font-10 {
+    font-size: 10px !important;
+}
+.font-12 {
+    font-size: 12px !important;
+}
 .font-15 {
     font-size: 15px !important;
 }
 .gap-0 {
     gap: 0 !important;
+}
+.gap-3px {
+    gap: 3px !important;
+}
+.gap-0p2 {
+    gap: 0.2rem !important;
 }
 .gap-0p3 {
     gap: 0.3rem !important;
@@ -509,6 +521,14 @@ fieldset {
 .px-5 {
     padding-left: 5rem !important;
     padding-right: 5rem !important;
+}
+.py-5px {
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+}
+.py-6px {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
 }
 .py-0 {
     padding-top: 0 !important;

@@ -1221,14 +1221,17 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 					savedQuestionsResponse?.map((saved, sIdx) => {
 						// const item = saved?.scramble_session_data
 						// console.log({saved})
+						const hasObj = saved?.objective_questions
+						const hasThr = saved?.theory_questions
+						const both = hasObj && hasThr
 						const preStyle = 'white-space-pre'
 						return (
 							<li key={saved.id}
-							className="no-list-style justify-content-center gap-0p3">
+							className="no-list-style justify-content-center gap-0p2">
 								<Link
 								to={`scramble-questions/${saved.id}`}
 								state={{fetchID: saved.id}}
-								className="no-list-style glass gap-05"
+								className="no-list-style glass gap-05 align-items-center"
 								style={{ position: "relative" }}>
 									<span className={`${preStyle}`}>{sIdx+1}.</span>
 									<span className={`${preStyle}`}>{
@@ -1239,18 +1242,18 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 									<span className={`${preStyle}`}>{
 											// titleCase(saved?.term)
 											getAbbr("termAbbr", saved?.term)
-											}-term</span>
-									<span>
-										{(saved?.objective_questions)?<span className={`${preStyle}`}>
-											{`${isMobileDev?'Obj':'Objectives'}: ${saved?.objective_questions}`}
+											}</span>
+									<span className={`d-flex flex-column gap-3px ${!both?'':`${isMobileDev?'font-10 py-6px':'font-12 py-5px'}`}`}>
+										{(hasObj)?<span className={`${preStyle} ${both?'py-0':''}`}>
+											{`${isMobileDev?'OBJ':'Objectives'}: ${saved?.objective_questions}`}
 										</span>:null}
-										{(saved?.theory_questions)?<span className={`${preStyle}`}>
-											{`${isMobileDev?'Thr':'Theory'}: ${saved?.theory_questions}`}
+										{(hasThr)?<span className={`${preStyle} ${both?'py-0':''}`}>
+											{`${isMobileDev?'THR':'Theory'}: ${saved?.theory_questions}`}
 										</span>:null}
 									</span>
 									<span className={`${preStyle} time-ago font-smb`}>{(saved?.has_submitted)?(isMobileDev?(
 										<i className="font-xsm font-bold font-white">
-											<FontAwesomeIcon icon="check" style={{ position: "absolute", right: 3, bottom: 14.5 }} />
+											{/* <FontAwesomeIcon icon="check" style={{ position: "absolute", right: 3, bottom: 14.5 }} /> */}
 											<FontAwesomeIcon icon="check" />
 										</i>
 									):'Submitted'):''}</span>

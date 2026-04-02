@@ -726,7 +726,7 @@ function Quiz() {
 					<>
 					In development
 					<br />
-					But there is a mock quiz available.
+					Note: This is only a sample quiz.
 					</>}
 				// buttonText="Review Answers"
 				onConfirm={() => {
@@ -823,10 +823,10 @@ function Quiz() {
 						</fieldset>
 						<div className="d-flex justify-content-center">
 							<button
-							style={{margin: '1rem 5rem 0 5rem'}}
+							// style={{margin: '1rem 5rem 0 5rem'}}
 							type="submit"
 							disabled={loading}
-							className="cta-button">
+							className="cta-button mt-1">
 								{loading ?
 									<Spinner type={'dot'} /> :
 									'Take Quiz'}
@@ -980,16 +980,17 @@ function Quiz() {
 							</fieldset>
 							<div className="d-flex justify-content-center">
 								<button
-									style={{margin: deviceInfo.label === "mobile"?'1rem 1rem 0 3rem':'1rem 1rem 0 5rem'}}
+									// style={{margin: deviceInfo.label === "mobile"?'1rem 1rem 0 3rem':'1rem 1rem 0 5rem'}}
 									type="submit"
 									disabled={(!isSubmitted&&!selectedAnswers.length)||(isSubmitted&&!canRetakeTest)||loading}
-									className={`cta-button text-nowrap ${(!isSubmitted || canRetakeTest)?'':'d-none'}`}>
+									className={`cta-button text-nowrap first
+												${(!isSubmitted || canRetakeTest)?'':'d-none'}`}>
 										{loading ?
 											<Spinner type={'dot'} /> :
 											isSubmitted?'Retake Quiz':'Submit'}
 								</button>
 								<button
-									style={{margin: deviceInfo.label === "mobile"?'1rem 3rem 0 1rem':'1rem 5rem 0 1rem'}}
+									// style={{margin: deviceInfo.label === "mobile"?'1rem 3rem 0 1rem':'1rem 5rem 0 1rem'}}
 									onClick={(e)=>{
 										if (isSubmitted) {
 											handleRePopulateFormData()
@@ -998,7 +999,8 @@ function Quiz() {
 									}}
 									type="button"
 									// disabled={(!isSubmitted&&!selectedAnswers.length)}
-									className={`cta-button text-nowrap`}>
+									className={`cta-button text-nowrap
+												${isSubmitted?'':'last'}`}>
 										{isSubmitted?'New Quiz':'Cancel Test'}
 								</button>
 							</div>

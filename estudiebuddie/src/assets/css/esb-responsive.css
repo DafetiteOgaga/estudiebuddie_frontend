@@ -218,9 +218,9 @@
     .logo-text {
         font-size: 25px;
     }
-    .glass {
+    /* .glass {
         overflow: visible;
-    }
+    } */
     .glass:hover {
         transform: none;
         box-shadow: none;
@@ -749,6 +749,9 @@
     } */
 }
 @media (max-width: 380px) {
+    .no-list-style span, .no-list-style a {
+        padding: 5px 3px 5px 3px;
+    }
     /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 50% !important;
     } */
