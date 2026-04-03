@@ -1973,8 +1973,8 @@ form .signup-btn {
 .profile-info .role {
     font-size: 1rem;
     color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 8px;
-    line-height: 25px;
+    /* margin-bottom: 8px; */
+    line-height: 20px;
 }
 .profile-info .bio {
     /* line-height: 1.6; */
