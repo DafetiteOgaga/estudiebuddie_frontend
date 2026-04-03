@@ -47,7 +47,7 @@ function Home() {
 					<>
 						<section className="hero glass">
 							<div className="hero-image">
-								<img src={require("../assets/images/eStudieBuddie.png")} alt="Modern Technology Interaction" />
+								<img src={require("../assets/images/eStudieBuddie.png")} alt="eStudieBuddie media" />
 							</div>
 							<div className="hero-content">
 								<h3
