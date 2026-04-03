@@ -1009,7 +1009,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 					:<h3  className="no-result">No staff record created yet</h3>}
 				</ul>
 				<div className={`${(pullResponse?.length&&isUserDetailPage&&staffsPage==='')?'w-100 very-small-mob':'d-none'}`}>
-					<div className="d-flex flex-column gap-2">
+					<div className="d-flex flex-column mb-2 gap-1">
 						{userDetail?.image_url ?
 							<img
 							className="profile-avatar"
