@@ -1294,7 +1294,7 @@ function ScrambleQuestionsComponent() {
 					: null}
 
 					{/* submit button */}
-					<div className={`d-flex justify-content-center ${addTheory?'pt-2':''} ${isMobileDev?'scramble-btns-pt-05':'pt-05'}`}>
+					<div className={`d-flex justify-content-center pt-1p5 ${isMobileDev?'scramble-btns-pt-05':'pt-05'}`}>
 						{hasSchool ?
 						<>
 							<button
