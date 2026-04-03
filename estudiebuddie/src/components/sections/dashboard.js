@@ -178,6 +178,25 @@ const fetchData = async (endpoint) => {
 
 const not_available = "Not-Provided"
 
+const CopyToClipboard = ({staffsPage, theGenCode, setCopiedCode, copiedCode, isMobileDev}) => {
+	console.log('copy to clipboard clicked!')
+	console.log({theGenCode})
+	return (
+		<p
+		className={`white-space-pre pointer pr-1
+			${(staffsPage==="create-staff"&&theGenCode)?'':'d-none'}
+			${isMobileDev?' mt-1':''}`}
+		onClick={()=>handleCopy(theGenCode, setCopiedCode)}
+		>{theGenCode?.[3]==='T'?'Teacher':'Admin'} Code
+		<span className={`pl-05 ${theGenCode?'':'d-none'}`}>
+			<FontAwesomeIcon
+				icon={copiedCode?"check":"copy"}
+				title="Copy code"
+			/>
+		</span>
+		</p>
+	)
+}
 function Dashboard() {
 	const hasRun = useRef(false)
 	const navigate = useNavigate()
@@ -807,18 +826,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 				<div className={`d-flex align-items-center ${isMobileDev?'justify-content-center':''}`}>
 
 					{/* copy code to clipboard */}
-					<p
-					className={`white-space-pre pointer pr-1 ${(staffsPage==="create-staff"&&theGenCode)?'':'d-none'}`}
-					onClick={()=>handleCopy(theGenCode, setCopiedCode)}
-					>{theGenCode?.[3]==='T'?'Teacher':'Admin'} Code
-					<span className={`pl-05 ${theGenCode?'':'d-none'}`}>
-						<FontAwesomeIcon
-							icon={copiedCode?"check":"copy"}
-							// style={{ cursor: "pointer" }}
-							title="Copy code"
-						/>
-					</span>
-					</p>
+					{!isMobileDev ? <CopyToClipboard {...{staffsPage, theGenCode, setCopiedCode, copiedCode}} />:null}
 
 					<div className={`${(staffsPage===''||staffsPage==='pull-submitted')?'d-none':'d-flex'}`}>
 						<button
@@ -963,6 +971,10 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 							{(staffsPage!==''||isUserDetailPage)?'◀ Back':'Create Staff'}
 					</button>
 				</div>
+
+				{/* copy code to clipboard */}
+				{isMobileDev ? <CopyToClipboard {...{staffsPage, theGenCode, setCopiedCode, copiedCode, isMobileDev}} />:null}
+
 			</div>
 			{/* initial sub page */}
 			<div className={`StaffsListPage justify-content-center ${(staffsPage===''||staffsPage==='pull-submitted')?'d-flex':'d-none'}`}>

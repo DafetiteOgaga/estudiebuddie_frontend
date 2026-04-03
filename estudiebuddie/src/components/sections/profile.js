@@ -442,7 +442,9 @@ function Profile() {
 										${contributor?'first':'mr-05'}`}
 							type="button"
 							onClick={(e)=>setIsGenSchCode(true)}>
-								{`${isMobileDev?'':'Gen '}sch code`}
+								{isGenSchCode?
+								<Spinner type={'dot'} />: // dot spinner
+								`${isMobileDev?'':'Gen '}sch code`}
 							</button>
 
 							{/* contribute button */}
