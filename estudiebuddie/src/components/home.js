@@ -50,19 +50,22 @@ function Home() {
 								<img src={require("../assets/images/eStudieBuddie.png")} alt="eStudieBuddie media" />
 							</div>
 							<div className="hero-content">
-								<h3
-								// className='font-bold'
-								// style={{fontSize: 23}}
-								>Learning just got smarter, simpler, and more fun.</h3>
+								<h3 className='hero-header'>Learning just got smarter, simpler, and more fun.</h3>
 								<p>
-									<AppName paragragh={true} color1='white' color2="font-gold" /> is an all-in-one study and practice platform designed for students
-									from <strong>Basic 1-5, JSS 1-3, SSS 1-3</strong>, and candidates preparing for <strong>WAEC</strong> and <strong>JAMB</strong>. Whether
-									you're revising for a class test, practicing past questions, or getting exam-ready, we've
-									got you covered.
+									<AppName paragragh={true} color1='white' color2="font-gold" /> is an All-in-One
+									<strong> AI-powered</strong> study and practice platform designed for students
+									from <strong>Basic 1-5, JSS 1-3, SSS 1-3</strong>, and candidates preparing for
+									<strong> WAEC</strong> and <strong>JAMB</strong>.
+								</p>
+								<p>Whether you're revising for a class test, practicing past questions, or getting
+									exam-ready, our <strong>AI-driven learning system</strong> adapts to your pace
+									and helps you focus on what matters most.
 								</p>
 								<p>
-									With interactive quizzes, timed practice sessions, smart feedback, and exam-focused
-									questions, <AppName paragragh={true} color1='white' color2="font-gold" /> helps you <strong>learn better, track your progress, and build
+									With <strong>smart AI feedback</strong>, interactive quizzes, timed practice
+									sessions, and exam-focused questions
+									, <AppName paragragh={true} color1='white' color2="font-gold" /> helps
+									you <strong>learn better, track your progress intelligently, and build
 									confidence</strong>, one question at a time.
 									<span className='device-width-home'>{deviceInfo.width}</span>
 								</p>

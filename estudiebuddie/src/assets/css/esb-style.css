@@ -990,11 +990,12 @@ nav.sticky {
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100%;
 }
 .hero-image img {
     width: 100%;
-    max-width: 440px;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
     border-radius: 20px;
     box-shadow: 0 15px 35px var(--lightDarkShadow);
 }

@@ -11,6 +11,11 @@
     }
 }
 
+@media (min-width: 1160px) {
+    .hero-header {
+        font-size: 27px;
+    }
+}
 @media (max-width: 1160px) {
     .cta-button:active {
         /* background: rgba(255, 255, 255, 0.3); */
@@ -179,6 +184,11 @@
     }
 }
 
+@media (min-width: 768px) {
+    .hero-header {
+        font-size: 25px;
+    }
+}
 @media (max-width: 768px) {
     .device-width {
         margin-top: -7px;
