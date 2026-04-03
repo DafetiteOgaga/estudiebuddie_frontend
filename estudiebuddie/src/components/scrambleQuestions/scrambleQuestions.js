@@ -1058,18 +1058,21 @@ function ScrambleQuestionsComponent() {
 	const hasMultipleLinks = hasLinks && downloadLink.length > 1;
 	const hasSingleLink = hasLinks && downloadLink.length === 1;
 
-	const canRememberOrSubmit = formHeadState?.every(field=>field.required&&formData[field.name]!=='')&&
-			!!formData?.questions?.length&&
-			Object.keys(questionObject)?.every(field=> {
-				if (["image", "uniqueId"].includes(field)) {
-					return true // skip image and uniqueid field checks
-				}
-				// console.log('aaa'.repeat(6))
-				// console.log({field})
-				return questionFormData?.every(question=> question[field]!=='')
-			})
+	const canRememberOrSubmit = formHeadState?.every(field=>field.required&&formData[field.name]!=='')
+			&&!!formData?.questions?.length
+			// &&Object.values(formData?.questions)?.[0]
+			// &&Object.keys(questionObject)?.every(field=> {
+			// 	if (["image", "uniqueId"].includes(field)) {
+			// 		return true // skip image and uniqueid field checks
+			// 	}
+			// 	// console.log('aaa'.repeat(6))
+			// 	// console.log({field})
+			// 	return questionFormData?.every(question=> question[field]!=='')
+			// })
 
 	console.log({
+		lenFH: formData?.questions?.length,
+		anyQ: Object.values(formData?.questions)?.[0],
 		// deviceInfo,
 		// userInfo,
 		// location,
@@ -1083,7 +1086,7 @@ function ScrambleQuestionsComponent() {
 		// hasSubmitted,
 		// questionObject,
 		questionFormData,
-		// canRememberOrSubmit,
+		canRememberOrSubmit,
 		// formValues,
 		// dept,
 		// categoryFilled: formHead.every(field=>field.required&&formData[field.name]!==''),
