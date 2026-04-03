@@ -36,9 +36,9 @@
         margin-top: -5px;
         font-size: 6.2px;
     }
-    /* .login-form.w33percent {
-        width: auto;
-    } */
+    .login-form.w33percent {
+        width: 45%;
+    }
     header.sticky {
         padding: 0.1px;
     }
@@ -84,7 +84,7 @@
         align-self: auto;
     }
     .login-form.w33percent {
-        width: 45%;
+        width: 50%;
     }
     .dashboard-content .dashboard {
         grid-template-columns: auto;
@@ -155,7 +155,7 @@
         font-size: 15px;
     }
     .login-form.w33percent {
-        width: 50%;
+        width: 55%;
     }
     .logo-text {
         display: none;
@@ -194,9 +194,9 @@
         margin-top: -7px;
         align-self: end;
     }
-    /* .login-form.w33percent {
-        width: 50%;
-    } */
+    .login-form.w33percent {
+        width: 60%;
+    }
     .no-result{
         margin-top: 0 !important;
         margin: 3.5rem 0 !important;
@@ -589,6 +589,9 @@
     } */
 }
 @media (max-width: 680px) {
+    .login-form.w33percent {
+        width: 65%;
+    }
     .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         width: 55%;
     }
@@ -600,7 +603,7 @@
 }
 @media (max-width: 600px) {
     .login-form.w33percent {
-        width: 60%;
+        width: 70%;
     }
 }
 @media (max-width: 590px) {
@@ -609,13 +612,16 @@
     } */
 }
 @media (max-width: 578px) {
+    .login-form.w33percent {
+        width: 75%;
+    }
     /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 70% !important;
     } */
 }
 @media (max-width: 530px) {
     .login-form.w33percent {
-        width: 68%;
+        width: 88%;
     }
     /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 67% !important;
@@ -623,7 +629,7 @@
 }
 @media (max-width: 480px) {
     .login-form.w33percent {
-        width: 80%;
+        width: 100%;
     }
     /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 63% !important;
@@ -638,9 +644,9 @@
     /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 57% !important;
     } */
-    .login-form.w33percent {
+    /* .login-form.w33percent {
         width: 100%;
-    }
+    } */
     .dashboard-p-05 {
         padding: 0.8rem 0.1rem !important;
     }
