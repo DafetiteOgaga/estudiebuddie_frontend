@@ -1286,6 +1286,7 @@ function ModalOverlay({
 			<p>{message}</p>
 	
 			<button
+				type="button"
 				className="cta-button modal"
 				ref={buttonRef}
 				onClick={onConfirm}
