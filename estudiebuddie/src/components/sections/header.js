@@ -7,6 +7,8 @@ import { useAuth } from "../../hooks/authContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDeviceInfo } from "../../hooks/deviceType";
 import { serverOrigin } from "../../hooks/FetchFromServer";
+import { normalizeStringLength } from "./profile";
+import { titleCase } from "../../hooks/changeCase";
 
 const moveByIndex = (arr, fromIndex, toIndex) => {
 	const copy = [...arr];                // do not mutate original
@@ -22,6 +24,7 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 	const { lStorage, sStorage } = useCreateStorage()
 	const userInfo = lStorage.getItem('user') || {}
 	const deviceInfo = useDeviceInfo()
+	const isMobileDev = deviceInfo.width<=900
 	const isDev = serverOrigin === 'http://127.0.0.1:8000/'
 	console.log({isDev, serverOrigin})
 	let {
@@ -158,7 +161,7 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 									<div className="bar-avatar m-0">{avatar_code?avatar_code:<FontAwesomeIcon icon="user" color="white" />}</div>
 								}
 								<p className="p-05 white-space-pre">
-									{id ? username||first_name : 'Anon'}
+									{id ? titleCase(normalizeStringLength(username||first_name, isMobileDev)) : 'Anon'}
 								</p>
 
 							</Link>
