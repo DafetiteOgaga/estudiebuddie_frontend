@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, HashRouter } from 'react-router-dom';
 import { AuthProvider } from './hooks/authContext';
+import { ConfirmProvider } from './hooks/overlayContext';
 import 'mathlive';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -14,12 +15,14 @@ const isGitHubPages = window.location.hostname.includes('github.io');
 const RouterToUse = isGitHubPages ? HashRouter : BrowserRouter;
 root.render(
   // <React.StrictMode>
-    <AuthProvider>
-      <RouterToUse>
-        <App />
-      </RouterToUse>
-    </AuthProvider>
-  // </React.StrictMode>
+    <ConfirmProvider>
+      <AuthProvider>
+        <RouterToUse>
+          <App />
+        </RouterToUse>
+      </AuthProvider>
+    </ConfirmProvider>
+    // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
