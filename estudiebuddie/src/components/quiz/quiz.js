@@ -1271,7 +1271,7 @@ function ModalOverlay({
 	buttonRef = null,
 }) {
 	if (!isOpen) return null;
-  
+
 	return (
 		<div className="ready-backdrop" aria-hidden={!isOpen}>
 			<div
