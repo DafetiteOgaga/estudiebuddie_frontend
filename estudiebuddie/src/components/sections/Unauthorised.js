@@ -27,7 +27,7 @@ function Unauthorized() {
 				<h1>You are not authorised to view this page</h1>
 			</div>
 
-			<button
+			{/* <button
 			type="submit"
 			onClick={(e)=>{
 				toast.success('Success')
@@ -36,24 +36,24 @@ function Unauthorized() {
 			}}
 			className="cta-button profile-btn">
 				Test Toasts
-			</button>
+			</button> */}
 
-			<div>
+			{/* <div>
 				<Spinner type={'dot'} />
 			</div>
 			<div>
 				<Spinner type={'bar'} />
-			</div>
+			</div> */}
 
-			<button
+			{/* <button
 			type="submit"
 			onClick={(e)=>{
 				setShowAnime(prev=>!prev)
 			}}
 			className="cta-button profile-btn">
 				{showAnime?'Hide anime':'show anime'}
-			</button>
-			{showAnime?
+			</button> */}
+			{/* {showAnime?
 			<div>
 				<div className='d-flex'>
 					<DancingLion />
@@ -64,14 +64,14 @@ function Unauthorized() {
 				<div>
 					<TalkingAnimal />
 				</div>
-			</div>:null}
+			</div>:null} */}
 
-			<button
+			{/* <button
 			type="submit"
 			onClick={submitHandler}
 			className="cta-button profile-btn">
 				test GET request
-			</button>
+			</button> */}
 		</>
 	)
 }

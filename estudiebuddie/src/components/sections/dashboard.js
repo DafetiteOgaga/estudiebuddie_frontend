@@ -9,8 +9,9 @@ import { useDeviceInfo } from "../../hooks/deviceType";
 import { toast } from 'react-toastify';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { roleArray, genderArray, checkIcons, isValidEmail } from "./signUp";
-import { handleCopy,notAvailable, copyDelayDuration } from "./profile";
+import { handleCopy,notAvailable, copyDelayDuration, normalizeStringLength } from "./profile";
 import { DownloadBtn, timeAgo } from "../scrambleQuestions/scrambleQuestions";
+import { useConfirm } from "../../hooks/overlayContext";
 
 const getAbbrObject = {
 	subjectAbbr: {
@@ -252,6 +253,9 @@ function Dashboard() {
 	const localPulledStaffs = lStorage.getItem('pulled-staffs')
 	const deviceInfo = useDeviceInfo()
 	const isMobileDev = deviceInfo.width<=900
+	const { confirm } = useConfirm();
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [pendingAction, setPendingAction] = useState(null);
 
 	useEffect(() => {
 		setLoadingPage(false)
@@ -475,7 +479,7 @@ function Dashboard() {
 		submitAllSavedQuestionsLoading, setDeleteAllSavedQuestionsLoading, setIsDeleteAllSaved,
 		deleteAllSavedQuestionsLoading, setSavedQuestionsLoading, setIsSavedQuestions,
 		savedQuestionsLoading, submitSavedQuestionLoading, setIsSubmitSavedQuestion,
-		deleteSavedQuestionLoading, setIsDeleteSaved, isMobileDev,
+		deleteSavedQuestionLoading, setIsDeleteSaved, isMobileDev, confirm,
 	}
 	const scramblePageArgs = {
 		currentPage, scrambledPage, setScrambledLoading, setIsScrambled,
@@ -754,13 +758,16 @@ function DashboardSidebar({
 			if (item.name==='staffs'&&!isHeadOrAdmin) {
 				return null
 			}
+			// console.log({name: item.name, idx, isHeadOrAdmin})
 			return (
 				<div key={idx}
 				className={`bar-box
 							${item.name===currentPage?'active':''}
 							${item.disable?'disabled':''}
 							${isMobileDev?(idx===0?'first ml-5px rem-mob-margin-dashb':
-											idx===(barItems.length-1)?'last mr-5px rem-mob-margin-dashb':'middle rem-mob-margin-dashb'
+											idx===(barItems.length-1)?'last mr-5px rem-mob-margin-dashb':
+											idx===2&&!isHeadOrAdmin?'last rem-mob-margin-dashb':
+											'middle rem-mob-margin-dashb'
 							):''}
 							`}
 				onClick={()=>{
@@ -981,7 +988,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 				<div className={`loader-margin-bottom ${(pullStaffsLoading)?'':'d-none'}`}>
 					<SpinnerBarForPage />
 				</div>
-				{pullResponse===null && <h3 className="no-result">Nothing to display</h3>}
+				{/* {pullResponse===null && <h3 className="no-result">Nothing to display</h3>} */}
 				<ul className={`${(pullResponse&&!isUserDetailPage)?'':'d-none'}`}>
 					{pullResponse?.length ?
 					pullResponse?.map((user, uIdx) => {
@@ -993,8 +1000,8 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 							}}
 							className="no-list-style glass my-05">
 								<span>{uIdx+1}.</span>
-								<span>{titleCase(user.first_name)||not_available}</span>
-								<span>{(userInfo?.id===user?.id)?'(You)':titleCase(user.last_name)||not_available}</span>
+								<span>{titleCase(normalizeStringLength(user.first_name||not_available, isMobileDev))}</span>
+								<span>{(userInfo?.id===user?.id)?'(You)':titleCase(normalizeStringLength(user.last_name||not_available, isMobileDev, null, null, "username"))}</span>
 								<span>{user.gender.toUpperCase().slice(0, 1)||not_available}</span>
 								{!isMobileDev?<span>{user.mobile_no||not_available}</span>:null}
 								<span className={`${user.role.toLowerCase()==='head'?'font-gold font-bold'
@@ -1019,21 +1026,21 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 							<div className="profile-avatar">{(userDetail?.avatar_code)?userDetail.avatar_code:<FontAwesomeIcon icon="user" color="white"/>}</div>
 						}
 						<div className="d-flex m-auto-td gap-1">
-							<h3 className="text-center profile-h3">{titleCase(userDetail?.first_name)||notAvailable}</h3>
-							<h3 className="text-center profile-h3">{titleCase(userDetail?.last_name)}</h3>
+							<h3 className="text-center profile-h3">{titleCase(normalizeStringLength(userDetail?.first_name||notAvailable, isMobileDev))}</h3>
+							<h3 className="text-center profile-h3">{titleCase(normalizeStringLength(userDetail?.last_name, isMobileDev, null, null, "username"))}</h3>
 							<h3 className="text-center profile-h3">({userDetail?.gender?.toUpperCase()?.slice(0, 1)})</h3>
 						</div>
 						{(userInfo?.school?.name)?
 						<div className="d-flex align-items-baseline justify-content-center">
-							<p className="role text-center text-italic m-0 white-space-pre">{titleCase(userInfo?.school?.name)||notAvailable} </p>
+							<p className="role text-center text-italic m-0 white-space-pre">{titleCase(normalizeStringLength(userInfo?.school?.name||notAvailable, isMobileDev, 23))} </p>
 							<p className="role text-center text-italic m-0">({userInfo?.school?.acronym||notAvailable})</p>
 							{/* <p className="role white-space-pre font-small"> ID:{id}</p> */}
 						</div>:null}
-						<div className="d-flex align-items-baseline justify-content-center">
+						<div className="d-flex align-items-baseline justify-content-center font-bold">
 							<p className="role text-center">{titleCase(userDetail?.role)||notAvailable}</p>
 							<p className="role white-space-pre font-small"> ID:{userDetail?.id}</p>
 						</div>
-						<p className="bio text-center">{sentenceCase(userDetail?.about)||notAvailable}</p>
+						<p className="bio text-center">{sentenceCase(normalizeStringLength(userDetail?.about||notAvailable, isMobileDev, 100, 100))}</p>
 					</div>
 					<div>
 						{profileArr?.map((userProfileItem, uPIdx) => {
@@ -1135,7 +1142,7 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 						submitAllSavedQuestionsLoading, setDeleteAllSavedQuestionsLoading, setIsDeleteAllSaved,
 						deleteAllSavedQuestionsLoading, setSavedQuestionsLoading, setIsSavedQuestions,
 						savedQuestionsLoading, submitSavedQuestionLoading, setIsSubmitSavedQuestion,
-						deleteSavedQuestionLoading, setIsDeleteSaved, isMobileDev,}) {
+						deleteSavedQuestionLoading, setIsDeleteSaved, isMobileDev, confirm,}) {
 	return (
 		<div className={` SavedQuestionsPageComp ${currentPage==='saved questions'?'':'d-none'}`}>
 			<div className={`d-flex justify-content-between pb-1`}>
@@ -1179,14 +1186,21 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 						</button>
 						<button
 						onClick={(e)=> {
-							// if (staffsPage==='pull-submitted') {
-							const allIDs = savedQuestionsResponse.map(item=>item.id)
-							setDeleteAllSavedQuestionsLoading(true)
-							setIsDeleteAllSaved(true)
-							setBackEndpoint(`school/save/false/?delete_all=True&allIDs=${allIDs}`)
-							allIDs.forEach(saved=> {
-								lStorage.removeItem(`saved-detail-${saved}`)
-							})
+							console.log("confirm clicked")
+							confirm({
+								title: "Delete All Saved Questions?",
+								// message: "This action cannot be undone.",
+								buttonText: "Yes, delete",
+								onConfirm: () => {
+									console.log('onConfirm')
+									const allIDs = savedQuestionsResponse.map(item=>item.id)
+									setDeleteAllSavedQuestionsLoading(true)
+									setIsDeleteAllSaved(true)
+									setBackEndpoint(`school/save/false/?delete_all=True&allIDs=${allIDs}`)
+									allIDs.forEach(saved=> {
+										lStorage.removeItem(`saved-detail-${saved}`)
+									})
+								}})
 						}}
 						type="button"
 						disabled={deleteAllSavedQuestionsLoading||
@@ -1237,29 +1251,25 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 						const hasThr = saved?.theory_questions
 						const both = hasObj && hasThr
 						const preStyle = 'white-space-pre'
+						const subjectAbbr = getAbbr("subjectAbbr", saved?.subject)
+						const termAbbr = getAbbr("termAbbr", saved?.term)
 						return (
 							<li key={saved.id}
 							className="no-list-style justify-content-center gap-0p2">
 								<Link
 								to={`scramble-questions/${saved.id}`}
 								state={{fetchID: saved.id}}
-								className="no-list-style glass gap-05 align-items-center"
+								className="no-list-style glass gap-05 align-items-center py-2px"
 								style={{ position: "relative" }}>
 									<span className={`${preStyle}`}>{sIdx+1}.</span>
-									<span className={`${preStyle}`}>{
-											// titleCase(saved?.subject)
-											getAbbr("subjectAbbr", saved?.subject)
-											}</span>
+									<span className={`${preStyle}`}>{subjectAbbr}</span>
 									<span className={`${preStyle}`}>{saved?.class?.toUpperCase()}</span>
-									<span className={`${preStyle}`}>{
-											// titleCase(saved?.term)
-											getAbbr("termAbbr", saved?.term)
-											}</span>
+									<span className={`${preStyle}`}>{termAbbr}</span>
 									<span className={`d-flex flex-column gap-3px ${!both?'':`${isMobileDev?'font-10 py-6px':'font-12 py-5px'}`}`}>
-										{(hasObj)?<span className={`${preStyle} ${both?'py-0':''}`}>
+										{(hasObj)?<span className={`${preStyle} ${both?'py-0 font-bold':''}`}>
 											{`${isMobileDev?'OBJ':'Objectives'}: ${saved?.objective_questions}`}
 										</span>:null}
-										{(hasThr)?<span className={`${preStyle} ${both?'py-0':''}`}>
+										{(hasThr)?<span className={`${preStyle} ${both?'py-0 font-bold':''}`}>
 											{`${isMobileDev?'THR':'Theory'}: ${saved?.theory_questions}`}
 										</span>:null}
 									</span>
@@ -1306,17 +1316,25 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 									</button>
 									<button
 									onClick={(e)=> {
-										// if (staffsPage==='pull-submitted') {
-										// const allIDs = savedQuestionsResponse.map(item=>item.id)
-										deleteSavedQuestionLoading?.push(saved.id)
-										setIsDeleteSaved(true)
-										setBackEndpoint(`school/save/false/?delete_all=True&allIDs=${[saved.id]}`);
-										lStorage.removeItem(`saved-detail-${saved.id}`)
-										setSavedQuestionsResponse(prev=>{
-											const updatedSaved = prev.filter(item=>item.id!==saved.id)
-											lStorage.setItem('saved-questions', updatedSaved)
-											return updatedSaved
-										})
+										console.log("confirm clicked")
+											confirm({
+												title: `Delete ${subjectAbbr} for ${saved?.class} (${termAbbr} term)?`,
+												// message: "This action cannot be undone.",
+												buttonText: "Yes, delete",
+												onConfirm: () => {
+													console.log('onConfirm')
+													// if (staffsPage==='pull-submitted') {
+													// const allIDs = savedQuestionsResponse.map(item=>item.id)
+													deleteSavedQuestionLoading?.push(saved.id)
+													setIsDeleteSaved(true)
+													setBackEndpoint(`school/save/false/?delete_all=True&allIDs=${[saved.id]}`);
+													lStorage.removeItem(`saved-detail-${saved.id}`)
+													setSavedQuestionsResponse(prev=>{
+														const updatedSaved = prev.filter(item=>item.id!==saved.id)
+														lStorage.setItem('saved-questions', updatedSaved)
+														return updatedSaved
+													})
+												}})
 									}}
 									type="button"
 									disabled={deleteSavedQuestionLoading.includes(saved.id)}

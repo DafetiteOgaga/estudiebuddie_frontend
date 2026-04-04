@@ -133,6 +133,31 @@ const handleCopy = async (content, isCopied) => {
 	}
 };
 const copyDelayDuration = 800
+const normalizeStringLength = (str, isMobileDev, len=null, extra=null, fieldName=null) => {
+	if (!str) return ''
+	console.log({len, extra})
+	let addExtra = 10
+	if (extra) {
+		addExtra = extra
+	}
+	let nameField = isMobileDev?8:13
+	if (fieldName) {
+		nameField = isMobileDev?5:10
+	}
+	if (len) {
+		console.log('using len', {
+			strLen: str.length,
+			len,
+			gt: str.length>len,
+			extra,
+		})
+		return str.length<len?str:
+				`${isMobileDev?str.slice(0, len):
+				str.slice(0, len+addExtra)}...`
+	}
+	return str.length<=10?str:
+			`${str.slice(0, nameField)}...` // desktop
+}
 
 function Profile() {
 	const deviceInfo = useDeviceInfo()
@@ -180,9 +205,9 @@ function Profile() {
 		about: about||"",
 		avatar_code: avatar_code||"",
 	}
-	if (username) {
-		username = `(${username})`
-	}
+	// if (username) {
+	// 	username = `(${username})`
+	// }
 	if (gender) {
 		gender = gender.toLowerCase()==='m'?'M':'F'
 	}
@@ -510,21 +535,21 @@ function Profile() {
 									<FontAwesomeIcon icon="user" color="white" />}</div>
 							}
 							<div className="d-flex m-auto-td gap-1">
-								<h3 className="text-center profile-h3">{titleCase(first_name)||notAvailable}</h3>
-								<h3 className="text-center profile-h3">{titleCase(last_name)}</h3>
-								<h3 className="text-center profile-h3">{username}</h3>
+								<h3 className="text-center profile-h3">{titleCase(normalizeStringLength(first_name||notAvailable, isMobileDev))}</h3>
+								<h3 className="text-center profile-h3">{titleCase(normalizeStringLength(last_name, isMobileDev, null, null, "last_name"))}</h3>
+								<h3 className="text-center profile-h3">({normalizeStringLength(username, isMobileDev, null, null, "username")})</h3>
 							</div>
 							{(school?.name)?
 							<div className="d-flex align-items-baseline justify-content-center">
-								<p className="role text-center text-italic m-0 white-space-pre">{titleCase(school?.name)||notAvailable} </p>
+								<p className="role text-center text-italic m-0 white-space-pre">{titleCase(normalizeStringLength(school?.name||notAvailable, isMobileDev, 23))} </p>
 								<p className="role text-center text-italic m-0">({school?.acronym||notAvailable})</p>
 								{/* <p className="role white-space-pre font-small"> ID:{id}</p> */}
 							</div>:null}
-							<div className="d-flex align-items-baseline justify-content-center">
+							<div className="d-flex align-items-baseline justify-content-center font-bold text-underline">
 								<p className="role text-center">{titleCase(role)||notAvailable}</p>
 								<p className="role white-space-pre font-small"> ID:{id}</p>
 							</div>
-							<p className="bio text-center">{sentenceCase(about)||notAvailable}</p>
+							<p className="bio text-center">{sentenceCase(normalizeStringLength(about||notAvailable, isMobileDev, 100, 100))}</p>
 						</div>
 
 						{(is_super_admin&&theGenCode) ?
@@ -841,4 +866,4 @@ function usePasswordCheck () {
 	}
 	return passwordCheck
 }
-export { Profile, handleCopy, notAvailable, copyDelayDuration };
+export { Profile, handleCopy, notAvailable, copyDelayDuration, normalizeStringLength };

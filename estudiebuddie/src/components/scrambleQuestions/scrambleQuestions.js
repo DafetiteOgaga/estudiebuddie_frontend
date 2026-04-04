@@ -14,6 +14,7 @@ import { useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CheckBoxBtnUI } from "../sections/signUp";
 import { TheoryBuilder } from "./theoryQuestions";
+import { useConfirm } from "../../hooks/overlayContext";
 
 let formValues = {
 	// school: "",
@@ -281,6 +282,43 @@ function normalizeTheory(data) {
 	}));
 }
 
+const validateFields = ({formData, formHeadState}) => {
+	const hasObjectives = Array.isArray(formData?.questions) && formData.questions.length > 0;
+	const hasTheory = Array.isArray(formData?.theory) && formData.theory.length > 0;
+	// Validate required fields
+	const headFieldsValid = formHeadState?.every(field => !field.required || formData[field.name] !== '');
+	// Validate objectives
+	const areObjectiveQuestionsValid = hasObjectives && formData.questions.every(q => {
+		const textObj = q?.question?.find(qt => qt.type === "text");
+		return (
+			textObj?.value?.trim() !== '' &&
+			q?.correct_answer?.trim() !== '' &&
+			q?.wrong_answer1?.trim() !== '' &&
+			q?.wrong_answer2?.trim() !== '' &&
+			q?.wrong_answer3?.trim() !== ''
+		);
+	});
+	// Validate theory (recursive)
+	const isTheoryValid = (nodes) => {
+		if (!Array.isArray(nodes) || nodes.length === 0) return false;
+		return nodes.every(node => {
+			const hasText = node?.text?.trim() !== '';
+			const childrenValid = node?.children?.length
+				? isTheoryValid(node.children)
+				: true;
+			return hasText && childrenValid;
+		});
+	};
+	const areTheoryValid = hasTheory && isTheoryValid(formData?.theory);
+
+	// outcome
+	return headFieldsValid &&
+			(
+				(hasObjectives && areObjectiveQuestionsValid) ||
+				(hasTheory && areTheoryValid)
+			);
+}
+
 function ScrambleQuestionsComponent() {
 	const levelRef = useRef('')
 	const classRef = useRef('')
@@ -327,6 +365,7 @@ function ScrambleQuestionsComponent() {
 	const [theory, setTheory] = useState([])
 	const [addTheory, setAddTheory] = useState(false)
 	const theoryQuestionsRef = useRef(null)
+	const { confirm } = useConfirm();
 
 	const updateTheoryState = (data) => {
 		setTheory(data)
@@ -932,7 +971,7 @@ function ScrambleQuestionsComponent() {
 	const submitHandler = async (e, isRemember=false, isSubmitToSch=false) => {
 		e.preventDefault(); // prevent default page refresh
 
-		console.log({isRemember, isSubmitToSch})
+		console.log('q'.repeat(15), {isRemember, isSubmitToSch})
 		// return
 		// setLoading(true)
 
@@ -1042,6 +1081,7 @@ function ScrambleQuestionsComponent() {
 
 	const args = {
 		// handleChange,
+		confirm,
 		addTheory,
 		formData,
 		setFormData,
@@ -1058,21 +1098,40 @@ function ScrambleQuestionsComponent() {
 	const hasMultipleLinks = hasLinks && downloadLink.length > 1;
 	const hasSingleLink = hasLinks && downloadLink.length === 1;
 
-	const canRememberOrSubmit = formHeadState?.every(field=>field.required&&formData[field.name]!=='')
-			&&!!formData?.questions?.length
-			// &&Object.values(formData?.questions)?.[0]
-			// &&Object.keys(questionObject)?.every(field=> {
-			// 	if (["image", "uniqueId"].includes(field)) {
-			// 		return true // skip image and uniqueid field checks
-			// 	}
-			// 	// console.log('aaa'.repeat(6))
-			// 	// console.log({field})
-			// 	return questionFormData?.every(question=> question[field]!=='')
-			// })
+	// const hasObjectives = Array.isArray(formData?.questions) && formData.questions.length > 0;
+	// const hasTheory = Array.isArray(formData?.theory) && formData.theory.length > 0;
+	// const headFieldsValid = formHeadState?.every(field => !field.required || formData[field.name] !== '');
+	// const areObjectiveQuestionsValid = hasObjectives && formData.questions.every(q => {
+	// 	const textObj = q?.question?.find(qt => qt.type === "text");
+	// 	return (
+	// 		textObj?.value?.trim() !== '' &&
+	// 		q?.correct_answer?.trim() !== '' &&
+	// 		q?.wrong_answer1?.trim() !== '' &&
+	// 		q?.wrong_answer2?.trim() !== '' &&
+	// 		q?.wrong_answer3?.trim() !== ''
+	// 	);
+	// });
+	// const isTheoryValid = (nodes) => {
+	// 	if (!Array.isArray(nodes) || nodes.length === 0) return false;
+	// 	return nodes.every(node => {
+	// 		const hasText = node?.text?.trim() !== '';
+	// 		const childrenValid = node?.children?.length
+	// 			? isTheoryValid(node.children)
+	// 			: true;
+	// 		return hasText && childrenValid;
+	// 	});
+	// };
+	// const areTheoryValid = hasTheory && isTheoryValid(formData?.theory);
+	const canRememberOrSubmit = validateFields({formData, formHeadState})
+	// headFieldsValid &&
+	// (
+	// 	(hasObjectives && areObjectiveQuestionsValid) ||
+	// 	(hasTheory && areTheoryValid)
+	// );
 
 	console.log({
-		lenFH: formData?.questions?.length,
-		anyQ: Object.values(formData?.questions)?.[0],
+		// areObjectiveQuestionsValid,
+		// areTheoryValid,
 		// deviceInfo,
 		// userInfo,
 		// location,
@@ -1240,7 +1299,11 @@ function ScrambleQuestionsComponent() {
 						<>
 							<br/><br/><br/>
 						</>:''}
-					{addTheory ? <TheoryBuilder updateState={updateTheoryState} updateFromSavedTheory={theoryQuestionsRef.current} />: null}
+					{addTheory ?
+						<TheoryBuilder
+						confirm={confirm}
+						updateState={updateTheoryState}
+						updateFromSavedTheory={theoryQuestionsRef.current} />: null}
 					{/* </div> */}
 						{/* : */}
 						{/* <div className="">
@@ -1305,7 +1368,7 @@ function ScrambleQuestionsComponent() {
 							onClick={(e)=>submitHandler(e, false, true)}
 							type="button"
 							disabled={submittingTToSchLoading
-								// ||!canRememberOrSubmit
+								||!canRememberOrSubmit
 							}
 							className={`cta-button scramble-submit-mobile font-gold
 										${(questionFormData?.length||addTheory)?'':'d-none'}
@@ -1319,7 +1382,7 @@ function ScrambleQuestionsComponent() {
 							onClick={(e)=>submitHandler(e, true)}
 							type="button"
 							disabled={rememberLoading
-								// ||!canRememberOrSubmit
+								||!canRememberOrSubmit
 							}
 							className={`cta-button scramble-submit-mobile
 										${(questionFormData?.length||addTheory)?'':'d-none'}
@@ -1333,7 +1396,7 @@ function ScrambleQuestionsComponent() {
 						// style={isMobileDev?{}:{margin: '0 0.5rem'}}
 						type="submit"
 						disabled={scrambleLoading
-							// ||!canRememberOrSubmit
+							||!canRememberOrSubmit
 						}
 						className={`cta-button scramble-submit-mobile
 									${(questionFormData?.length||addTheory)?'':'d-none'}

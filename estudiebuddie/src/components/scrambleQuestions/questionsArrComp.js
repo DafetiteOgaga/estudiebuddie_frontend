@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState, useRef } from 'react';
 import { ImageCropAndCompress } from '../../hooks/imgCompressAndCrop/ImageCropAndCompress';
 import { useDeviceInfo } from '../../hooks/deviceType';
 import { customFindLast } from './scrambleQuestions';
+// import { useConfirm } from '../../hooks/overlayContext';
 import {
 	Stage,
 	Layer,
@@ -66,7 +67,9 @@ const formQuestions = [
 function QuestionsArrComp({args}) {
 	const deviceInfo = useDeviceInfo()
 	const [uploadedImg, setUploadedImg] = useState(null)
+	// const { confirm } = useConfirm();
 	const {
+		confirm,
 		addTheory,
 		formData,
 		setFormData,
@@ -171,7 +174,8 @@ function QuestionsArrComp({args}) {
 			generateUniqueId={generateUniqueId}
 			within60Questions={within60Questions}
 			addRemoveQuestion={addRemoveQuestion}
-			deviceInfo={deviceInfo} />
+			deviceInfo={deviceInfo}
+			confirm={confirm} />
 			<button
 			style={{margin: '0 5rem'}}
 			type="button" onClick={addRemoveQuestion}
@@ -190,7 +194,8 @@ function QuestionBlock ({diagramStageRefs,
 						generateUniqueId,
 						within60Questions,
 						addRemoveQuestion,
-						deviceInfo,}) {
+						deviceInfo,
+						confirm,}) {
 	// console.log({
 	// 	questionFormData
 	// })
@@ -434,7 +439,15 @@ function QuestionBlock ({diagramStageRefs,
 
 									<button
 									type="button"
-									onClick={()=>addRemoveQuestion({id:questionData?.uniqueId})}
+									onClick={()=> {
+										confirm({
+											title: `Delete question ${qIdx + 1}?`,
+											// message: "This action cannot be undone.",
+											buttonText: "Yes, delete",
+											onConfirm: () => {
+												addRemoveQuestion({id:questionData?.uniqueId})
+											}})
+									}}
 									className="cta-button question bg-red-warn">
 										Remove {deviceInfo.width > 768 ? 'Question':''}
 									</button>

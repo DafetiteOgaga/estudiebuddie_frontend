@@ -1271,7 +1271,7 @@ function ModalOverlay({
 	buttonRef = null,
 }) {
 	if (!isOpen) return null;
-  
+
 	return (
 		<div className="ready-backdrop" aria-hidden={!isOpen}>
 			<div
@@ -1286,6 +1286,7 @@ function ModalOverlay({
 			<p>{message}</p>
 	
 			<button
+				type="button"
 				className="cta-button modal"
 				ref={buttonRef}
 				onClick={onConfirm}

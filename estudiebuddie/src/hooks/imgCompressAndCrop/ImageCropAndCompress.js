@@ -242,6 +242,7 @@ const ImageCropAndCompress = forwardRef(({onComplete,
 					imgType!=="question"&&
 					imgType!=="sch-logo")&&
 				<button
+				type="button"
 				onClick={handleDownload}
 				className="download">
 					Download Cropped Image
