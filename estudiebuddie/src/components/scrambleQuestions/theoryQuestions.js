@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { generateUniqueId } from "../../hooks/formHooks";
+// import { useConfirm } from "../../hooks/overlayContext";
 
-function TheoryBuilder({updateState, updateFromSavedTheory}) {
+function TheoryBuilder({updateState, updateFromSavedTheory, confirm}) {
+	// const { confirm } = useConfirm()
 	const [theoryQuestions, setTheoryQuestions] = useState([
 		{
 			id: generateUniqueId(),
@@ -51,10 +53,12 @@ function TheoryBuilder({updateState, updateFromSavedTheory}) {
 				addChild={addChild}
 				deleteNode={deleteNode}
 				setNextSerial={setNextSerial}
+				confirm={confirm}
 			/>
 			))}
 
 			<button
+			type="button"
 			className="cta-button q-mx"
 			onClick={() =>
 				setTheoryQuestions(prev => [
@@ -69,7 +73,7 @@ function TheoryBuilder({updateState, updateFromSavedTheory}) {
 	);
 }
 
-function QuestionNode({ node, depth, index, path, updateNode, addChild, deleteNode, setNextSerial }) {
+function QuestionNode({ node, depth, index, path, updateNode, addChild, deleteNode, setNextSerial, confirm }) {
 	const serialNumber = getFullLabel(path, index, depth);
 	console.log({serialNumber})
 	useEffect(() => {
@@ -107,12 +111,22 @@ function QuestionNode({ node, depth, index, path, updateNode, addChild, deleteNo
 
 				<div className="d-flex align-items-start">
 					<button
+					type="button"
 					// style={{fontSize: 15}}
 					className="cta-button theory-btn fit first"
 					onClick={() => addChild(node.id)}><FontAwesomeIcon icon="circle-plus"/></button>
 					<button
+					type="button"
 					className="cta-button theory-btn fit bg-red-warn last"
-					onClick={() => deleteNode(node.id)}><FontAwesomeIcon icon="trash"/></button>
+					onClick={() => {
+						confirm({
+							title: `Delete question ${serialNumber}?`,
+							// message: "This action cannot be undone.",
+							buttonText: "Yes, delete",
+							onConfirm: () => {
+								deleteNode(node.id)
+							}})
+						}}><FontAwesomeIcon icon="trash"/></button>
 				</div>
 			</div>
 
@@ -126,6 +140,7 @@ function QuestionNode({ node, depth, index, path, updateNode, addChild, deleteNo
 				updateNode={updateNode}
 				addChild={addChild}
 				deleteNode={deleteNode}
+				confirm={confirm}
 				/>
 			))}
 		</div>
