@@ -186,7 +186,7 @@ const CopyToClipboard = ({staffsPage, theGenCode, setCopiedCode, copiedCode, isM
 		<p
 		className={`white-space-pre pointer pr-1
 			${(staffsPage==="create-staff"&&theGenCode)?'':'d-none'}
-			${isMobileDev?' mt-1':''}`}
+			${isMobileDev?'align-self-center mt-1':''}`}
 		onClick={()=>handleCopy(theGenCode, setCopiedCode)}
 		>{theGenCode?.[3]==='T'?'Teacher':'Admin'} Code
 		<span className={`pl-05 ${theGenCode?'':'d-none'}`}>
