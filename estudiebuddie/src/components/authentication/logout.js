@@ -1,6 +1,6 @@
 import { useCreateStorage } from "../../hooks/persistToStorage";
 import { toast } from "react-toastify"
-import { useAuth } from "../../hooks/authContext";
+import { useAuth } from "../../contexts/authContext";
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const authPages = [
