@@ -4,7 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import './assets/css/esb-style.css';
 import './assets/css/esb-responsive.css';
 import { useCreateStorage } from './hooks/persistToStorage';
-import { useDeviceInfo } from './hooks/deviceType';
+import { useDevice } from './contexts/deviceTypeContext';
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEye, faEyeSlash, faCircleCheck, faCheck, faTimes,
@@ -25,7 +25,7 @@ function App() {
   // const { lStorage, sStorage } = useCreateStorage()
   // lStorage.expiredSoRemove('pulled-staffs', 1000*60*60*2)
   console.log('App rendered');
-  const xyz = useDeviceInfo()
+  const { label } = useDevice();
   return (
     <>
       <AppRoutes />
