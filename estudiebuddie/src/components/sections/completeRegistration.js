@@ -9,8 +9,8 @@ import { sentenceCase, titleCase } from "../../hooks/changeCase";
 import { Spinner } from "../../hooks/spinner/spinner";
 import { useCreateStorage } from "../../hooks/persistToStorage";
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useAuth } from "../../hooks/authContext";
-import { useDeviceInfo } from "../../hooks/deviceType";
+import { useAuth } from "../../contexts/authContext";
+import { useDevice } from "../../contexts/deviceTypeContext";
 
 const formValues = {
 	// first_name: "",
@@ -178,8 +178,8 @@ function CompleteRegistration() {
 	// const [hasCode, setHasCode] = useState(false);
 	// const [initRole, setInitRole] = useState('')
 	// const [formHead, setFormHead] = useState(initFormHead)
-	const deviceInfo = useDeviceInfo()
-	const isMobileDev = deviceInfo.width<=768
+	const { label, width, isMobileDev768 } = useDevice();
+	// const isMobileDev768 = deviceInfo.width<=768
 	// console.log({deviceInfo})
 	const { loggedIn, setLoggedIn } = useAuth()
 	const navigate = useNavigate()
@@ -278,7 +278,7 @@ function CompleteRegistration() {
 			<div className="login-form w33percent glass flex-column">
 				{/* <h2>Get In Touch</h2> */}
 				<h1>One more more step</h1>
-				<div className={`${isMobileDev?'block':'d-flex'} justify-content-between`}>
+				<div className={`${isMobileDev768?'block':'d-flex'} justify-content-between`}>
 					<small className="pl-color">You must change your password to continue</small>
 					{/* <CheckBoxBtnUI
 					chkText="Got a code?"
