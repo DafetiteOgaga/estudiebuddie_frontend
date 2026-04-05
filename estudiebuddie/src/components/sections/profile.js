@@ -791,8 +791,6 @@ function usePasswordCheck () {
 		// console.log({
 		// 	password1,
 		// 	password2,
-		// 	formData,
-		// 	old_password,
 		// })
 		if (old_password) {
 			// console.log('checking for old password')

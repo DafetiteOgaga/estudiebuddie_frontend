@@ -1,17 +1,18 @@
 import { toast } from 'react-toastify';
-import { useImageKitAPIs, serverOrigin } from '../FetchFromServer';
+import { useImageKitAPIs, serverOrigin, FetchFromServer } from '../FetchFromServer';
 
 const authenticator = async () => {
 	console.log({serverOrigin})
 	try {
-		const response = await fetch(`${serverOrigin}imagekit-auth/`);
+		const response = await FetchFromServer(`imagekit-auth`);
+		console.log({response})
 		if (!response.ok) {
 			const errorText = "Failed to authenticate with ImageKit"
 			toast.error(errorText);
 			throw new Error(errorText);
 		}
-		const data = await response.json();
-		return data;
+		// const data = await response.json();
+		return response.data;
 	} catch (error) {
 		throw new Error(`Authentication failed: ${error.message}`);
 	}

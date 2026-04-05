@@ -1060,19 +1060,31 @@ function ScrambleQuestionsComponent() {
 		
 		if (res.ok) {
 			const resData = res?.data
-			console.log({resData})
+			let extraMessage = "Use the download button to get your questions.";;
+			if (isSubmitToSch) {
+				extraMessage = "Questions have been sent to the admin.";
+			} else if (isRemember) {
+				extraMessage = "";
+			}
+			console.log({resData, extraMessage})
 			if (!isRemember) {
 				if (isSubmitToSch) {
 					setHasSubmitted({[fetchID]: resData?.has_submitted})
 				}
-				alert("Success\nClick 'Download File' to download the shuffled questions");
 				fetchDownloadLinkss({endpoint, setDownloadLink})
 				setIsNewDownload(true)
 			} else {
 				lStorage.removeItem('saved-questions')
 				lStorage.removeItem(`saved-detail-${fetchID}`)
-				toast.success(`${res?.data?.success}!.`)
 			}
+			toast.success(
+				<div>
+					<div>{res?.data?.success}!</div>
+					<div style={{ marginTop: "6px" }}>
+						{extraMessage}
+					</div>
+				</div>
+			);
 		}
 		setRememberLoading(false)
 		setScrambleLoading(false)
