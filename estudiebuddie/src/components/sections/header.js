@@ -3,9 +3,9 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AppLogo } from "./appLogo";
 import { useLogout } from "../authentication/logout";
 import { useCreateStorage } from "../../hooks/persistToStorage";
-import { useAuth } from "../../hooks/authContext";
+import { useAuth } from "../../contexts/authContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useDeviceInfo } from "../../hooks/deviceType";
+import { useDevice } from "../../contexts/deviceTypeContext";
 import { serverOrigin } from "../../hooks/FetchFromServer";
 import { normalizeStringLength } from "./profile";
 import { titleCase } from "../../hooks/changeCase";
@@ -23,8 +23,9 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 	const { loggedIn, setLoggedIn } = useAuth()
 	const { lStorage, sStorage } = useCreateStorage()
 	const userInfo = lStorage.getItem('user') || {}
-	const deviceInfo = useDeviceInfo()
-	const isMobileDev = deviceInfo.width<=900
+	// const deviceInfo = useDeviceInfo()
+	const { label, width, isMobileDev900 } = useDevice();
+	// const isMobileDev900 = deviceInfo.width<=900
 	const isDev = serverOrigin === 'http://127.0.0.1:8000/'
 	console.log({isDev, serverOrigin})
 	let {
@@ -103,7 +104,7 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 						</div>
 						<div className="d-flex flex-column">
 							<AppName />
-							{isDev? <span className='device-width'> {deviceInfo.width}</span>: null}
+							{isDev? <span className='device-width'> {width}</span>: null}
 						</div>
 					</div>
 					<div className="nav-links is-desktop">
@@ -161,7 +162,7 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 									<div className="bar-avatar m-0">{avatar_code?avatar_code:<FontAwesomeIcon icon="user" color="white" />}</div>
 								}
 								<p className="p-05 white-space-pre">
-									{id ? titleCase(normalizeStringLength(username||first_name, isMobileDev)) : 'Anon'}
+									{id ? titleCase(normalizeStringLength(username||first_name, isMobileDev900)) : 'Anon'}
 								</p>
 
 							</Link>
