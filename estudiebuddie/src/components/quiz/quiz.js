@@ -685,6 +685,18 @@ function Quiz() {
 		formData,
 		canRetakeTest,
 	})
+	console.log({
+		quizStarting,
+		// setIsStarting={setQuizStarting}
+		userStartTime,
+		duration: Number(session?.duration) * 60 * 60, // 2 hrs in seconds
+		// onWarning={() => setFeedback("warning")}
+		// onTimeUp={() => setFeedback("timeup")}
+		// onTabLeave={() => setFeedback("warning")}
+		// onTimeUpChange={setIsTimeUp}
+		isSubmitted,
+		// submitHandler={submitHandler}
+	})
 
 	return (
 			<>
@@ -984,7 +996,7 @@ function Quiz() {
 									type="submit"
 									disabled={(!isSubmitted&&!selectedAnswers.length)||(isSubmitted&&!canRetakeTest)||loading}
 									className={`cta-button text-nowrap first
-												${(!isSubmitted || canRetakeTest)?'':'d-none'}`}>
+												${(!isSubmitted)?'':'d-none'}`}>
 										{loading ?
 											<Spinner type={'dot'} /> :
 											isSubmitted?'Retake Quiz':'Submit'}
@@ -1067,36 +1079,26 @@ function QuizTimer({
 	const _10percent = Math.ceil(0.1 * duration)
 	const isTimeUp = timeLeft <= 0;
 	const expiredReportedRef = useRef(false);
-	const hasStartedRef = useRef(false);
+	// const hasStartedRef = useRef(false);
 	const intervalRef = useRef(null);
+	const isSubmittedRef = useRef(isSubmitted);
+	const hasStartedRef = useRef(
+		start ? new Date(start).getTime() < Date.now() : false
+	);
+	const isExpiredOrSubmitted = (isTimeUp && hasStartedRef.current) || isSubmitted;
 
-	// expose isTimeUp to parent
-	// console.log('outside', {
-	// 	// isSubmitted,
-	// 	// start,
-	// 	// duration,
-	// 	// timeLeft,
-	// 	// isStartTime,
-	// 	// expiredReportedRef: expiredReportedRef.current,
-	// 	// hasStartedRef: hasStartedRef.current,
-	// })
 	useEffect(() => {
-		// console.log('yyyyy')
-		// console.log('in effect', {
-		// 	isSubmitted,
-		// 	// start,
-		// 	// duration,
-		// 	// timeLeft,
-		// 	// isStartTime,
-		// 	// expiredReportedRef: expiredReportedRef.current,
-		// 	// hasStartedRef: hasStartedRef.current,
-		// })
+		isSubmittedRef.current = isSubmitted;
+	}, [isSubmitted]);
+
+	useEffect(() => {
 		if (!start) {
 			// console.log('no start')
 			setTimeLeft(0);
 			warnedRef.current = false;
 			hasStartedRef.current = false;
 			expiredReportedRef.current = false;
+			return;
 		}
 		if (!duration||!isStartTime) {
 			const durationErr = "Error: Duration not set properly"
@@ -1112,35 +1114,29 @@ function QuizTimer({
 		const endTime = startTime + duration * 1000;
 
 		const tick = () => {
+			if (isSubmittedRef.current) {
+				// timer is done, do nothing
+				clearInterval(intervalRef.current);
+				intervalRef.current = null;
+				return;
+			}
+
 			const now = Date.now();
 			const diff = Math.floor((endTime - now) / 1000);
 
-			// console.log({
-			// 	diff,
-			// 	isSubmitted,
-			// 	// gt0: diff>0,
-			// 	// ltm1: diff<-1,
-			// 	// start,
-			// 	// duration,
-			// 	// timeLeft,
-			// 	// startTime,
-			// 	// expiredReportedRef: expiredReportedRef.current,
-			// 	// hasStartedRef: hasStartedRef.current,
-			// })
-			// gt0 and start
-			if (diff > 0 || (start && diff < -1)) {
+			// if (diff > 0 || (start && diff < -1)) {
+			if (diff > 0) {
 				// console.log('setting has started to true')
 				hasStartedRef.current = true;
-				if (diff > 0) {
-					expiredReportedRef.current = false
-				}
+				expiredReportedRef.current = false
+				// if (diff > 0) {
+				// 	expiredReportedRef.current = false
+				// }
 			}
 
 			if (diff <= 0) {
 				// console.log('time may be up or just starting')
-				if (!expiredReportedRef.current
-					&& hasStartedRef.current
-				) {
+				if (!expiredReportedRef.current && hasStartedRef.current) {
 					// console.log('bulls eye'.repeat(5))
 					expiredReportedRef.current = true;
 					// STOP tick interval
@@ -1150,7 +1146,7 @@ function QuizTimer({
 						intervalRef.current = null;
 						// setIsStarting(null)
 					}
-					if (!isSubmitted) {
+					if (!isSubmittedRef.current) {
 						// console.log('trigger time up overlay')
 						onTimeUpChange?.(true);
 						submitHandler?.(null, true) // forcefully submit current progress
@@ -1208,19 +1204,17 @@ function QuizTimer({
 		<div className="timer-wrapper">
 			<div
 				className={`timer-display ${
+					isExpiredOrSubmitted ? "timer-danger no-anime":
 					(!isTimeUp && timeLeft <= _10percent) ?
 						"timer-danger" : ""}`}>
-				{/* {hours.toString().padStart(2, "0")}:
-				{minutes.toString().padStart(2, "0")}:
-				{seconds.toString().padStart(2, "0")} */}
-				{isTimeUp ?
-					<span className="timer-dash">--:--:--</span> :
-					<>
+				{isExpiredOrSubmitted ? (<span>00:00:00</span>):
+					isTimeUp ? <span className="timer-dash">--:--:--</span> :
+					(<>
 						{hours.toString().padStart(2, "0")}:
 						{minutes.toString().padStart(2, "0")}:
 						{seconds.toString().padStart(2, "0")}
 					</>
-				}
+				)}
 			</div>
 		</div>
 	);
