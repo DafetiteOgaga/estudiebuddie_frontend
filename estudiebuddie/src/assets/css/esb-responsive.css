@@ -462,8 +462,9 @@
         height: 80px;
         font-size: 50px;
         /* margin: 10px 0; */
-        padding: 10px 0;
+        /* padding: 10px 0; */
     }
+    
     form .profile-btn,
     form .profile-img {
         grid-column: 1;
