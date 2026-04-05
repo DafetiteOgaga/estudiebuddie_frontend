@@ -9,7 +9,7 @@ import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit";
 import { useCreateStorage } from "../../hooks/persistToStorage";
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
 import { useNavigate } from "react-router-dom"
-import { useDeviceInfo } from "../../hooks/deviceType";
+import { useDevice } from "../../contexts/deviceTypeContext";
 
 // const roleArray = [
 // 	'student',
@@ -133,16 +133,16 @@ const handleCopy = async (content, isCopied) => {
 	}
 };
 const copyDelayDuration = 800
-const normalizeStringLength = (str, isMobileDev, len=null, extra=null, fieldName=null) => {
+const normalizeStringLength = (str, isMobileDev900, len=null, extra=null, fieldName=null) => {
 	if (!str) return ''
 	console.log({len, extra})
 	let addExtra = 10
 	if (extra) {
 		addExtra = extra
 	}
-	let nameField = isMobileDev?8:13
+	let nameField = isMobileDev900?8:13
 	if (fieldName) {
-		nameField = isMobileDev?5:10
+		nameField = isMobileDev900?5:10
 	}
 	if (len) {
 		console.log('using len', {
@@ -152,7 +152,7 @@ const normalizeStringLength = (str, isMobileDev, len=null, extra=null, fieldName
 			extra,
 		})
 		return str.length<len?str:
-				`${isMobileDev?str.slice(0, len):
+				`${isMobileDev900?str.slice(0, len):
 				str.slice(0, len+addExtra)}...`
 	}
 	return str.length<=10?str:
@@ -160,8 +160,9 @@ const normalizeStringLength = (str, isMobileDev, len=null, extra=null, fieldName
 }
 
 function Profile() {
-	const deviceInfo = useDeviceInfo()
-	const isMobileDev = deviceInfo.width<=900
+	// const deviceInfo = useDeviceInfo()
+	const { label, width, isMobileDev900 } = useDevice();
+	// const isMobileDev900 = deviceInfo.width<=900
 	const navigate = useNavigate()
 	const [copied, setCopied] = useState(false);
 	const [isGenSchCode, setIsGenSchCode] = useState(false)
@@ -469,7 +470,7 @@ function Profile() {
 							onClick={(e)=>setIsGenSchCode(true)}>
 								{isGenSchCode?
 								<Spinner type={'dot'} />: // dot spinner
-								`${isMobileDev?'':'Gen '}sch code`}
+								`${isMobileDev900?'':'Gen '}sch code`}
 							</button>
 
 							{/* contribute button */}
@@ -477,7 +478,7 @@ function Profile() {
 							className={`cta-button profile ${(activeView==='profile'&&contributor)?'middle':'d-none'}`}
 							type="button"
 							onClick={(e)=>navigate(`contribute-questions`)}>
-								{`Contribute${isMobileDev?'':' Questions'}`}
+								{`Contribute${isMobileDev900?'':' Questions'}`}
 							</button>
 
 							{/* edit and back button */}
@@ -492,7 +493,7 @@ function Profile() {
 								else if (prev==='avatar') return 'edit'
 								else if (prev==='password') return 'edit'
 							})}>
-							{(activeView==='edit'||activeView==='avatar'||activeView==='password')?'◀ Back':`Edit${isMobileDev?'':' Profile'}`}
+							{(activeView==='edit'||activeView==='avatar'||activeView==='password')?'◀ Back':`Edit${isMobileDev900?'':' Profile'}`}
 							</button>
 						</div>
 					</div>
@@ -535,13 +536,13 @@ function Profile() {
 									<FontAwesomeIcon icon="user" color="white" />}</div>
 							}
 							<div className="d-flex m-auto-td gap-1">
-								<h3 className="text-center profile-h3">{titleCase(normalizeStringLength(first_name||notAvailable, isMobileDev))}</h3>
-								<h3 className="text-center profile-h3">{titleCase(normalizeStringLength(last_name, isMobileDev, null, null, "last_name"))}</h3>
-								<h3 className="text-center profile-h3">({normalizeStringLength(username, isMobileDev, null, null, "username")})</h3>
+								<h3 className="text-center profile-h3">{titleCase(normalizeStringLength(first_name||notAvailable, isMobileDev900))}</h3>
+								<h3 className="text-center profile-h3">{titleCase(normalizeStringLength(last_name, isMobileDev900, null, null, "last_name"))}</h3>
+								{username ? <h3 className="text-center profile-h3">({normalizeStringLength(username, isMobileDev900, null, null, "username")})</h3>:null}
 							</div>
 							{(school?.name)?
 							<div className="d-flex align-items-baseline justify-content-center">
-								<p className="role text-center text-italic m-0 white-space-pre">{titleCase(normalizeStringLength(school?.name||notAvailable, isMobileDev, 23))} </p>
+								<p className="role text-center text-italic m-0 white-space-pre">{titleCase(normalizeStringLength(school?.name||notAvailable, isMobileDev900, 23))} </p>
 								<p className="role text-center text-italic m-0">({school?.acronym||notAvailable})</p>
 								{/* <p className="role white-space-pre font-small"> ID:{id}</p> */}
 							</div>:null}
@@ -549,7 +550,7 @@ function Profile() {
 								<p className="role text-center">{titleCase(role)||notAvailable}</p>
 								<p className="role white-space-pre font-small"> ID:{id}</p>
 							</div>
-							<p className="bio text-center">{sentenceCase(normalizeStringLength(about||notAvailable, isMobileDev, 100, 100))}</p>
+							<p className="bio text-center">{sentenceCase(normalizeStringLength(about||notAvailable, isMobileDev900, 100, 100))}</p>
 						</div>
 
 						{(is_super_admin&&theGenCode) ?
@@ -645,7 +646,7 @@ function Profile() {
 							onClick={(e)=>submitHandler(e, 'delete-image')}
 							type="button"
 							disabled={loading}
-							className={`cta-button question ml-05 ${image_url?'':'d-none'}`}>
+							className={`cta-button question ${isMobileDev900?'':'ml-05'} ${image_url?'':'d-none'}`}>
 								{loading ?
 									<Spinner type={'dot'} /> :
 									'Delete Profile Picture'}
