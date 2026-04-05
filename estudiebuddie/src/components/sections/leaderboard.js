@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { FetchFromServer } from "../../hooks/FetchFromServer";
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
 import { Link } from 'react-router-dom';
-import { useAuth } from "../../hooks/authContext";
+import { useAuth } from "../../contexts/authContext";
 
 const getOrdinal = (num) => {
 	// if (typeof num !== 'number') return num;
@@ -77,7 +77,7 @@ function Leaderboard() {
 						<h3 className="mb-0">
 							Leaderboard: Total: {leaderboardData?.data?.total_participants}
 						</h3>
-						<p className={loggedIn?'d-none':''}>
+						<p className={`align-self-end text-end ${loggedIn?'d-none':''}`}>
 							Get your score on the board <Link to={"/signup"}
 							className="register-link"
 							>Register</Link>
