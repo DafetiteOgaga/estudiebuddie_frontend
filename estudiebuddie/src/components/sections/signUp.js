@@ -9,8 +9,8 @@ import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit";
 import { Spinner } from "../../hooks/spinner/spinner";
 import { useCreateStorage } from "../../hooks/persistToStorage";
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useAuth } from "../../hooks/authContext";
-import { useDeviceInfo } from "../../hooks/deviceType";
+import { useAuth } from "../../contexts/authContext";
+import { useDevice } from "../../contexts/deviceTypeContext";
 
 const formValues = {
 	first_name: "",
@@ -146,8 +146,9 @@ function SignUp() {
 	const [hasCode, setHasCode] = useState(false);
 	const [initRole, setInitRole] = useState('')
 	const [formHead, setFormHead] = useState(initFormHead)
-	const deviceInfo = useDeviceInfo()
-	const isMobileDev = deviceInfo.width<=768
+	// const deviceInfo = useDeviceInfo()
+	const { label, isMobileDev900 } = useDevice();
+	// const isMobileDev900 = deviceInfo.width<=768
 	// console.log({deviceInfo})
 	const { loggedIn, setLoggedIn } = useAuth()
 	const navigate = useNavigate()
@@ -338,7 +339,7 @@ function SignUp() {
 			}
 		})
 	}, [formData?.esb_code])
-	if (deviceInfo.label === "mobile") {
+	if (label === "mobile") {
 		console.log('mobile'.repeat(5))
 		formHead.forEach(obj => {
 			obj.width = '40%'
@@ -482,7 +483,7 @@ function SignUp() {
 			<div className="sign-up-form glass flex-column">
 				{/* <h2>Get In Touch</h2> */}
 				<h1>Sign Up</h1>
-				<div className={`${isMobileDev?'block':'d-flex'} justify-content-between`}>
+				<div className={`${isMobileDev900?'block':'d-flex'} justify-content-between`}>
 					<small className="pl-color">Note: Every field with * must be filled</small>
 					<CheckBoxBtnUI
 					chkText="Got a code?"

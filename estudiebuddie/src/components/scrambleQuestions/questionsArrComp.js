@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState, useRef } from 'react';
 import { ImageCropAndCompress } from '../../hooks/imgCompressAndCrop/ImageCropAndCompress';
-import { useDeviceInfo } from '../../hooks/deviceType';
+import { useDevice } from '../../contexts/deviceTypeContext';
 import { customFindLast } from './scrambleQuestions';
 // import { useConfirm } from '../../hooks/overlayContext';
 import {
@@ -65,7 +65,7 @@ const formQuestions = [
 ]
 
 function QuestionsArrComp({args}) {
-	const deviceInfo = useDeviceInfo()
+	const { label, width, isMobileDev768 } = useDevice();
 	const [uploadedImg, setUploadedImg] = useState(null)
 	// const { confirm } = useConfirm();
 	const {
@@ -174,7 +174,9 @@ function QuestionsArrComp({args}) {
 			generateUniqueId={generateUniqueId}
 			within60Questions={within60Questions}
 			addRemoveQuestion={addRemoveQuestion}
-			deviceInfo={deviceInfo}
+			label={label}
+			width={width}
+			isMobileDev768={isMobileDev768}
 			confirm={confirm} />
 			<button
 			style={{margin: '0 5rem'}}
@@ -194,7 +196,7 @@ function QuestionBlock ({diagramStageRefs,
 						generateUniqueId,
 						within60Questions,
 						addRemoveQuestion,
-						deviceInfo,
+						label, width, isMobileDev768,
 						confirm,}) {
 	// console.log({
 	// 	questionFormData
@@ -342,7 +344,7 @@ function QuestionBlock ({diagramStageRefs,
 											)
 										}
 										getStageRef={(stage) => (diagramStageRefs.current[qIdx] = stage)}
-										deviceInfo={deviceInfo}
+										isMobileDev768={isMobileDev768}
 										/>
 									</div>
 								);
@@ -363,7 +365,7 @@ function QuestionBlock ({diagramStageRefs,
 									<div className='floating-field'
 									key={field.name + fIdx}
 									style={{
-										width: deviceInfo.label === "mobile"?"100%":"49%", // 2 per row roughly (45% + gap ≈ 100%)
+										width: label === "mobile"?"100%":"49%", // 2 per row roughly (45% + gap ≈ 100%)
 										margin: '2px',
 									}}>
 										<input
@@ -397,13 +399,14 @@ function QuestionBlock ({diagramStageRefs,
 								</div>
 
 								<div className='d-flex'>
-									{deviceInfo.width > 768 ?
+									{width > 768 ?
 									<MathAndDiagBtns
 									toggleMode={toggleMode}
 									isMathActive={isMathActive}
 									within60Questions={within60Questions}
 									isDiagramActive={isDiagramActive}
 									isImage={isImage}
+									isMobileDev768={isMobileDev768}
 									qIdx={qIdx}/> :null}
 
 									<button
@@ -449,11 +452,11 @@ function QuestionBlock ({diagramStageRefs,
 											}})
 									}}
 									className="cta-button question bg-red-warn">
-										Remove {deviceInfo.width > 768 ? 'Question':''}
+										Remove {width > 768 ? 'Question':''}
 									</button>
 								</div>
 								</div>
-									{deviceInfo.width <= 768 ?
+									{width <= 768 ?
 										<div className='d-flex'>
 											<MathAndDiagBtns
 											toggleMode={toggleMode}
@@ -462,7 +465,7 @@ function QuestionBlock ({diagramStageRefs,
 											isDiagramActive={isDiagramActive}
 											isImage={isImage}
 											qIdx={qIdx}
-											deviceInfo={deviceInfo}/>
+											isMobileDev768={isMobileDev768}/>
 										</div> :null}
 								</div>
 					</fieldset>
@@ -473,7 +476,7 @@ function QuestionBlock ({diagramStageRefs,
 }
 
 const GRID_SIZE = 10;
-function DiagramField({ value, onChange, getStageRef, deviceInfo=1000 }) {
+function DiagramField({ value, onChange, getStageRef, isMobileDev768 }) {
 	console.log({diagramValue: value})
 	const [diagramShapes, setDiagramShapes] = useState([]);
 	const [groups, setGroups] = useState([]);
@@ -481,7 +484,7 @@ function DiagramField({ value, onChange, getStageRef, deviceInfo=1000 }) {
 	const [selectedIds, setSelectedIds] = useState([]); // for multiple selection
 	const [tool, setTool] = useState("");
 	const hydratedRef = useRef(false);
-	const isMobileWidth = deviceInfo.width<=768
+	// const isMobileWidth = width<=768
 
 	const shapeRefs = useRef({});
 	const trRef = useRef();
@@ -718,8 +721,8 @@ function DiagramField({ value, onChange, getStageRef, deviceInfo=1000 }) {
 			</div>
 
 			<Stage
-			width={isMobileWidth?315:800}
-			height={isMobileWidth?200:250}
+			width={isMobileDev768?315:800}
+			height={isMobileDev768?200:250}
 			ref={stageRef}
 			style={{ border: "1px solid #ccc", borderRadius: 6 }}
 			onMouseDown={(e) => {
@@ -984,14 +987,14 @@ function MathQuestionField({ value, onChange }) {
 	);
 }
 
-function MathAndDiagBtns ({toggleMode, isMathActive, within60Questions, isDiagramActive, isImage, qIdx, deviceInfo=1000}) {
-	const isMobile = deviceInfo.width <= 768
+function MathAndDiagBtns ({toggleMode, isMathActive, within60Questions, isDiagramActive, isImage, qIdx, isMobileDev768}) {
+	// const isMobile = deviceInfo.width <= 768
 	return (
 		<>
 			<button
 			type="button"
 			onClick={() => toggleMode(qIdx, 'math')}
-			className={`cta-button question ${isMathActive?'highlight':''} ${within60Questions?'':'d-none'} ${isMobile?'fit':''}`}>
+			className={`cta-button question ${isMathActive?'highlight':''} ${within60Questions?'':'d-none'} ${isMobileDev768?'fit':''}`}>
 				Math
 			</button>
 
@@ -1000,7 +1003,7 @@ function MathAndDiagBtns ({toggleMode, isMathActive, within60Questions, isDiagra
 			onClick={() => toggleMode(qIdx, 'diagram')}
 			// disabled={isImage}
 			disabled={true}
-			className={`cta-button question ${isDiagramActive?'highlight':''} ${within60Questions?'':'d-none'} ${isMobile?'fit':''}`}>
+			className={`cta-button question ${isDiagramActive?'highlight':''} ${within60Questions?'':'d-none'} ${isMobileDev768?'fit':''}`}>
 				Diagram
 			</button>
 		</>

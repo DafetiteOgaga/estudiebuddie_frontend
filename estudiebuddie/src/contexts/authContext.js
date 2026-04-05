@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect, useRef } from "react";
-import { useCreateStorage } from "./persistToStorage";
+import { useCreateStorage } from "../hooks/persistToStorage";
 
 // 1. Create the context
 export const AuthContext = createContext();

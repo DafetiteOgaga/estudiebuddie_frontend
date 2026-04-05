@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 
 const deviceLabels = {
 	mobile: false,
@@ -8,6 +8,8 @@ const deviceLabels = {
 	laptop: false,
 	desktop: false,
 };
+
+const DeviceContext = createContext(null); // context
 
 const useDeviceState = () => {
 	const [deviceType, setDeviceType] = useState(() => ({ ...deviceLabels }));
@@ -61,4 +63,25 @@ const useDeviceInfo = () => {
 	return { label, width };
 };
 
-export { useDeviceInfo };
+export const DeviceProvider = ({ children }) => {
+	const deviceInfo = useDeviceInfo();
+
+	// 👉 your custom global logic
+	const isMobileDev900 = deviceInfo.width <= 900;
+	const isMobileDev768 = deviceInfo.width <= 768;
+
+	return (
+		<DeviceContext.Provider
+			value={{ ...deviceInfo, isMobileDev900, isMobileDev768 }}
+		>
+			{children}
+		</DeviceContext.Provider>
+	);
+};
+export const useDevice = () => {
+	const context = useContext(DeviceContext);
+	if (!context) {
+		throw new Error("useDevice must be used within DeviceProvider");
+	}
+	return context;
+};

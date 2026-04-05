@@ -5,13 +5,13 @@ import { shuffleArray, getAuthorizedCodes, justNumbers, removeWhiteSpace } from 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCreateStorage } from "../../hooks/persistToStorage";
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
-import { useDeviceInfo } from "../../hooks/deviceType";
+import { useDevice } from "../../contexts/deviceTypeContext";
 import { toast } from 'react-toastify';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { roleArray, genderArray, checkIcons, isValidEmail } from "./signUp";
 import { handleCopy,notAvailable, copyDelayDuration, normalizeStringLength } from "./profile";
 import { DownloadBtn, timeAgo } from "../scrambleQuestions/scrambleQuestions";
-import { useConfirm } from "../../hooks/overlayContext";
+import { useConfirm } from "../../contexts/overlayContext";
 
 const getAbbrObject = {
 	subjectAbbr: {
@@ -179,14 +179,14 @@ const fetchData = async (endpoint) => {
 
 const not_available = "Not-Provided"
 
-const CopyToClipboard = ({staffsPage, theGenCode, setCopiedCode, copiedCode, isMobileDev}) => {
+const CopyToClipboard = ({staffsPage, theGenCode, setCopiedCode, copiedCode, isMobileDev900}) => {
 	console.log('copy to clipboard clicked!')
 	console.log({theGenCode})
 	return (
 		<p
 		className={`white-space-pre pointer pr-1
 			${(staffsPage==="create-staff"&&theGenCode)?'':'d-none'}
-			${isMobileDev?'align-self-center mt-1':''}`}
+			${isMobileDev900?'align-self-center mt-1':''}`}
 		onClick={()=>handleCopy(theGenCode, setCopiedCode)}
 		>{theGenCode?.[3]==='T'?'Teacher':'Admin'} Code
 		<span className={`pl-05 ${theGenCode?'':'d-none'}`}>
@@ -251,11 +251,11 @@ function Dashboard() {
 	const localSavedQuestions = lStorage.getItem('saved-questions')
 	const localScrambledQuestionLinks = lStorage.getItem('scrambled-questions-links')
 	const localPulledStaffs = lStorage.getItem('pulled-staffs')
-	const deviceInfo = useDeviceInfo()
-	const isMobileDev = deviceInfo.width<=900
+	const { label, width, isMobileDev900 } = useDevice();
+	// const isMobileDev900 = deviceInfo.width<=900
 	const { confirm } = useConfirm();
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [pendingAction, setPendingAction] = useState(null);
+	// const [isModalOpen, setIsModalOpen] = useState(false);
+	// const [pendingAction, setPendingAction] = useState(null);
 
 	useEffect(() => {
 		setLoadingPage(false)
@@ -419,7 +419,7 @@ function Dashboard() {
 		}
 		console.log('downloading multiple...')
 		const link = document.createElement("a");
-		link.href = `${serverOrigin}${downloadAllResponse?.downloadLink}`;
+		link.href = `${serverOrigin.replace(/\/$/, "")}${downloadAllResponse?.downloadLink}`;
 		link.download = "";
 		document.body.appendChild(link);
 		link.click();
@@ -458,7 +458,7 @@ function Dashboard() {
 		isHeadOrAdmin, handlePage, currentPage, localPulledStaffs,
 		setPullResponse, setBackEndpoint, setPullStaffsLoading,
 		setIsPullStaffs, handleBarPage, setScrambledLoading, setIsScrambled,
-		deviceInfo, isMobileDev,
+		isMobileDev900,
 	}
 	const staffPageArgs = {
 		currentPage, isUserDetailPage, theGenCode, setCopiedCode, userDetail,
@@ -471,7 +471,7 @@ function Dashboard() {
 		setCopiedPassword, copiedPassword, pullResponse, handleBarPage,
 		setIsUserDetailPage, setUserDetail, profileArr, downloadLoading,
 		setDownloadID, setIsDownloading, downloadResponse, staffCreationLoading,
-		setStaffCreationLoading, deviceInfo, isMobileDev,
+		setStaffCreationLoading, label, width, isMobileDev900,
 	}
 	const questionPageArgs = {
 		currentPage, savedQuestionsPage, savedQuestionsResponse, setSubmitAllSavedQuestionsLoading,
@@ -479,11 +479,11 @@ function Dashboard() {
 		submitAllSavedQuestionsLoading, setDeleteAllSavedQuestionsLoading, setIsDeleteAllSaved,
 		deleteAllSavedQuestionsLoading, setSavedQuestionsLoading, setIsSavedQuestions,
 		savedQuestionsLoading, submitSavedQuestionLoading, setIsSubmitSavedQuestion,
-		deleteSavedQuestionLoading, setIsDeleteSaved, isMobileDev, confirm,
+		deleteSavedQuestionLoading, setIsDeleteSaved, isMobileDev900, confirm,
 	}
 	const scramblePageArgs = {
 		currentPage, scrambledPage, setScrambledLoading, setIsScrambled,
-		setBackEndpoint, scrambledLoading, scrambledResponse, isMobileDev,
+		setBackEndpoint, scrambledLoading, scrambledResponse, isMobileDev900,
 	}
 	
 	console.log({
@@ -506,7 +506,6 @@ function Dashboard() {
 		downloadAllResponse,
 		downloadAllLoading,
 		localSavedQuestions,
-		deviceInfo,
 	})
 	return (
 			<>
@@ -522,7 +521,7 @@ function Dashboard() {
 						<DashboardSidebar {...dashboardSidebarArgs} />
 
 						{/* dashboard detailed content */}
-						<div className={`DashboardPage glass dashboard-details ${isMobileDev?'p-05 dashboard-p-05':'p-1'}`}>
+						<div className={`DashboardPage glass dashboard-details ${isMobileDev900?'p-05 dashboard-p-05':'p-1'}`}>
 
 							{/* staffs page */}
 							<StaffPageComp {...staffPageArgs} />
@@ -549,7 +548,7 @@ function Dashboard() {
 
 const validateFieldsArr = ["email"]
 
-function CreateStaff({staffCreationLoading, setStaffCreationLoading, deviceInfo}) {
+function CreateStaff({staffCreationLoading, setStaffCreationLoading, label}) {
 	const [formHead, setFormHead] = useState(initFormHead)
 	const { lStorage, sStorage } = useCreateStorage()
 	const userInfo = lStorage.getItem('user')
@@ -578,7 +577,7 @@ function CreateStaff({staffCreationLoading, setStaffCreationLoading, deviceInfo}
 			})
 		}
 	}, [])
-	if (deviceInfo.label === "mobile") {
+	if (label === "mobile") {
 		// console.log('mobile'.repeat(5))
 		formHead.forEach(obj => {
 			obj.width = '40%'
@@ -751,9 +750,9 @@ function CreateStaff({staffCreationLoading, setStaffCreationLoading, deviceInfo}
 function DashboardSidebar({
 	isHeadOrAdmin, handlePage, currentPage, localPulledStaffs,
 	setPullResponse, setBackEndpoint, setPullStaffsLoading, setIsPullStaffs,
-	handleBarPage, setScrambledLoading, setIsScrambled, deviceInfo, isMobileDev}) {
+	handleBarPage, setScrambledLoading, setIsScrambled, isMobileDev900}) {
 	return (
-		<div className={`DashboardSidebar mob-dashb glass no-glass-hover dashboard-bar-text ${isMobileDev?'d-flex justify-content-center p-01':'p-1'}`}>
+		<div className={`DashboardSidebar mob-dashb glass no-glass-hover dashboard-bar-text ${isMobileDev900?'d-flex justify-content-center p-01':'p-1'}`}>
 		{barItems.map((item, idx) => {
 			if (item.name==='staffs'&&!isHeadOrAdmin) {
 				return null
@@ -764,7 +763,7 @@ function DashboardSidebar({
 				className={`bar-box
 							${item.name===currentPage?'active':''}
 							${item.disable?'disabled':''}
-							${isMobileDev?(idx===0?'first ml-5px rem-mob-margin-dashb':
+							${isMobileDev900?(idx===0?'first ml-5px rem-mob-margin-dashb':
 											idx===(barItems.length-1)?'last mr-5px rem-mob-margin-dashb':
 											idx===2&&!isHeadOrAdmin?'last rem-mob-margin-dashb':
 											'middle rem-mob-margin-dashb'
@@ -814,26 +813,26 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 					userInfo, adminCodeLoading, setDownloadAllLoading, setIsDownloadAll,
 					setBackEndpoint, submittedQuestionsResponse, downloadAllLoading,
 					setSubmittedQuestionsLoading, setIsSubmittedQuestions, setPullResponse,
-					setPullStaffsLoading, setIsPullStaffs, pullStaffsLoading, isMobileDev,
+					setPullStaffsLoading, setIsPullStaffs, pullStaffsLoading, isMobileDev900,
 					setCopiedPassword, copiedPassword, pullResponse, handleBarPage,
 					setIsUserDetailPage, setUserDetail, profileArr, downloadLoading,
 					setDownloadID, setIsDownloading, downloadResponse, staffCreationLoading,
-					setStaffCreationLoading, submittedQuestionsLoading, deviceInfo,}) {
+					setStaffCreationLoading, submittedQuestionsLoading, label, width}) {
 	const staffSubPageArgs = {
 			staffCreationLoading,
 			setStaffCreationLoading,
-			deviceInfo,
+			label,
 		}
 	return (
 		<div className={`StaffPageComp ${currentPage==='staffs'?'':'d-none'}`}>
 
-			<div className={`d-flex justify-content-between pb-1 ${isMobileDev?'flex-column':''}`}>
-				<h2 className={`${isUserDetailPage?'':'d-none'}`}>{titleCase(isMobileDev?`${userDetail?.role}`:`${(userInfo?.id===userDetail?.id)?'You':userDetail?.first_name} (${userDetail?.role})`)}</h2>
+			<div className={`d-flex justify-content-between pb-1 ${isMobileDev900?'flex-column':''}`}>
+				<h2 className={`${isUserDetailPage?'':'d-none'}`}>{titleCase(isMobileDev900?`${userDetail?.role}`:`${(userInfo?.id===userDetail?.id)?'You':userDetail?.first_name} (${userDetail?.role})`)}</h2>
 				<h1 className={`${!isUserDetailPage?'':'d-none'}`}>{titleCase(currentPage)}</h1>
-				<div className={`d-flex align-items-center ${isMobileDev?'justify-content-center':''}`}>
+				<div className={`d-flex align-items-center ${isMobileDev900?'justify-content-center':''}`}>
 
 					{/* copy code to clipboard */}
-					{!isMobileDev ? <CopyToClipboard {...{staffsPage, theGenCode, setCopiedCode, copiedCode}} />:null}
+					{!isMobileDev900 ? <CopyToClipboard {...{staffsPage, theGenCode, setCopiedCode, copiedCode}} />:null}
 
 					<div className={`${(staffsPage===''||staffsPage==='pull-submitted')?'d-none':'d-flex'}`}>
 						<button
@@ -890,7 +889,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 								<Spinner type={'dot'} /> :
 								<>
 									<FontAwesomeIcon icon="download" />
-										{titleCase(`${isMobileDev?'':'Download '} All`)}
+										{titleCase(`${isMobileDev900?'':'Download '} All`)}
 								</>
 							}
 								{/* <FontAwesomeIcon icon="arrows-rotate" spin={teacherCodeLoading} /> */}
@@ -934,7 +933,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 								(pullResponse?.length&&isUserDetailPage&&
 								staffsPage!=='pull-submitted'))?'':'d-none'}
 								`}>
-							{`${isMobileDev?'':'Copy'} Password`}
+							{`${isMobileDev900?'':'Copy'} Password`}
 							<FontAwesomeIcon
 							icon={copiedPassword?"check":"copy"}
 							title="Copy password"
@@ -958,7 +957,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 								`}>
 						{submittedQuestionsLoading ?
 								<Spinner type={'dot'} /> :
-							`Submitted${isMobileDev?'':' Questions'}`}
+							`Submitted${isMobileDev900?'':' Questions'}`}
 					</button>
 
 					<button
@@ -980,7 +979,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 				</div>
 
 				{/* copy code to clipboard */}
-				{isMobileDev ? <CopyToClipboard {...{staffsPage, theGenCode, setCopiedCode, copiedCode, isMobileDev}} />:null}
+				{isMobileDev900 ? <CopyToClipboard {...{staffsPage, theGenCode, setCopiedCode, copiedCode, isMobileDev900}} />:null}
 
 			</div>
 			{/* initial sub page */}
@@ -1000,10 +999,10 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 							}}
 							className="no-list-style glass my-05">
 								<span>{uIdx+1}.</span>
-								<span>{titleCase(normalizeStringLength(user.first_name||not_available, isMobileDev))}</span>
-								<span>{(userInfo?.id===user?.id)?'(You)':titleCase(normalizeStringLength(user.last_name||not_available, isMobileDev, null, null, "username"))}</span>
+								<span>{titleCase(normalizeStringLength(user.first_name||not_available, isMobileDev900))}</span>
+								<span>{(userInfo?.id===user?.id)?'(You)':titleCase(normalizeStringLength(user.last_name||not_available, isMobileDev900, null, null, "username"))}</span>
 								<span>{user.gender.toUpperCase().slice(0, 1)||not_available}</span>
-								{!isMobileDev?<span>{user.mobile_no||not_available}</span>:null}
+								{!isMobileDev900?<span>{user.mobile_no||not_available}</span>:null}
 								<span className={`${user.role.toLowerCase()==='head'?'font-gold font-bold'
 													:user.role.toLowerCase()==='admin'?'font-gold':''}`}>{titleCase(user.role)||not_available}
 									<sup
@@ -1026,13 +1025,13 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 							<div className="profile-avatar">{(userDetail?.avatar_code)?userDetail.avatar_code:<FontAwesomeIcon icon="user" color="white"/>}</div>
 						}
 						<div className="d-flex m-auto-td gap-1">
-							<h3 className="text-center profile-h3">{titleCase(normalizeStringLength(userDetail?.first_name||notAvailable, isMobileDev))}</h3>
-							<h3 className="text-center profile-h3">{titleCase(normalizeStringLength(userDetail?.last_name, isMobileDev, null, null, "username"))}</h3>
+							<h3 className="text-center profile-h3">{titleCase(normalizeStringLength(userDetail?.first_name||notAvailable, isMobileDev900))}</h3>
+							<h3 className="text-center profile-h3">{titleCase(normalizeStringLength(userDetail?.last_name, isMobileDev900, null, null, "username"))}</h3>
 							<h3 className="text-center profile-h3">({userDetail?.gender?.toUpperCase()?.slice(0, 1)})</h3>
 						</div>
 						{(userInfo?.school?.name)?
 						<div className="d-flex align-items-baseline justify-content-center">
-							<p className="role text-center text-italic m-0 white-space-pre">{titleCase(normalizeStringLength(userInfo?.school?.name||notAvailable, isMobileDev, 23))} </p>
+							<p className="role text-center text-italic m-0 white-space-pre">{titleCase(normalizeStringLength(userInfo?.school?.name||notAvailable, isMobileDev900, 23))} </p>
 							<p className="role text-center text-italic m-0">({userInfo?.school?.acronym||notAvailable})</p>
 							{/* <p className="role white-space-pre font-small"> ID:{id}</p> */}
 						</div>:null}
@@ -1040,7 +1039,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 							<p className="role text-center">{titleCase(userDetail?.role)||notAvailable}</p>
 							<p className="role white-space-pre font-small"> ID:{userDetail?.id}</p>
 						</div>
-						<p className="bio text-center">{sentenceCase(normalizeStringLength(userDetail?.about||notAvailable, isMobileDev, 100, 100))}</p>
+						<p className="bio text-center">{sentenceCase(normalizeStringLength(userDetail?.about||notAvailable, isMobileDev900, 100, 100))}</p>
 					</div>
 					<div>
 						{profileArr?.map((userProfileItem, uPIdx) => {
@@ -1087,7 +1086,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 											getAbbr("termAbbr", submitted?.session_term)
 											}-term</span>
 									<span className="time-ago font-15 white-space-pre">
-										{(isMobileDev?(
+										{(isMobileDev900?(
 										<i className="font-xsm font-bold font-white">
 											{/* <FontAwesomeIcon icon="check" style={{ position: "absolute", right: 165, bottom: 13.5 }} /> */}
 											<FontAwesomeIcon icon="check" />
@@ -1102,9 +1101,9 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 												onClick={(e)=>e.stopPropagation()}
 												className="cta-button py-05"
 												download
-												href={`${serverOrigin}${downloadResponse[submitted?.id]}`}>
+												href={`${serverOrigin.replace(/\/$/, "")}${downloadResponse[submitted?.id]}`}>
 													<FontAwesomeIcon icon="download" />
-													{`${deviceInfo.width<400?'':titleCase('Download')}`}
+													{`${width<400?'':titleCase('Download')}`}
 												</a>
 												:
 												// {/* {(!downloadLoading.includes(submitted?.id)) ?
@@ -1115,7 +1114,7 @@ function StaffPageComp({currentPage, isUserDetailPage, theGenCode, setCopiedCode
 													>
 														<FontAwesomeIcon icon="cog" />
 													</i>
-													{`${deviceInfo.width<400?'':titleCase('Generate')}`}
+													{`${width<400?'':titleCase('Generate')}`}
 												</>
 												}
 									</span>
@@ -1142,7 +1141,7 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 						submitAllSavedQuestionsLoading, setDeleteAllSavedQuestionsLoading, setIsDeleteAllSaved,
 						deleteAllSavedQuestionsLoading, setSavedQuestionsLoading, setIsSavedQuestions,
 						savedQuestionsLoading, submitSavedQuestionLoading, setIsSubmitSavedQuestion,
-						deleteSavedQuestionLoading, setIsDeleteSaved, isMobileDev, confirm,}) {
+						deleteSavedQuestionLoading, setIsDeleteSaved, isMobileDev900, confirm,}) {
 	return (
 		<div className={` SavedQuestionsPageComp ${currentPage==='saved questions'?'':'d-none'}`}>
 			<div className={`d-flex justify-content-between pb-1`}>
@@ -1178,7 +1177,7 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 									<i className="font-xsm">
 										<FontAwesomeIcon icon="paper-plane" />
 									</i>
-										{`${isMobileDev?'':'Submit '}${titleCase('All')}`}
+										{`${isMobileDev900?'':'Submit '}${titleCase('All')}`}
 										{/* {titleCase('Submit All')} */}
 								</>
 							}
@@ -1210,7 +1209,7 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 								<Spinner type={'dot'} /> :
 								<>
 									<FontAwesomeIcon icon="trash-can" />
-										{`${isMobileDev?'':'Delete '}${titleCase('All')}`}
+										{`${isMobileDev900?'':'Delete '}${titleCase('All')}`}
 								</>
 							}
 								{/* <FontAwesomeIcon icon="arrows-rotate" spin={teacherCodeLoading} /> */}
@@ -1265,15 +1264,15 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 									<span className={`${preStyle}`}>{subjectAbbr}</span>
 									<span className={`${preStyle}`}>{saved?.class?.toUpperCase()}</span>
 									<span className={`${preStyle}`}>{termAbbr}</span>
-									<span className={`d-flex flex-column gap-3px ${!both?'':`${isMobileDev?'font-10 py-6px':'font-12 py-5px'}`}`}>
+									<span className={`d-flex flex-column gap-3px ${!both?'':`${isMobileDev900?'font-10 py-6px':'font-12 py-5px'}`}`}>
 										{(hasObj)?<span className={`${preStyle} ${both?'py-0 font-bold':''}`}>
-											{`${isMobileDev?'OBJ':'Objectives'}: ${saved?.objective_questions}`}
+											{`${isMobileDev900?'OBJ':'Objectives'}: ${saved?.objective_questions}`}
 										</span>:null}
 										{(hasThr)?<span className={`${preStyle} ${both?'py-0 font-bold':''}`}>
-											{`${isMobileDev?'THR':'Theory'}: ${saved?.theory_questions}`}
+											{`${isMobileDev900?'THR':'Theory'}: ${saved?.theory_questions}`}
 										</span>:null}
 									</span>
-									<span className={`${preStyle} time-ago font-smb`}>{(saved?.has_submitted)?(isMobileDev?(
+									<span className={`${preStyle} time-ago font-smb`}>{(saved?.has_submitted)?(isMobileDev900?(
 										<i className="font-xsm font-bold font-white">
 											{/* <FontAwesomeIcon icon="check" style={{ position: "absolute", right: 3, bottom: 14.5 }} /> */}
 											<FontAwesomeIcon icon="check" />
@@ -1309,7 +1308,7 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 												<i className="font-xsm">
 													<FontAwesomeIcon icon="paper-plane" />
 												</i>
-													{isMobileDev?'':titleCase('Submit')}
+													{isMobileDev900?'':titleCase('Submit')}
 											</>
 										}
 											{/* <FontAwesomeIcon icon="arrows-rotate" spin={teacherCodeLoading} /> */}
@@ -1343,7 +1342,7 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 											<Spinner type={'dot'} /> :
 											<>
 												<FontAwesomeIcon icon="trash-can" />
-													{isMobileDev?'':titleCase('Delete')}
+													{isMobileDev900?'':titleCase('Delete')}
 											</>
 										}
 											{/* <FontAwesomeIcon icon="arrows-rotate" spin={teacherCodeLoading} /> */}
@@ -1361,7 +1360,7 @@ function SavedQuestionsPageComp({currentPage, savedQuestionsPage, savedQuestions
 }
 
 function ScramblePageComp({currentPage, scrambledPage, setScrambledLoading, setIsScrambled,
-							setBackEndpoint, scrambledLoading, scrambledResponse, isMobileDev,}) {
+							setBackEndpoint, scrambledLoading, scrambledResponse, isMobileDev900,}) {
 	return (
 		<div className={` ScramblePageComp-title ${currentPage==='scrambled'?'':'d-none'}`}>
 			<div className={`d-flex justify-content-between pb-1`}>
@@ -1403,6 +1402,7 @@ function ScramblePageComp({currentPage, scrambledPage, setScrambledLoading, setI
 						const subject = shuffleInfo.split('_')[1].toUpperCase()
 						const term = shuffleInfo.split('_')[2].toLowerCase()
 						// console.log({subject, term, shuffleInfo})
+						const normalisedDownloadLink = serverOrigin.replace(/\/$/, "")+scrambled.link
 						return (
 							<li key={sIdx}
 							// onClick={()=> {
@@ -1427,7 +1427,7 @@ function ScramblePageComp({currentPage, scrambledPage, setScrambledLoading, setI
 								</div>
 								<a
 									role="button"
-									href={`${serverOrigin}${scrambled.link}`}
+									href={normalisedDownloadLink}
 									download
 									className={'download-btn-dropdown-item'}
 								>

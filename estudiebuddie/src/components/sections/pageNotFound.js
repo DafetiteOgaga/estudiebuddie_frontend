@@ -5,13 +5,14 @@ import { Spinner } from '../../hooks/spinner/spinner'
 // import { CoinsRain } from '../animationComps/framerAnime'
 import { DancingLion, DancingLion2, TalkingAnimal } from '../animationComps/lottieAnime'
 import { FetchFromServer } from "../../hooks/FetchFromServer";
-import { useDeviceInfo } from "../../hooks/deviceType";
+import { useDevice } from "../../contexts/deviceTypeContext";
 import { titleCase } from "../../hooks/changeCase";
 // import { TheoryBuilder } from "../scrambleQuestions/theoryQuestions";
 
 function PageNotFound() {
-	const deviceInfo = useDeviceInfo()
-	console.log({deviceInfo})
+	// const deviceInfo = useDeviceInfo()
+	const { label, width } = useDevice();
+	// console.log({deviceInfo})
 	const [showAnime, setShowAnime] = useState(false)
 
 	const submitHandler = async (e) => {
@@ -81,8 +82,8 @@ function PageNotFound() {
 			className="cta-button profile-btn">
 				test GET request
 			</button> */}
-			<h2>Device: {titleCase(deviceInfo.label)}</h2>
-			<h3>Media width: {deviceInfo.width}px</h3>
+			<h2>Device: {titleCase(label)}</h2>
+			<h3>Media width: {width}px</h3>
 		</>
 	)
 }

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { AppName } from './sections/header';
-import { useAuth } from '../hooks/authContext';
-import { useDeviceInfo } from '../hooks/deviceType';
+import { useAuth } from '../contexts/authContext';
+import { useDevice } from '../contexts/deviceTypeContext';
 
 const homeCards = [
 	{
@@ -37,7 +37,7 @@ const homeCards = [
 ]
 function Home() {
 	const { loggedIn } = useAuth()
-	const deviceInfo = useDeviceInfo()
+	const { width } = useDevice();
 	// console.log({loggedIn})
 	// const { showPage } = useOutletContext();
 	return (
@@ -67,7 +67,7 @@ function Home() {
 									, <AppName paragragh={true} color1='white' color2="font-gold" /> helps
 									you <strong>learn better, track your progress intelligently, and build
 									confidence</strong>, one question at a time.
-									<span className='device-width-home'>{deviceInfo.width}</span>
+									<span className='device-width-home'>{width}</span>
 								</p>
 								<div className='d-flex gap-1 center-btns'>
 									<Link to={"/quiz"}

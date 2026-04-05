@@ -5,7 +5,7 @@ import { shuffleArray } from "../../hooks/formHooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCreateStorage } from "../../hooks/persistToStorage";
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
-import { useDeviceInfo } from "../../hooks/deviceType";
+import { useDevice } from "../../contexts/deviceTypeContext";
 import { toast } from 'react-toastify';
 
 const formValues = {
@@ -137,7 +137,7 @@ const STORAGE_KEY = "countdown_seconds_left";
 function Quiz() {
 	const [isFirstRender, setIsFirstRender] = useState(false)
 	const [statePreHeadForm, setStatePreHeadForm] = useState(preHeadForm)
-	const deviceInfo = useDeviceInfo()
+	const { label, width } = useDevice();
 	// console.log({deviceInfo})
 	const [isTimeUp, setIsTimeUp] = useState(false);
 	const startButtonRef = useRef(null);
@@ -170,25 +170,25 @@ function Quiz() {
 			})
 		}
 	}, [])
-	if (deviceInfo.label === "smallLaptop") {
+	if (label === "smallLaptop") {
 		// console.log('smallTablet'.repeat(5))
 		dyName.forEach(obj => {
 			let objItem = statePreHeadForm.find(item => item.name === obj)
 			if (objItem) objItem.width = '17%'
 		})
-	} else if (deviceInfo.label === "tablet") {
+	} else if (label === "tablet") {
 		// console.log('smallTablet'.repeat(5))
 		dyName.forEach(obj => {
 			let objItem = statePreHeadForm.find(item => item.name === obj)
 			if (objItem) {
-				if (deviceInfo.width > 800) {
+				if (width > 800) {
 					objItem.width = '19%'
 				} else {
 					objItem.width = '22%'
 				}
 			}
 		})
-	} else if (deviceInfo.label === "mobile") {
+	} else if (label === "mobile") {
 		// console.log('mobile'.repeat(5))
 		statePreHeadForm.forEach(obj => {
 			// let objItem = formHead.find(item => item.name === obj)
@@ -233,7 +233,7 @@ function Quiz() {
 					return updatedPreForm
 				} else {
 					const insertIndex = 4;
-					const width = deviceInfo.label === "mobile"?"70%":"15%"
+					const width = label === "mobile"?"70%":"15%"
 					updatedPreForm = [
 						...updatedPreForm.slice(0, insertIndex),
 						{
@@ -855,7 +855,7 @@ function Quiz() {
 												<h5>
 													Question {sessionLength?(QuestionNumber + 1):0} of {sessionLength}
 												</h5>
-												{deviceInfo.label === "mobile" ?
+												{label === "mobile" ?
 												<div className="mr-05 auto-left">
 													<QuizTimer
 													isStartTime={quizStarting}
@@ -980,7 +980,7 @@ function Quiz() {
 							</fieldset>
 							<div className="d-flex justify-content-center">
 								<button
-									// style={{margin: deviceInfo.label === "mobile"?'1rem 1rem 0 3rem':'1rem 1rem 0 5rem'}}
+									// style={{margin: label === "mobile"?'1rem 1rem 0 3rem':'1rem 1rem 0 5rem'}}
 									type="submit"
 									disabled={(!isSubmitted&&!selectedAnswers.length)||(isSubmitted&&!canRetakeTest)||loading}
 									className={`cta-button text-nowrap first
@@ -990,7 +990,7 @@ function Quiz() {
 											isSubmitted?'Retake Quiz':'Submit'}
 								</button>
 								<button
-									// style={{margin: deviceInfo.label === "mobile"?'1rem 3rem 0 1rem':'1rem 5rem 0 1rem'}}
+									// style={{margin: label === "mobile"?'1rem 3rem 0 1rem':'1rem 5rem 0 1rem'}}
 									onClick={(e)=>{
 										if (isSubmitted) {
 											handleRePopulateFormData()
@@ -1007,10 +1007,10 @@ function Quiz() {
 						</form>
 
 						{/* timer and question list section */}
-						<div className={`${deviceInfo.label === "mobile"?'':'align-self-baseline'} mb-0 ultra-small-devices-ans`}>
+						<div className={`${label === "mobile"?'':'align-self-baseline'} mb-0 ultra-small-devices-ans`}>
 							<div className="stat-card glass">
 								{/* <div className="stat-number">150+</div> */}
-								{deviceInfo.label !== "mobile" ?
+								{label !== "mobile" ?
 								<QuizTimer
 									isStartTime={quizStarting}
 									setIsStarting={setQuizStarting}

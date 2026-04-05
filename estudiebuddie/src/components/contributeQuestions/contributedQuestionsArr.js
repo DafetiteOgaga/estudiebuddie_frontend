@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState, useRef } from 'react';
 import { ImageCropAndCompress } from '../../hooks/imgCompressAndCrop/ImageCropAndCompress';
-import { useDeviceInfo } from '../../hooks/deviceType';
+import { useDevice } from '../../contexts/deviceTypeContext';
 
 const formQuestions = [
 	{
@@ -56,7 +56,7 @@ const formQuestions = [
 ]
 
 function QuestionsArrComp({args}) {
-	const deviceInfo = useDeviceInfo()
+	const { label } = useDevice();
 	const [uploadedImg, setUploadedImg] = useState(null)
 	const {
 		// questions,
@@ -344,7 +344,7 @@ function QuestionsArrComp({args}) {
 									<div className='floating-field'
 									key={field.name + fIdx}
 									style={{
-										width: deviceInfo.label === "mobile"?"100%":"49%", // 2 per row roughly (45% + gap ≈ 100%)
+										width: label === "mobile"?"100%":"49%", // 2 per row roughly (45% + gap ≈ 100%)
 										margin: '2px',
 									}}>
 										<input
