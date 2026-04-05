@@ -3,7 +3,7 @@ import { FetchFromServer } from "../../hooks/FetchFromServer";
 import { toast } from 'react-toastify'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from "../../hooks/authContext";
+import { useAuth } from "../../contexts/authContext";
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
 import { useLogout } from "./logout";
 
