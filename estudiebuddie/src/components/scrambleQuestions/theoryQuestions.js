@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { generateUniqueId } from "../../hooks/formHooks";
-import { useDeviceInfo } from "../../hooks/deviceType";
+import { useDevice } from "../../contexts/deviceTypeContext";
 // import { useConfirm } from "../../hooks/overlayContext";
 const MAX_DEPTH = 3;
 
 function TheoryBuilder({updateState, updateFromSavedTheory, confirm}) {
 	// const { confirm } = useConfirm()
-	const deviceInfo = useDeviceInfo()
-	const isMobileDev = deviceInfo.width<=768
+	const { label, width, isMobileDev768 } = useDevice();
+	// const isMobileDev768 = deviceInfo.width<=768
 	const [theoryQuestions, setTheoryQuestions] = useState([
 		{
 			id: generateUniqueId(),
@@ -58,7 +58,7 @@ function TheoryBuilder({updateState, updateFromSavedTheory, confirm}) {
 				deleteNode={deleteNode}
 				setNextSerial={setNextSerial}
 				confirm={confirm}
-				isMobileDev={isMobileDev}
+				isMobileDev768={isMobileDev768}
 			/>
 			))}
 
@@ -78,7 +78,7 @@ function TheoryBuilder({updateState, updateFromSavedTheory, confirm}) {
 	);
 }
 
-function QuestionNode({ node, depth, index, path, updateNode, addChild, deleteNode, setNextSerial, confirm, isMobileDev }) {
+function QuestionNode({ node, depth, index, path, updateNode, addChild, deleteNode, setNextSerial, confirm, isMobileDev768 }) {
 	const serialNumber = getFullLabel(path, index, depth);
 	// console.log({ serialNumber, depth, pathLength: path.length });
 	useEffect(() => {
@@ -90,7 +90,7 @@ function QuestionNode({ node, depth, index, path, updateNode, addChild, deleteNo
 	const canAddNest = depth < MAX_DEPTH
 
 	return (
-		<div className={`form-group pt-05 ${(!depth||isMobileDev)?'q-mx':''}`}
+		<div className={`form-group pt-05 ${(!depth||isMobileDev768)?'q-mx':''}`}
 		style={{ marginLeft: depth * 3, marginBottom: 5 }}>
 			<div className="floating-field"
 			style={{
@@ -149,7 +149,7 @@ function QuestionNode({ node, depth, index, path, updateNode, addChild, deleteNo
 				addChild={addChild}
 				deleteNode={deleteNode}
 				confirm={confirm}
-				isMobileDev={isMobileDev}
+				isMobileDev768={isMobileDev768}
 				/>
 			))}
 		</div>
