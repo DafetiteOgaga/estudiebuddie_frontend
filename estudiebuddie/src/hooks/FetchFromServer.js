@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify'
 import { useCreateStorage } from './persistToStorage';
-import { useAuth } from './authContext';
+import { useAuth } from '../contexts/authContext';
 import { useNavigate } from 'react-router-dom';
 
 const originUrl = (api=false, dev=false) => {
