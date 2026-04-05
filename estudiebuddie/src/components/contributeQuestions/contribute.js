@@ -4,7 +4,7 @@ import { FetchFromServer, buildFormData, serverOrigin } from "../../hooks/FetchF
 import { titleCase, sentenceCase, formatPhoneNumber } from "../../hooks/changeCase";
 import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit";
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
-import { useDeviceInfo } from "../../hooks/deviceType";
+import { useDevice } from "../../contexts/deviceTypeContext";
 
 const formValues = {
 	type: "",
@@ -97,8 +97,8 @@ const justNumbers = (str) => {
 };
 
 function ContributeQuestionsComponent() {
-	const deviceInfo = useDeviceInfo()
-	console.log({deviceInfo})
+	const { label, width } = useDevice();
+	// console.log({deviceInfo})
 	const [loadingPage, setLoadingPage] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const formDataRef = useRef(new FormData())
@@ -123,25 +123,25 @@ function ContributeQuestionsComponent() {
 		setLoadingPage(false)
 	}, []);
 
-	if (deviceInfo.label === "smallLaptop") {
+	if (label === "smallLaptop") {
 		console.log('smallLaptop'.repeat(5))
 		dyName.forEach(obj => {
 			let objItem = formHead.find(item => item.name === obj)
 			if (objItem) objItem.width = '17%'
 		})
-	} else if (deviceInfo.label === "tablet") {
+	} else if (label === "tablet") {
 		console.log('tablet'.repeat(5))
 		dyName.forEach(obj => {
 			let objItem = formHead.find(item => item.name === obj)
 			if (objItem) {
-				if (deviceInfo.width > 800) {
+				if (width > 800) {
 					objItem.width = '19%'
 				} else {
 					objItem.width = '22%'
 				}
 			}
 		})
-	} else if (deviceInfo.label === "mobile") {
+	} else if (label === "mobile") {
 		console.log('mobile'.repeat(5))
 		formHead.forEach(obj => {
 			// let objItem = formHead.find(item => item.name === obj)
