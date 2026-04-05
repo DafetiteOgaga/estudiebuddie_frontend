@@ -7,14 +7,14 @@ import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
 import { ImageCropAndCompress } from "../../hooks/imgCompressAndCrop/ImageCropAndCompress";
 import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit";
 import { imageCompression } from 'browser-image-compression';
-import { useDeviceInfo } from "../../hooks/deviceType";
+import { useDevice } from "../../contexts/deviceTypeContext";
 import { useCreateStorage } from "../../hooks/persistToStorage";
 import { toast } from 'react-toastify'
 import { useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CheckBoxBtnUI } from "../sections/signUp";
 import { TheoryBuilder } from "./theoryQuestions";
-import { useConfirm } from "../../hooks/overlayContext";
+import { useConfirm } from "../../contexts/overlayContext";
 
 let formValues = {
 	// school: "",
@@ -339,8 +339,8 @@ function ScrambleQuestionsComponent() {
 		class: false,
 		subject: false
 	})
-	const deviceInfo = useDeviceInfo()
-	const isMobileDev = deviceInfo.width<=768
+	const { label, width, isMobileDev768 } = useDevice();
+	// const isMobileDev768 = deviceInfo.width<=768
 	const [tick, setTick] = useState(Date.now());
 	const [loadingPage, setLoadingPage] = useState(true);
 	const [rememberLoading, setRememberLoading] = useState(false);
@@ -487,7 +487,7 @@ function ScrambleQuestionsComponent() {
 								disabled: false,
 								type: "text",
 								placeholder: "No. of Questions",
-								width: deviceInfo.label === "mobile"?"40%":"20%",
+								width: label === "mobile"?"40%":"20%",
 								case: null,
 							},
 							...returnedPrev,
@@ -619,7 +619,7 @@ function ScrambleQuestionsComponent() {
 
 	useEffect(() => {
 		if (deviceTypeCheckRef.current) return
-		if (deviceInfo.label === "mobile") {
+		if (label === "mobile") {
 			// console.log('mobile'.repeat(5), formHeadState)
 			setFormHeadState(prev =>
 				prev.map(obj => {
@@ -650,7 +650,7 @@ function ScrambleQuestionsComponent() {
 			deviceTypeCheckRef.current = true
 			// console.log({formHeadState})
 		}
-	}, [deviceInfo])
+	}, [width, label])
 
 	useEffect(() => {
 		if (!savedSession) return
@@ -1185,11 +1185,11 @@ function ScrambleQuestionsComponent() {
 							{/* mobile */}
 							{(formData.level.toLowerCase().includes('sss')&&
 								formData.class.toLowerCase().includes('sss') &&
-								deviceInfo.width <= 768) &&
+								width <= 768) &&
 								<div className="d-flex justify-self-start">
 							<ToggleDepartment
 							deptStyle={'d-flex pb-01'}
-							deviceInfo={deviceInfo}
+							isMobileDev768={isMobileDev768}
 							dept={dept} handleDeptSet={handleDeptSet} />
 							</div>}
 						</div>
@@ -1197,7 +1197,7 @@ function ScrambleQuestionsComponent() {
 							{/* desktop */}
 							{(formData.level.toLowerCase().includes('sss')&&
 								formData.class.toLowerCase().includes('sss') &&
-								deviceInfo.width > 768) &&
+								width > 768) &&
 							<ToggleDepartment
 							dept={dept} handleDeptSet={handleDeptSet} />}
 							<div className="d-flex flex-column">
@@ -1346,8 +1346,8 @@ function ScrambleQuestionsComponent() {
 							onMouseEnter={(e)=>setIsNewDownload(false)}
 							// style={{margin: '0 5rem',}}
 							className={`download-btn-dropdown mt-1
-										${deviceInfo.width>1024?'mx-5':
-										deviceInfo.width>900?'mx-3':'mx-1'}`}>
+										${width>1024?'mx-5':
+										width>900?'mx-3':'mx-1'}`}>
 							<button
 							type="button"
 							className="cta-button fit no-cursor">
@@ -1372,11 +1372,11 @@ function ScrambleQuestionsComponent() {
 					: null}
 
 					{/* submit button */}
-					<div className={`d-flex justify-content-center pt-1p5 ${isMobileDev?'scramble-btns-pt-05':'pt-05'}`}>
+					<div className={`d-flex justify-content-center pt-1p5 ${isMobileDev768?'scramble-btns-pt-05':'pt-05'}`}>
 						{hasSchool ?
 						<>
 							<button
-							// style={isMobileDev?{}:{margin: '0 0.5rem'}}
+							// style={isMobileDev768?{}:{margin: '0 0.5rem'}}
 							onClick={(e)=>submitHandler(e, false, true)}
 							type="button"
 							disabled={submittingTToSchLoading
@@ -1390,7 +1390,7 @@ function ScrambleQuestionsComponent() {
 									(hasSubmitted?.[fetchID])?'Update Submission':`Submit to ${hasSchool?.acronym}`}
 							</button>
 							<button
-							// style={isMobileDev?{}:{margin: '0 0.5rem'}}
+							// style={isMobileDev768?{}:{margin: '0 0.5rem'}}
 							onClick={(e)=>submitHandler(e, true)}
 							type="button"
 							disabled={rememberLoading
@@ -1405,7 +1405,7 @@ function ScrambleQuestionsComponent() {
 							</button>
 						</>:null}
 						<button
-						// style={isMobileDev?{}:{margin: '0 0.5rem'}}
+						// style={isMobileDev768?{}:{margin: '0 0.5rem'}}
 						type="submit"
 						disabled={scrambleLoading
 							||!canRememberOrSubmit
@@ -1415,7 +1415,7 @@ function ScrambleQuestionsComponent() {
 									${hasSchool?'last':''}`}>
 							{scrambleLoading ?
 								<Spinner type={'dot'} /> :
-								`Scramble${deviceInfo.width>768?' Questions':''}`}
+								`Scramble${width>768?' Questions':''}`}
 						</button>
 					</div>
 				</form>
@@ -1430,12 +1430,16 @@ function DownloadBtn({item, tick, single=false}) {
 	const uKey = (itemName[4]??itemName[3]).slice(4)
 	// console.log({itemName, subject, uKey})
 	const fileName = `${subject}_${uKey}`
+	console.log({serverOrigin, link: item.link, completeLink: `${serverOrigin}${item.link}`})
+	const normalisedDownloadLink = serverOrigin.replace(/\/$/, "")+item.link
+	// cleanedDownloadLink.includes("//public")
+	// console.log({cleanedDownloadLink, incl: cleanedDownloadLink.includes("//public")})
 	return (
 		<a
 			style={{...single?{margin: '0 5rem'}:{}}}
 			role="button"
 
-			href={`${serverOrigin}${item.link}`}
+			href={normalisedDownloadLink}
 			download
 			className={single?'cta-button fit':'download-btn-dropdown-item'}
 		>
@@ -1477,26 +1481,26 @@ function timeAgo(isoString) {
 	return `${diffDays}d ${ago}`;
 }
 
-function ToggleDepartment ({dept, handleDeptSet, deviceInfo=1000, deptStyle=null}) {
-	const isMobile = deviceInfo?.width <= 768
+function ToggleDepartment ({dept, handleDeptSet, isMobileDev768, deptStyle=null}) {
+	// const isMobile = deviceInfo?.width <= 768
 	return (
-		<div className={`${deptStyle?deptStyle:''} ${isMobile?'':'align-self-end pr-1 pb-05'}`}>
+		<div className={`${deptStyle?deptStyle:''} ${isMobileDev768?'':'align-self-end pr-1 pb-05'}`}>
 			<button
 			type="button"
 			onClick={()=>handleDeptSet('art')}
-			className={`cta-button btn-sm first ${dept==='art'?'active':''} ${isMobile?'px-1':''}`}>
+			className={`cta-button btn-sm first ${dept==='art'?'active':''} ${isMobileDev768?'px-1':''}`}>
 				Art
 			</button>
 			<button
 			type="button"
 			onClick={()=>handleDeptSet('commercial')}
-			className={`cta-button btn-sm middle ${dept==='commercial'?'active':''} ${isMobile?'px-1':''}`}>
+			className={`cta-button btn-sm middle ${dept==='commercial'?'active':''} ${isMobileDev768?'px-1':''}`}>
 				Com
 			</button>
 			<button
 			type="button"
 			onClick={()=>handleDeptSet('science')}
-			className={`cta-button btn-sm last ${dept==='science'?'active':''} ${isMobile?'px-1':''}`}>
+			className={`cta-button btn-sm last ${dept==='science'?'active':''} ${isMobileDev768?'px-1':''}`}>
 				Sci
 			</button>
 		</div>
