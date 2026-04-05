@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { generateUniqueId } from "../../hooks/formHooks";
+import { useDeviceInfo } from "../../hooks/deviceType";
 // import { useConfirm } from "../../hooks/overlayContext";
+const MAX_DEPTH = 3;
 
 function TheoryBuilder({updateState, updateFromSavedTheory, confirm}) {
 	// const { confirm } = useConfirm()
+	const deviceInfo = useDeviceInfo()
+	const isMobileDev = deviceInfo.width<=768
 	const [theoryQuestions, setTheoryQuestions] = useState([
 		{
 			id: generateUniqueId(),
@@ -54,6 +58,7 @@ function TheoryBuilder({updateState, updateFromSavedTheory, confirm}) {
 				deleteNode={deleteNode}
 				setNextSerial={setNextSerial}
 				confirm={confirm}
+				isMobileDev={isMobileDev}
 			/>
 			))}
 
@@ -73,19 +78,20 @@ function TheoryBuilder({updateState, updateFromSavedTheory, confirm}) {
 	);
 }
 
-function QuestionNode({ node, depth, index, path, updateNode, addChild, deleteNode, setNextSerial, confirm }) {
+function QuestionNode({ node, depth, index, path, updateNode, addChild, deleteNode, setNextSerial, confirm, isMobileDev }) {
 	const serialNumber = getFullLabel(path, index, depth);
-	console.log({serialNumber})
+	// console.log({ serialNumber, depth, pathLength: path.length });
 	useEffect(() => {
 		const intSerialNumber = Number(serialNumber)
 		if (!isNaN(intSerialNumber) && setNextSerial) {
 			setNextSerial(intSerialNumber+1)
 		}
 	}, [serialNumber])
+	const canAddNest = depth < MAX_DEPTH
 
 	return (
-		<div className="form-group pt-05 q-mx"
-		style={{ marginLeft: depth * 15, marginBottom: 5 }}>
+		<div className={`form-group pt-05 ${(!depth||isMobileDev)?'q-mx':''}`}
+		style={{ marginLeft: depth * 3, marginBottom: 5 }}>
 			<div className="floating-field"
 			style={{
 				// position: "relative",
@@ -110,14 +116,16 @@ function QuestionNode({ node, depth, index, path, updateNode, addChild, deleteNo
 				>{`Enter question ${serialNumber}`}</label>
 
 				<div className="d-flex align-items-start">
+					{canAddNest ?
 					<button
 					type="button"
 					// style={{fontSize: 15}}
 					className="cta-button theory-btn fit first"
-					onClick={() => addChild(node.id)}><FontAwesomeIcon icon="circle-plus"/></button>
+					onClick={() => addChild(node.id)}><FontAwesomeIcon icon="circle-plus"/>
+					</button>:null}
 					<button
 					type="button"
-					className="cta-button theory-btn fit bg-red-warn last"
+					className={`cta-button theory-btn fit bg-red-warn ${canAddNest?'last':''}`}
 					onClick={() => {
 						confirm({
 							title: `Delete question ${serialNumber}?`,
@@ -141,6 +149,7 @@ function QuestionNode({ node, depth, index, path, updateNode, addChild, deleteNo
 				addChild={addChild}
 				deleteNode={deleteNode}
 				confirm={confirm}
+				isMobileDev={isMobileDev}
 				/>
 			))}
 		</div>
@@ -225,17 +234,5 @@ function deleteNodeById(tree, id) {
 			children: deleteNodeById(node.children, id)
 		}));
 }
-
-// async function handleSubmit() {
-// 	await fetch("/api/theory/", {
-// 	  method: "POST",
-// 	  headers: {
-// 		"Content-Type": "application/json"
-// 	  },
-// 	  body: JSON.stringify({
-// 		structure: questions
-// 	  })
-// 	});
-//   }
 
 export { TheoryBuilder };
