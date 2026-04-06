@@ -120,6 +120,20 @@ async function FetchFromServer(endpoint, method = 'GET', body = null, keepForm=f
 		let data = null;
 		// Safely attempt to parse JSON
 		try {
+			console.log({response})
+			const contentType = response.headers.get("content-type");
+			const isFile = contentType && contentType.includes("application/zip");
+			console.log({isFile})
+			if (response.ok && isFile) {
+				// trigger file download
+				const filename = await downloadFile(response)
+
+				return {
+					ok: true,
+					status: response.status,
+					data: { downloaded: true, filename }
+				};
+			}
 			data = await response.json();
 		} catch {
 			data = null;
@@ -307,6 +321,33 @@ function useImageKitAPIs() {
 	}, []);
 
   	return { data, loading, error };  // return something usable
+}
+
+async function downloadFile (response) {
+	console.log("📦 file response detected");
+
+	const blob = await response.blob();
+
+	const contentDisposition = response.headers.get("Content-Disposition");
+	let filename = "download.zip";
+
+
+	if (contentDisposition) {
+		const match = contentDisposition.match(/filename\*?=(?:UTF-8''|")?([^;"']+)/);
+		if (match?.[1]) {
+			filename = decodeURIComponent(match[1].replace(/"/g, ""));
+		}
+	}
+	// trigger download
+	const url = window.URL.createObjectURL(blob);
+	const a = document.createElement("a");
+	a.href = url;
+	a.download = filename;
+	document.body.appendChild(a);
+	a.click();
+	a.remove();
+	window.URL.revokeObjectURL(url);
+	return filename
 }
 
 export { FetchFromServer, buildFormData, serverOrigin, useImageKitAPIs };
