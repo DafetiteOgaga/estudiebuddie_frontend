@@ -330,26 +330,36 @@ function Dashboard() {
 				if (isPullStaffs) {
 					setPullResponse(data)
 					lStorage.setItem('pulled-staffs', {...data, storedAt: Date.now()})
+					console.log('isPullStaffs'.repeat(5))
 				} else if (isSavedQuestions) {
 					setSavedQuestionsResponse(data)
 					lStorage.setItem('saved-questions', data)
+					console.log('isSavedQuestions'.repeat(5))
 				} else if (isDeleteAllSaved) {
 					setSavedQuestionsResponse([])
 					toast.success(data.success)
+					console.log('isDeleteAllSaved'.repeat(5))
 				} else if (isDeleteSaved) {
 					console.log('saved item deleted from server success')
 					toast.success(data.success)
+					console.log('isDeleteSaved'.repeat(5))
 				} else if (isScrambled) {
 					setScrambledResponse(data)
 					lStorage.setItem('scrambled-questions-links', data)
+					console.log('isScrambled'.repeat(5))
 				} else if (isSubmittedQuestions) {
 					setSubmittedQuestionsResponse(data)
+					console.log('isSubmittedQuestions'.repeat(5))
 				} else if (isDownloading) {
 					setDownloadResponse(prev=>{
 						return {...prev, [downloadID]: data.downloadLink}
 					})
+					toast.success(`Questions Downloaded`)
+					console.log('isDownloading'.repeat(5))
 				} else if (isDownloadAll) {
 					setDownloadAllResponse(data)
+					toast.success(`All questions Downloaded`)
+					console.log('isDownloadAll'.repeat(5))
 				}
 				if (isSubmitAllSavedQuestions||isSubmitSavedQuestion) {
 					console.log({data})
@@ -362,6 +372,7 @@ function Dashboard() {
 						console.log(toastTxt)
 					}
 					toast.success(`${sentenceCase(toastTxt)} submitted`)
+					console.log('isSubmitAllSavedQuestions||isSubmitSavedQuestion'.repeat(5))
 				}
 			}
 			setIsScrambled(false)
@@ -641,7 +652,7 @@ function CreateStaff({staffCreationLoading, setStaffCreationLoading, label}) {
 				res,
 			});
 		if (res.ok) {
-			toast.success('Success')
+			toast.success(`${formData.role} account created successfully.`)
 			setFormData(formValues)
 		}
 		setStaffCreationLoading(false)

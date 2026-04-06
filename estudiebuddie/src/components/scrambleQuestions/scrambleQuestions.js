@@ -327,7 +327,7 @@ function ScrambleQuestionsComponent() {
 	const [formHeadState, setFormHeadState] = useState(formHead);
 	const [hasDiffSchool, setHasDiffSchool] = useState(false);
 	// console.log({hasDiffSchool})
-	const userInfoRef = useRef(false)
+	const firstRenderFromSavedRef = useRef(true)
 	const location = useLocation()
 	const isFetch = !!location?.state?.fetchID
 	const fetchID = location?.state?.fetchID
@@ -387,15 +387,7 @@ function ScrambleQuestionsComponent() {
 				})
 			}
 	}, [theory])
-	// useEffect(() => {
-	// 	if (!addTheory) {
-	// 		updateTheoryState([])
-	// 	} else {
-	// 		setFormData(prev => {
-	// 			return {...prev, theory: theory}
-	// 		})
-	// 	}
-	// }, [addTheory,theory])
+
 	const handleDeptSet = (value='') => {
 		if (value===null||value===undefined) return ''
 		setDept(value)
@@ -472,6 +464,10 @@ function ScrambleQuestionsComponent() {
 	}, [hasDiffSchool])
 
 	useEffect(() => {
+		if (isFetch && firstRenderFromSavedRef.current) {
+			firstRenderFromSavedRef.current = false
+			return
+		}
 		// console.log({formHeadState})
 		if (!removeObjectives) {
 			// adding objectives
@@ -495,21 +491,8 @@ function ScrambleQuestionsComponent() {
 					}
 					return returnedPrev
 				})
-				// setFormData(prev => ({
-				// 	...prev,
-				// 	totalQs: 1,
-				// }))
 				console.log('🏆'.repeat(10))
-				// setTotalNoOfQs(2)
-				// console.log('❎'.repeat(10))
-				// setTotalNoOfQs(prev => {
-				// 	if (prev !== 1) {
-				// 		console.log('❎'.repeat(10))
-				// 		return 1;
-				// 	}
-				// 	console.log('♻'.repeat(10))
-				// 	return prev;
-				// });
+				console.log({isFetch, localSavedDetails, savedSession})
 				setTotalNoOfQs(1)
 		} else {
 			// removing objectives
@@ -741,7 +724,7 @@ function ScrambleQuestionsComponent() {
 	useEffect(() => {
 		setLoadingPage(false)
 		if (!hasFetched.current) {
-			fetchDownloadLinkss({endpoint, setDownloadLink})
+			// fetchDownloadLinkss({endpoint, setDownloadLink})
 			hasFetched.current = true
 		}
 	}, []);
@@ -1060,7 +1043,8 @@ function ScrambleQuestionsComponent() {
 		
 		if (res.ok) {
 			const resData = res?.data
-			let extraMessage = "Use the download button to get your questions.";;
+			let extraMessage = ""
+			// let extraMessage = "Use the download button to get your questions.";;
 			if (isSubmitToSch) {
 				extraMessage = "Questions have been sent to the admin.";
 			} else if (isRemember) {
@@ -1071,7 +1055,7 @@ function ScrambleQuestionsComponent() {
 				if (isSubmitToSch) {
 					setHasSubmitted({[fetchID]: resData?.has_submitted})
 				}
-				fetchDownloadLinkss({endpoint, setDownloadLink})
+				// fetchDownloadLinkss({endpoint, setDownloadLink})
 				setIsNewDownload(true)
 			} else {
 				lStorage.removeItem('saved-questions')
@@ -1079,7 +1063,7 @@ function ScrambleQuestionsComponent() {
 			}
 			toast.success(
 				<div>
-					<div>{res?.data?.success}!</div>
+					<div>{res?.data?.success||'Success'}!</div>
 					<div style={{ marginTop: "6px" }}>
 						{extraMessage}
 					</div>
