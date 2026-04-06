@@ -800,9 +800,10 @@ function DashboardSidebar({
 					// 		console.log('fetched links from local storage')
 					// 		setScrambledResponse(localScrambledQuestionLinks)
 					} else {
-						setBackEndpoint('shufflequestions/get-links')
-						setScrambledLoading(true)
-						setIsScrambled(true)
+						// controls fetching scrambled questions from server
+						// setBackEndpoint('shufflequestions/get-links')
+						// setScrambledLoading(true)
+						// setIsScrambled(true)
 					}
 					// }
 				}}>
@@ -1382,9 +1383,10 @@ function ScramblePageComp({currentPage, scrambledPage, setScrambledLoading, setI
 						<button
 						onClick={(e)=> {
 							console.log('1'.repeat(10))
-							setScrambledLoading(true)
-							setIsScrambled(true)
-							setBackEndpoint('shufflequestions/get-links')
+							// controls fetching scrambled questions from server
+							// setScrambledLoading(true)
+							// setIsScrambled(true)
+							// setBackEndpoint('shufflequestions/get-links')
 							console.log('2'.repeat(10))
 						}}
 						type="button"
