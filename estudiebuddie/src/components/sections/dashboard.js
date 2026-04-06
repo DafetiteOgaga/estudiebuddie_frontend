@@ -1456,7 +1456,8 @@ function ScramblePageComp({currentPage, scrambledPage, setScrambledLoading, setI
 						)
 					})
 					:
-					<h3 className="no-result">No Recent Activity</h3>}
+					<h3 className="no-result">COMING SOON!</h3>}
+					{/* // <h3 className="no-result">No Recent Activity</h3>} */}
 				</ul>
 			</div>
 		</div>
