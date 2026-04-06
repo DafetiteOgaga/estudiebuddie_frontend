@@ -464,7 +464,9 @@
         /* margin: 10px 0; */
         /* padding: 10px 0; */
     }
-    
+    /* .select-avatar {
+        padding: 10px 0;
+    } */
     form .profile-btn,
     form .profile-img {
         grid-column: 1;
@@ -549,10 +551,14 @@
 
     /* toast styling */
 	.Toastify__toast-container--top-center {
-        margin-top: 60px !important;
+        margin-top: 20px !important;
+        /* width: auto; */
+        /* white-space: pre; */
     }
     .custom_toast {
         max-width: 95%;
+        min-width: 50%;
+        width: max-content;
         font-size: 0.8rem;
         margin: 0 auto;
     }
