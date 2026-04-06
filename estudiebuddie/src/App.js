@@ -25,13 +25,14 @@ function App() {
   // const { lStorage, sStorage } = useCreateStorage()
   // lStorage.expiredSoRemove('pulled-staffs', 1000*60*60*2)
   console.log('App rendered');
-  const { label } = useDevice();
+  const { isMobileDev768 } = useDevice();
   return (
     <>
       <AppRoutes />
       <ToastContainer
       toastClassName="custom_toast"
-      position={"top-right"} // {deviceType?"top-center":"top-right"}
+      // position={"top-right"}
+      position={isMobileDev768?"top-center":"top-right"}
       autoClose={3000} // 3 seconds (you can increase if needed)
       hideProgressBar={false}
       newestOnTop={true}
