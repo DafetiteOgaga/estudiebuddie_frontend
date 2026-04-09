@@ -48,6 +48,9 @@ body {
     overflow-x: hidden;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
+.dark-theme {
+    --background: #000000;
+}
 :focus-visible {
 	outline: 1px solid white !important;
 }
@@ -279,6 +282,9 @@ h1, h2, h3, h4, h5, h6, p {
 .font-12 {
     font-size: 12px !important;
 }
+.font-14p5 {
+    font-size: 14.5px !important;
+}
 .font-15 {
     font-size: 15px !important;
 }
@@ -363,6 +369,9 @@ fieldset {
 .d-flex {
     display: flex !important;
 }
+.d-block {
+    display: block !important;
+}
 .flex-wrap {
     flex-wrap: wrap !important;
 }
@@ -389,6 +398,9 @@ fieldset {
 }
 .justify-content-start {
     justify-content: start !important;
+}
+.justify-self-end {
+    justify-self: end !important;
 }
 .align-items-center {
     align-items: center !important;
@@ -454,6 +466,9 @@ fieldset {
 }
 .pt-0 {
     padding-top: 0 !important;
+}
+.pt-01 {
+    padding-top: 0.1rem !important;
 }
 .pt-05 {
     padding-top: 0.5rem !important;
