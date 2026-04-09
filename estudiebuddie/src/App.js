@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
 import './App.css';
 import { AppRoutes } from './routes/route';
 import { ToastContainer } from 'react-toastify';
 import './assets/css/esb-style.css';
 import './assets/css/esb-responsive.css';
 import { useCreateStorage } from './hooks/persistToStorage';
+import { useLogo } from './contexts/LogoContext';
 import { useDevice } from './contexts/deviceTypeContext';
 
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -23,9 +25,19 @@ library.add(
 
 function App() {
   // const { lStorage, sStorage } = useCreateStorage()
+  // useEffect(() => {
+  //   // const shouldUseDark = true; // or dynamic logic
+
+  //   // if (shouldUseDark) {
+  //   //   document.documentElement.classList.add("dark-theme");
+  //   // } else {
+  //   //   document.documentElement.classList.remove("dark-theme");
+  //   // }
+  // }, []);
   // lStorage.expiredSoRemove('pulled-staffs', 1000*60*60*2)
   console.log('App rendered');
   const { isMobileDev768 } = useDevice();
+  const { logo } = useLogo();
   return (
     <>
       <AppRoutes />
