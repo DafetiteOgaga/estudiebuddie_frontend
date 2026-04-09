@@ -811,7 +811,7 @@ function DashboardSidebar({
 					type="button"
 					className="cta-button"
 					disabled={item.disable}
-					>{titleCase(item.name)}</button>
+					>{titleCase((item.name==='saved questions'&&isMobileDev900)?'saved':item.name)}</button>
 				</div>
 			)
 		})}
