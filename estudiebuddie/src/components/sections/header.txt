@@ -130,3 +130,12 @@ canRememberOrSubmit
 
 "\\sqrt4"
 "{\\displaylines\\sqrt4\\\\ \\pi}"
+
+"SUPERUSER TESTING SCHOOL",
+"Subject: Mathematics",
+"Class: BASIC4",
+"Second Term",
+"Duration: 2 hours",
+"Instruction: Answer All Objectives And Any 8 In Theory",
+"variant: MTH_2T_074432_b8pd",
+"Type: C",
