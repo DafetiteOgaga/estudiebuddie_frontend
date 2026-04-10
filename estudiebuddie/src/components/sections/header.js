@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { AppLogo } from "./appLogo";
+import { EStudieBuddieLogo } from "./appLogo";
 import { useLogout } from "../authentication/logout";
 import { useCreateStorage } from "../../hooks/persistToStorage";
 import { useAuth } from "../../contexts/authContext";
@@ -100,7 +100,7 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 					onClick={(e)=>navigate('/')}
 					>
 						<div className="logo-icon">
-							<AppLogo />
+							<EStudieBuddieLogo />
 						</div>
 						<div className="d-flex flex-column">
 							<AppName />
@@ -183,7 +183,7 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 								4: '10vh',
 								5: '15vh',
 							};
-							// console.log({hIdx})
+							// console.log({hIdx})x
 							return (
 								<Link
 									key={hIdx}
