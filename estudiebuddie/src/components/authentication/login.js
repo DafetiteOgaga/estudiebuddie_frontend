@@ -37,7 +37,7 @@ function Login() {
 	const [loadingPage, setLoadingPage] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate()
-	const { loggedIn, setLoggedIn } = useAuth()
+	const { loggedIn, setLoggedIn, setUser } = useAuth()
 	const [formData, setFormData] = useState(formValues);
 	const [showPassword, setShowPassword] = useState(false);
 
@@ -68,6 +68,7 @@ function Login() {
 				res,
 			});
 		if (res.ok) {
+			setUser(res?.data?.user)
 			setLoggedIn(res.ok)
 			setLoadingPage(true)
 			if (res?.data?.must_change_password) {
