@@ -52,7 +52,7 @@ async function GetOrFetchLogo() {
 	const cached = lStorage.getItem(STORAGE_KEY);
 	if (cached) {
 		console.log("Loaded logo from localStorage");
-		// return cached;
+		// return cached
 		const blob = base64ToBlob(cached);
 		const file = blobToFile(blob, "school-logo.png");
 
