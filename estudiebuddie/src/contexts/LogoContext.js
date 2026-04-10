@@ -43,6 +43,7 @@ export function useLogo() {
 async function GetOrFetchLogo() {
 	const { lStorage } = useCreateStorage()
 	const loggedInUser = lStorage.getItem("user")
+	// 0. check if user is logged in and has a school
 	if (!loggedInUser||!loggedInUser?.school) {
 		return null
 	}
