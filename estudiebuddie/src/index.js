@@ -7,6 +7,7 @@ import { BrowserRouter, HashRouter } from 'react-router-dom';
 import { AuthProvider } from './contexts/authContext';
 import { ConfirmProvider } from './contexts/overlayContext';
 import { DeviceProvider } from './contexts/deviceTypeContext';
+import { LogoProvider } from './contexts/LogoContext';
 import 'mathlive';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -16,15 +17,17 @@ const isGitHubPages = window.location.hostname.includes('github.io');
 const RouterToUse = isGitHubPages ? HashRouter : BrowserRouter;
 root.render(
   // <React.StrictMode>
-  <DeviceProvider>
-    <ConfirmProvider>
-      <AuthProvider>
-        <RouterToUse>
-          <App />
-        </RouterToUse>
-      </AuthProvider>
-    </ConfirmProvider>
-  </DeviceProvider>
+  <LogoProvider>
+    <DeviceProvider>
+      <ConfirmProvider>
+        <AuthProvider>
+          <RouterToUse>
+            <App />
+          </RouterToUse>
+        </AuthProvider>
+      </ConfirmProvider>
+    </DeviceProvider>
+  </LogoProvider>
   // </React.StrictMode>
 );
 
