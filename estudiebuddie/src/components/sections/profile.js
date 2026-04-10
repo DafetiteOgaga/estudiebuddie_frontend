@@ -528,7 +528,9 @@ function Profile() {
 			}
 			setFormData(formValues)
 			setSchoolFormData(schoolFormValues)
-			setActiveView('profile')
+			if (view!=="theme_mode") {
+				setActiveView('profile')
+			}
 		}
 		setLoading(false)
 	};
@@ -595,7 +597,10 @@ function Profile() {
 			{loadingPage && <SpinnerBarForPage />}
 
 			<section className={`profile-page ${loadingPage?'d-none':''}`}>
-				<div className={`glass ${activeView==='edit'?'profile-form flex-column':'profile-info'}`}>
+				<div className={`glass
+									${activeView==='edit'?'profile-form flex-column':
+									(activeView==='edit-school')?'edit-school-header-info':
+									'profile-info'}`}>
 
 					{/* page header */}
 					<div className="d-flex justify-content-between mobile-profile">
@@ -691,7 +696,7 @@ function Profile() {
 							</div>
 							{activeView==='edit'?
 							<div className="d-flex justify-self-end align-items-center">
-								<h4 className="font-14p5 white-space-pre mt-3pcent">Display: </h4>
+								<h4 className="font-14p5 white-space-pre mt-3pcent">Theme: </h4>
 								<ItemsToggler
 								togglerArray={themeTogglerArray}
 								toggleStyle={'d-flex pt-05'}
@@ -830,7 +835,7 @@ function EditProfilePage({submitHandler, activeView, formData, handleChange, ima
 							setUploadedProfileImg, isMobileDev900}) {
 	return (
 		<form onSubmit={(e)=>submitHandler(e, 'edit')}
-		className={activeView==='edit'?`form-column profile pt-05`:'d-none'}>
+		className={`EditProfilePage ${activeView==='edit'?`form-column profile pt-05`:'d-none'}`}>
 			{formHead.map((input, inpIdx) => {
 				// console.log({form__value: formData[input.name]})
 				return (
@@ -912,7 +917,7 @@ function EditSchoolPage({submitHandler, activeView, schoolFormData, handleSchool
 							loading, setUploadedSchoolImg, isMobileDev900}) {
 	return (
 		<form onSubmit={(e)=>submitHandler(e, 'edit-school')}
-		className={activeView==='edit-school'?`form-column profile pt-05`:'d-none'}>
+		className={`EditSchoolPage ${activeView==='edit-school'?`form-column profile pt-05`:'d-none'}`}>
 			{schoolFormHead.map((input, inpIdx) => {
 			// console.log({form__value: formData[input.name]})
 				return (
@@ -996,7 +1001,7 @@ function ChangePasswordPage({submitHandler, activeView, formData, handleChange, 
 								oldPasswordCheckError, loading}) {
 	return (
 		<form onSubmit={(e)=>submitHandler(e, 'password')}
-		className={activeView==='password'?`form-column profile pt-05`:'d-none'}>
+		className={`ChangePasswordPage ${activeView==='password'?`form-column profile pt-05`:'d-none'}`}>
 			{formPassword.map((input, inpIdx) => {
 				// console.log({
 				// 	field: input.name,
