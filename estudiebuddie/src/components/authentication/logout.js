@@ -13,13 +13,14 @@ function useLogout() {
 	const location = useLocation()?.pathname?.split('/')[1]
 	// console.log({location})
 	// console.log('trying to logout')
-	const { setLoggedIn } = useAuth();
+	const { setLoggedIn, setUser } = useAuth();
 	const { lStorage } = useCreateStorage();
 
 	const logout = () => {
 		console.log('logging out now')
 		lStorage.removeAllItems();
 		setLoggedIn(false);
+		setUser(null)
 		console.log('logout success')
 		toast.success("Logout successful");
 		if (authPages.includes(location)) {

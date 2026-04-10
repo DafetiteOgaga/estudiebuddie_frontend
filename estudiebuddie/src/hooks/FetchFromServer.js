@@ -235,6 +235,7 @@ async function FetchFromServer(endpoint, method = 'GET', body = null, keepForm=f
 			data = {
 				must_change_password: data?.user?.must_change_password,
 				id: data?.user?.id,
+				user: data?.user,
 			}
 		}
 		console.log('✅ completed with normal process ✅')
