@@ -400,12 +400,14 @@ function Profile() {
 
 		let endpoint
 		let cleanedData
+		let viewSuccessText
 		if (view==="theme_mode") {
 			console.log('✅'.repeat(7), {bgThemeValue})
 			endpoint = 'user/change-theme'
 			cleanedData = {
 				theme_mode: bgThemeValue
 			}
+			viewSuccessText = "theme change "
 		} else {
 			setLoading(true)
 			cleanedData = structuredClone(formData);
@@ -414,6 +416,7 @@ function Profile() {
 			if (view==='edit') {
 				pageArr = formHead
 				endpoint = `user/update`
+				viewSuccessText = "update "
 			} else if (view==='password') {
 				const password = formData.password?.trim();
 				const confirmPassword = formData.confirm_password?.trim();
@@ -424,15 +427,18 @@ function Profile() {
 					password === confirmPassword) {
 						pageArr = ["password", "old_password"]
 				}
+				viewSuccessText = "password update "
 			} else if (view==='avatar') {
 				pageArr = ["avatar_code"]
 				endpoint = `user/update`
+				viewSuccessText = "avatar update "
 			} else if (view === 'edit-school') {
 				console.log('editing school...')
 				cleanedData = structuredClone(schoolFormData);
 				pageArr = schoolFormHead
 				endpoint = `school/update`
 				lStorage.removeItem("school_logo")
+				viewSuccessText = "school update "
 			} else {
 				console.warn('no view selected')
 				return
@@ -449,6 +455,7 @@ function Profile() {
 					cleanedData[field] = null
 				})
 				endpoint = `user/update`
+				viewSuccessText = "image delete "
 			}
 			if (view==='delete-school-logo') {
 				console.warn('deleting school logo')
@@ -457,6 +464,7 @@ function Profile() {
 					cleanedData[field] = null
 				})
 				endpoint = `school/update`
+				viewSuccessText = "logo delete "
 			}
 			console.log({
 				formData,
@@ -509,7 +517,7 @@ function Profile() {
 				res,
 			});
 		if (res.ok) {
-			toast.success('Success')
+			toast.success(sentenceCase(`${viewSuccessText}success`))
 			if ((view==='edit'||
 				view==='delete-image'||
 				view==='edit-school'||
