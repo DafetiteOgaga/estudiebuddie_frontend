@@ -42,6 +42,14 @@
     --accent-red-dark: #c0392b;
 }
 
+/* prevents white or wrong color flicker during app mount/reloads */
+html {
+    background-color: #1e3c72;
+}
+html.dark-theme {
+    background-color: #000;
+}
+
 body {
     background-color: var(--background);
     min-height: 100vh;
