@@ -22,15 +22,18 @@ export function AuthProvider({ children }) {
 	console.log('AuthContext rendered');
 	useEffect(() => {
 		const theme = user?.theme_mode
+		const metaTheme = document.querySelector("meta[name='theme-color']");
 		console.log({theme})
 		console.log('changing theme')
 		const shouldUseDark = theme==="dark"
 		if (shouldUseDark) {
 			console.log('change to dark...')
 			document.documentElement.classList.add("dark-theme");
+			metaTheme.setAttribute("content", "#000000");
 		} else {
 			console.log('change to blue...')
 			document.documentElement.classList.remove("dark-theme");
+			metaTheme.setAttribute("content", "#1e3c72");
 		}
 		// document.documentElement.classList.toggle(
 		// 	"dark-theme",
