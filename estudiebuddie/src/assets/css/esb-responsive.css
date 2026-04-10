@@ -71,6 +71,7 @@
     .quiz-head1,
     .shuffle-question-head1,
     .profile-info h2,
+    .edit-school-header-info h2,
     .profile-form h2,
     .leaderboard-page h3,
     .dashboard-content h1,
@@ -172,12 +173,16 @@
     .quiz-head1,
     .shuffle-question-head1,
     .profile-info h2,
+    .edit-school-header-info h2,
     .profile-form h2,
     .leaderboard-page h3,
     .dashboard-content h1,
     .dashboard-content h2 {
         font-size: medium;
         padding-left: 15px;
+    }
+    .edit-school-header-info h2 {
+        padding-left: 14px;
     }
     .leaderboard-page p {
         font-size: small !important;
@@ -428,6 +433,9 @@
     }
     .profile-info {
         padding: 15px;
+    }
+    .edit-school-header-info {
+        padding: 14px !important;
     }
     .mobile-profile {
         padding-bottom: 15px;
