@@ -16,13 +16,13 @@ function EStudieBuddieLogo () {
 				{/* <rect width="500" height="500" rx="96" fill="#0D1F1A"/> */}
 
 				{/* <!-- Outer arc (lightest green, thinnest) --> */}
-				<path d="M140 250 A110 110 0 1 1 360 250" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-dasharray="180 1000" opacity="0.55"/>
+				<path d="M140 250 A110 110 0 1 1 360 250" fill="none" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" strokeDasharray="180 1000" opacity="0.55"/>
 
 				{/* <!-- Middle arc --> */}
-				<path d="M162 250 A88 88 0 1 1 338 250" fill="none" stroke="#facc15" stroke-width="7" stroke-linecap="round" stroke-dasharray="130 1000" opacity="0.75"/>
+				<path d="M162 250 A88 88 0 1 1 338 250" fill="none" stroke="#facc15" strokeWidth="7" strokeLinecap="round" strokeDasharray="130 1000" opacity="0.75"/>
 
 				{/* <!-- Inner arc (darkest, thickest) --> */}
-				<path d="M186 250 A64 64 0 1 1 314 250" fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-dasharray="70 1000" opacity="0.55"/>
+				<path d="M186 250 A64 64 0 1 1 314 250" fill="none" stroke="#ffffff" strokeWidth="9" strokeLinecap="round" strokeDasharray="70 1000" opacity="0.55"/>
 
 				{/* <!-- Central diamond --> */}
 				<polygon points="250,176 296,250 250,324 204,250" fill="#ffffff" opacity="0.25"/>
@@ -30,13 +30,13 @@ function EStudieBuddieLogo () {
 				<polygon points="250,220 264,250 250,280 236,250" fill="#ffffff" opacity="0.55"/>
 
 				{/* <!-- Mirrored outer arc (lower-right, sweep reversed) --> */}
-				<path d="M360 250 A110 110 0 1 1 140 250" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-dasharray="180 1000" opacity="0.55"/>
+				<path d="M360 250 A110 110 0 1 1 140 250" fill="none" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" strokeDasharray="180 1000" opacity="0.55"/>
 
 				{/* <!-- Mirrored middle arc --> */}
-				<path d="M338 250 A88 88 0 1 1 162 250" fill="none" stroke="#facc15" stroke-width="7" stroke-linecap="round" stroke-dasharray="130 1000" opacity="0.75"/>
+				<path d="M338 250 A88 88 0 1 1 162 250" fill="none" stroke="#facc15" strokeWidth="7" strokeLinecap="round" strokeDasharray="130 1000" opacity="0.75"/>
 
 				{/* <!-- Mirrored inner arc --> */}
-				<path d="M314 250 A64 64 0 1 1 186 250" fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-dasharray="70 1000" opacity="0.55"/>
+				<path d="M314 250 A64 64 0 1 1 186 250" fill="none" stroke="#ffffff" strokeWidth="9" strokeLinecap="round" strokeDasharray="70 1000" opacity="0.55"/>
 
 				{/* <!-- Original arc left-end dots --> */}
 				<circle cx="140" cy="250" r="10" fill="#facc15" opacity="1"/>
