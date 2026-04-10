@@ -30,12 +30,22 @@ const jssSubjectArrar = ["science", "computer"]
 const sssSubjectArray = ["physics", "chemistry"]
 const departmentArray = ["art", "commercial", "science"]
 
-// const durationArray = ["1hr"]
-const durationArray = Array.from({length: 5}).map((_, idx) => {
-	const fraction = 0.5
-	// const fraction = 0.003
-	return fraction * (idx + 1)
-})
+// // const durationArray = ["1hr"]
+// const durationArray = Array.from({length: 5}).map((_, idx) => {
+// 	const fraction = 0.5
+// 	// const fraction = 0.003
+// 	return fraction * (idx + 1)
+// })
+const durationArray = [
+	...[0.5/60, 1/60, 2/60, 3/60, 5/60],
+	...Array.from({ length: 3 }, (_, i) => (i + 1) * (10 / 60)), // 10,20,30 mins
+	...Array.from({ length: 5 }, (_, i) => 1 + (i * 0.5)) // 1,1.5,2,2.5,3
+	// 1,
+	// 1.5,
+	// 2,
+	// 2.5,
+	// 3
+];
 const noOfQsArray = [0, 30, 70].map((increment, idx) => {
 	const initNumber = 30
 	return initNumber + increment
@@ -588,7 +598,19 @@ function Quiz() {
 		setIsPreQuiz(false); // SAME action alert was guarding
 		// console.log('setting beginning time')
 		const startTime = new Date(actualStartTime).getTime(); // ms
+		const timeNow = Date.now()
+		const timeExpired = timeNow > startTime
+		// if (timeExpired) {
+		// 	console.log('forcing submission')
+		// 	submitHandler(null, true)
+		// 	return
+		// }
 		setQuizStarting(startTime)
+		console.log({
+			actualStartTime,
+			startTime,
+			timeExpired,
+		})
 	};
 	// console.log({QuestionNumber})
 	// console.log({selectedAnswers})
@@ -1173,6 +1195,7 @@ function QuizTimer({
 		if (!intervalRef.current) {
 			// console.log('ticking started')
 			// setIsStarting(true)
+			tick();
 			intervalRef.current = setInterval(tick, 1000);
 		}
 

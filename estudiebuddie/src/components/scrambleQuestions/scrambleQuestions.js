@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CheckBoxBtnUI } from "../sections/signUp";
 import { TheoryBuilder } from "./theoryQuestions";
 import { useConfirm } from "../../contexts/overlayContext";
+import { useLogo } from "../../contexts/LogoContext";
 
 let formValues = {
 	// school: "",
@@ -318,6 +319,7 @@ const validateFields = ({formData, formHeadState}) => {
 				(hasTheory && areTheoryValid)
 			);
 }
+const deptTogglerArray = ["art", "com", "sci"]
 
 function ScrambleQuestionsComponent() {
 	const levelRef = useRef('')
@@ -366,6 +368,11 @@ function ScrambleQuestionsComponent() {
 	const [addTheory, setAddTheory] = useState(false)
 	const theoryQuestionsRef = useRef(null)
 	const { confirm } = useConfirm();
+	const { logo:schoolLogo } = useLogo();
+	const imageCropAndCompressRef = useRef()
+	const triggerimageCompression = () => {
+		imageCropAndCompressRef.current.removeAction()
+	}
 
 	const updateTheoryState = (data) => {
 		setTheory(data)
@@ -389,6 +396,7 @@ function ScrambleQuestionsComponent() {
 	}, [theory])
 
 	const handleDeptSet = (value='') => {
+		console.log({value})
 		if (value===null||value===undefined) return ''
 		setDept(value)
 		setFormData(prev => {
@@ -459,6 +467,13 @@ function ScrambleQuestionsComponent() {
 			])
 		} else {
 			setFormHeadState(prev => prev.filter(fh => fh.name !== 'school'));
+			setFormData(prev => {
+				return {
+					...prev,
+					school: '',
+				}
+			})
+			triggerimageCompression()
 		}
 		// console.log({formHeadState})
 	}, [hasDiffSchool])
@@ -574,10 +589,10 @@ function ScrambleQuestionsComponent() {
 							if (dept==='art') {
 								// console.log({dept})
 								options = artsSubjects;
-							} else if (dept==='commercial') {
+							} else if (dept==='com') {
 								// console.log({dept})
 								options = commercialSubjects
-							} else if (dept==='science') {
+							} else if (dept==='sci') {
 								// console.log({dept})
 								options = scienceSubjects
 							}
@@ -1029,6 +1044,9 @@ function ScrambleQuestionsComponent() {
 			cleanedData = {...formData}
 			cleanedData.postQuestions = formData.questions
 			delete cleanedData.questions
+			if (!formData.logo&&hasSchool) {
+				cleanedData.logo = schoolLogo
+			}
 			console.log({submittedFormData: cleanedData})
 			fd = buildFormData(new FormData(), cleanedData)
 			shuffleEndpoint = `${endpoint}/shuffle`
@@ -1143,7 +1161,7 @@ function ScrambleQuestionsComponent() {
 		questionFormData,
 		canRememberOrSubmit,
 		// formValues,
-		// dept,
+		dept,
 		// categoryFilled: formHead.every(field=>field.required&&formData[field.name]!==''),
 		// questionsAvailable: !!formData?.questions?.length,
 		// questionsFilled: Object.keys(questionObject)?.every(field=> {
@@ -1171,19 +1189,22 @@ function ScrambleQuestionsComponent() {
 								formData.class.toLowerCase().includes('sss') &&
 								width <= 768) &&
 								<div className="d-flex justify-self-start">
-							<ToggleDepartment
-							deptStyle={'d-flex pb-01'}
-							isMobileDev768={isMobileDev768}
-							dept={dept} handleDeptSet={handleDeptSet} />
-							</div>}
+									<ItemsToggler
+									togglerArray={deptTogglerArray}
+									toggleStyle={'d-flex pb-01'}
+									isMobileDev768={isMobileDev768}
+									btnItem={dept} stateSetter={handleDeptSet} />
+								</div>}
 						</div>
 						<div className="d-flex flex-row align-items-center gap-1 chk-box-pad-r">
 							{/* desktop */}
 							{(formData.level.toLowerCase().includes('sss')&&
 								formData.class.toLowerCase().includes('sss') &&
 								width > 768) &&
-							<ToggleDepartment
-							dept={dept} handleDeptSet={handleDeptSet} />}
+									<ItemsToggler
+									togglerArray={deptTogglerArray}
+									btnItem={dept} stateSetter={handleDeptSet}
+									pageName={'scramble'} />}
 							<div className="d-flex flex-column">
 								<CheckBoxBtnUI
 								chkText="New School?"
@@ -1205,16 +1226,6 @@ function ScrambleQuestionsComponent() {
 							</div>
 						</div>
 					</div>
-						{/* mobile */}
-						{/* {(formData.level.toLowerCase().includes('sss')&&
-							formData.class.toLowerCase().includes('sss') &&
-							deviceInfo.width <= 768) &&
-							<div className="d-flex justify-self-start">
-						<ToggleDepartment
-						deptStyle={'d-flex pb-01'}
-						deviceInfo={deviceInfo}
-						dept={dept} handleDeptSet={handleDeptSet} />
-						</div>} */}
 
 					<fieldset className="questions-header">
 						{formHeadState?.map((input, inpIdx) => {
@@ -1272,21 +1283,34 @@ function ScrambleQuestionsComponent() {
 								</div>
 							)
 						})}
-						<div className=''>
+						{/* <div className=''>
 							<div className="d-flex gap-1">
-								{/* upload/change images */}
 								<ImageCropAndCompress
 								onComplete={setUploadedSchLogo}
 								onClearSelection={setIsClearUploadedLogo}
 								imageId={'logo'}
 								imgType="sch-logo"
-								disableBtn={!hasDiffSchool} />
+								disableBtn={!hasDiffSchool}
+								btnStyle="d-inline"
+								/>
 
 							</div>
-
-							{/* <img src={formData.preview} alt="preview" /> */}
-						</div>
+						</div> */}
 					</fieldset>
+					<div className='d-flex justify-content-center'>
+						<div className="d-flex gap-1">
+							<ImageCropAndCompress
+							ref={imageCropAndCompressRef}
+							onComplete={setUploadedSchLogo}
+							onClearSelection={setIsClearUploadedLogo}
+							imageId={'logo'}
+							imgType="sch-logo"
+							disableBtn={!hasDiffSchool}
+							btnStyle="d-inline"
+							/>
+
+						</div>
+					</div>
 
 					{/* {(totalNumberOfQuestions&&!isFile) ? */}
 					{/* <div> */}
@@ -1465,11 +1489,30 @@ function timeAgo(isoString) {
 	return `${diffDays}d ${ago}`;
 }
 
-function ToggleDepartment ({dept, handleDeptSet, isMobileDev768, deptStyle=null}) {
+function ItemsToggler ({togglerArray, btnItem, stateSetter, isMobileDev768, toggleStyle=null, pageName=null}) {
 	// const isMobile = deviceInfo?.width <= 768
 	return (
-		<div className={`${deptStyle?deptStyle:''} ${isMobileDev768?'':'align-self-end pr-1 pb-05'}`}>
-			<button
+		<div className={`${toggleStyle?toggleStyle:''}
+							${isMobileDev768?'':'align-self-end pb-05'}
+							${pageName==='scramble'?'pr-1':''}`}>
+			{togglerArray.map((btn, idb) => {
+				return (
+					<button key={`${btn}-${idb}`}
+					type="button"
+					onClick={()=>{
+						console.log('clicked', {btn});
+						stateSetter(btn)
+					}}
+					className={`cta-button btn-sm
+								${idb===0?'first':
+								(idb===togglerArray.length-1)?'last':'middle'}
+								${btnItem===btn?'active':''}
+								${isMobileDev768?'px-1':''}`}>
+						{titleCase(btn)}
+					</button>
+				)
+			})}
+			{/* <button
 			type="button"
 			onClick={()=>handleDeptSet('art')}
 			className={`cta-button btn-sm first ${dept==='art'?'active':''} ${isMobileDev768?'px-1':''}`}>
@@ -1486,9 +1529,9 @@ function ToggleDepartment ({dept, handleDeptSet, isMobileDev768, deptStyle=null}
 			onClick={()=>handleDeptSet('science')}
 			className={`cta-button btn-sm last ${dept==='science'?'active':''} ${isMobileDev768?'px-1':''}`}>
 				Sci
-			</button>
+			</button> */}
 		</div>
 	)
 }
 
-export { ScrambleQuestionsComponent, DownloadBtn, timeAgo, customFindLast };
+export { ScrambleQuestionsComponent, DownloadBtn, timeAgo, customFindLast, ItemsToggler };

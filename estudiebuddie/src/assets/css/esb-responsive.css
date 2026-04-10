@@ -190,6 +190,9 @@
     }
 }
 @media (max-width: 768px) {
+    .mt-3pcent {
+        margin-top: 3% !important;
+    }
     .device-width {
         margin-top: -7px;
         align-self: end;

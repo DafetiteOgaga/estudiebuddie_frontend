@@ -27,6 +27,11 @@
 	width: 50px !important;
 	height: 50px !important;
 }
+.image-preview-container .sch-logo.s100-head-acc {
+	border-radius: 10% !important;
+	width: 100px !important;
+	height: 100px !important;
+}
 .image-preview-container .remove {
 	margin-top: 8px !important;
 	/* color: #ff6b6b !important; */
@@ -57,6 +62,9 @@
 
 .file-upload-container {
 	display: inline-flex !important;
+}
+.file-upload-container.d-inline {
+	display: inline !important;
 }
 
 .modal-container {
@@ -99,6 +107,9 @@
 	}
 	.image-preview-container .profile {
 		width: 150px !important;
+	}
+	.image-preview-container .profile.w140{
+		width: 140px !important;
 	}
 	.modal-container .modal-preview {
 		justify-self: normal !important;

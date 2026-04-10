@@ -994,6 +994,7 @@ function MathAndDiagBtns ({toggleMode, isMathActive, within60Questions, isDiagra
 			<button
 			type="button"
 			onClick={() => toggleMode(qIdx, 'math')}
+			disabled={true}
 			className={`cta-button question ${isMathActive?'highlight':''} ${within60Questions?'':'d-none'} ${isMobileDev768?'fit':''}`}>
 				Math
 			</button>
