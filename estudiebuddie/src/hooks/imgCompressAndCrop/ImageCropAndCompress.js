@@ -9,7 +9,7 @@ import "./ImageCropAndCompress.css"
 
 // Utility: turn crop pixels into a File via canvas
 const convertCroppedPixelToJPGImage = (imageSrc, cropPixels) => {
-	console.log({imageSrc, cropPixels})
+	// console.log({imageSrc, cropPixels})
 	return new Promise((resolve, reject) => {
 		const img = new Image();
 		img.src = imageSrc;
@@ -97,15 +97,15 @@ const ImageCropAndCompress = forwardRef(({onComplete,
 
 	// handle file upload from local machine
 	const handleFileChange = (e) => {
-		console.log("File input changed:", e.target.files);
+		// console.log("File input changed:", e.target.files);
 		if (e.target.files && e.target.files.length > 0) {
 			const file = e.target.files[0];
-			console.log("Selected file:", file);
+			// console.log("Selected file:", file);
 			setFileName(file.name);
 			const reader = new FileReader();
 			reader.onload = () => setImageSrc(reader.result);
 			reader.readAsDataURL(file);
-			console.log({reader})
+			// console.log({reader})
 
 			// Reset input
 			e.target.value = "";
@@ -115,12 +115,13 @@ const ImageCropAndCompress = forwardRef(({onComplete,
 	// Expose handleImageProcessing to parent via ref
 	useImperativeHandle(ref, () => ({
 		handleImageProcessing,
+		removeAction,
 	}));
 	
 	// watcher (imageSrc separately)
 	useEffect(() => {
 		if (isImagePreview) {
-			console.log('changing imagePreview from,', isImagePreview, 'to', !!imageSrc)
+			// console.log('changing imagePreview from,', isImagePreview, 'to', !!imageSrc)
 			isImagePreview(!!imageSrc);  // true if imageSrc exists, false otherwise
 		}
 	}, [imageSrc]);
@@ -173,10 +174,10 @@ const ImageCropAndCompress = forwardRef(({onComplete,
 
 			// send file to parent
 			if (onComplete) {
-				console.log('sending to parent ...')
+				// console.log('sending to parent ...')
 				onComplete({compressedFile, imageId, imgPreview});
 				setIsFileSelected(true);
-				console.log({compressedFile})
+				// console.log({compressedFile})
 			}
 
 		} catch (err) {
@@ -186,15 +187,32 @@ const ImageCropAndCompress = forwardRef(({onComplete,
 
 	// download the cropped and compressed file
 	const handleDownload = () => {
-		console.log('handle download...')
+		// console.log('handle download...')
 		if (!finalFile) return;
 
-		console.log('handling download...')
+		// console.log('handling download...')
 		const link = document.createElement("a");
 		link.href = URL.createObjectURL(finalFile);
 		link.download = finalFile.name || "compressed.jpeg"; // default name
 		link.click();
 	};
+
+	const removeAction = () => {
+		setFinalImageUrl(null);
+		setFinalFile(null);
+		setFileName("No file chosen");
+		if (isImagePreview) isImagePreview(false);
+		if (onComplete) {
+			onComplete(
+				{compressedFile: null, imageId, imgPreview: null}
+				// null
+			);
+			setIsFileSelected(false);
+		}
+		if (onClearSelection) {
+			onClearSelection(true)
+		}
+	}
 
 
 	// console.log({imageSrc})
@@ -211,26 +229,13 @@ const ImageCropAndCompress = forwardRef(({onComplete,
 				{/* image preview */}
 				<img src={finalImageUrl}
 				alt="image-preview"
-				className={`image-preview ${imgType==="question"?"question":imgType === "sch-logo"?"sch-logo":"profile"}`}
+				className={`image-preview w140 s100-head-acc ${imgType==="question"?"question":imgType === "sch-logo"?"sch-logo":"profile"}`}
 				/>
 				{/* remove image button */}
 				<button
 				type="button"
 				onClick={() => {
-					setFinalImageUrl(null);
-					setFinalFile(null);
-					setFileName("No file chosen");
-					if (isImagePreview) isImagePreview(false);
-					if (onComplete) {
-						onComplete(
-							{compressedFile: null, imageId, imgPreview: null}
-							// null
-						);
-						setIsFileSelected(false);
-					}
-					if (onClearSelection) {
-						onClearSelection(true)
-					}
+					removeAction()
 				}}
 				className={`cta-button fit question remove ${imgType === "sch-logo"?'x':''}`}>
 					{imgType === "sch-logo"?'X':'Remove'}
@@ -250,7 +255,7 @@ const ImageCropAndCompress = forwardRef(({onComplete,
 			</div>)}
 
 			{/* File input */}
-			<div className={`${'file-upload-container'}`}>
+			<div className={`${'file-upload-container'} ${btnStyle}`}>
 				{/* upload button */}
 				<button
 				type='button'
