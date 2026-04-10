@@ -27,7 +27,7 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 	const { label, width, isMobileDev900 } = useDevice();
 	// const isMobileDev900 = deviceInfo.width<=900
 	const isDev = serverOrigin === 'http://127.0.0.1:8000/'
-	console.log({isDev, serverOrigin})
+	// console.log({isDev, serverOrigin})
 	let {
 		about,
 		email,
@@ -86,7 +86,7 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 	const navigate = useNavigate()
 	const location = useLocation().pathname.split('/')[1];
 	// const hideHeader = location === "complete-registration"
-	console.log({location})
+	// console.log({location})
 	// console.log({userInfo, headerMenu, isOver2000Width, isSticky, scrollY})
 	let mobileHeaderMenu = moveByIndex(headerMenu, 0, 3)
 	// console.log({firstMHM: mobileHeaderMenu})

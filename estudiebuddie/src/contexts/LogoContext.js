@@ -60,6 +60,13 @@ async function GetOrFetchLogo() {
 		return file;
 	}
 
+	// console.warn({url: loggedInUser?.school?.school_logo_url,
+	// 	urlTrue: !loggedInUser?.school?.school_logo_url
+	// })
+	if (!loggedInUser?.school?.school_logo_url) {
+		console.warn('school logo yet to be uploaded by school')
+		return null
+	}
 	console.log("🌐 Fetching logo from ImageKit...");
 
 	// 2. Fetch image
