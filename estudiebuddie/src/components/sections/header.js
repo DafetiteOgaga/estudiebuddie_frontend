@@ -183,7 +183,7 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 								4: '10vh',
 								5: '15vh',
 							};
-							// console.log({hIdx})
+							// console.log({hIdx})x
 							return (
 								<Link
 									key={hIdx}
