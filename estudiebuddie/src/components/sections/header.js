@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { EStudieBuddieLogo } from "./appLogo";
+import { EStudieBuddieLogo, AppName } from "./appLogo";
 import { useLogout } from "../authentication/logout";
 import { useCreateStorage } from "../../hooks/persistToStorage";
 import { useAuth } from "../../contexts/authContext";
@@ -103,8 +103,10 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 							<EStudieBuddieLogo />
 						</div>
 						<div className="d-flex flex-column">
-							<AppName />
-							{isDev? <span className='device-width'> {width}</span>: null}
+							<span>
+								<AppName />
+							</span>
+							{/* {isDev? <span className='device-width'> {width}</span>: null} */}
 						</div>
 					</div>
 					<div className="nav-links is-desktop">
@@ -212,17 +214,4 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 	)
 }
 
-function AppName({paragragh=false, color1=null, color2=null}) {
-	return (
-		<span
-		className={paragragh?'':'logo-text'}>
-			<span className="font-gold skew-e">e</span>
-			<span className={`font-${color1?color1:'light-white'}`}>Studie</span>
-			<span className={`${color2?color2:'font-gold1'} text-nowrap`}>
-				<span className="skew-b">B</span>
-				<span className=''>uddie</span>
-			</span>
-		</span>
-	)
-}
-export { Header, AppName };
+export { Header };
