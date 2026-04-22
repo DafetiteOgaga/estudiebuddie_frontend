@@ -8,7 +8,7 @@ import { FetchFromServer } from "../../hooks/FetchFromServer";
 import { useDevice } from "../../contexts/deviceTypeContext";
 import { titleCase } from "../../hooks/changeCase";
 // import { TheoryBuilder } from "../scrambleQuestions/theoryQuestions";
-// import { EStudieBuddieLogo } from "./appLogo";
+// import { EStudieBuddieLogo, AppName } from "./appLogo";
 
 function PageNotFound() {
 	// const deviceInfo = useDeviceInfo()
@@ -36,6 +36,10 @@ function PageNotFound() {
 
 			{/* <div>
 				<EStudieBuddieLogo />
+			</div>
+
+			<div>
+				<AppName />
 			</div> */}
 
 			{/* <div className="">

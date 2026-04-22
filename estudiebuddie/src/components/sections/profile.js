@@ -213,11 +213,13 @@ function Profile() {
 	const [theGenCode, setTheGenCode] = useState(null)
 	const [loadingPage, setLoadingPage] = useState(true);
 	const [loading, setLoading] = useState(false);
+	const [isUpdating, setIsUpdating] = useState(false)
 	const [activeView, setActiveView] = useState('profile')
 	// const [isEditing, setIsEditing] = useState(false)
 	const [selectedAvatar, setSelectedAvatar] = useState(null)
 	// const [isChoosingAvatar, setIsChoosingAvatar] = useState(false)
 	const { lStorage, sStorage } = useCreateStorage()
+	const [updateSch, setUpdateSch] = useState(false)
 	const userData = lStorage.getItem('user') || {}
 	let {
 		about,
@@ -327,6 +329,21 @@ function Profile() {
 		},
 	]
 
+	useEffect(()=> {
+		if (updateSch) {
+			const newUserData = lStorage.getItem('user') || {}
+			console.log('new'.repeat(10), {newUserData})
+			const { school, rest } = newUserData
+			setSchoolFormData({
+				name: school.name||"",
+				acronym: school.acronym||"",
+				school_email: school.school_email||"",
+				// role: role||"",
+				school_address: school.school_address||"",
+			})
+			setUpdateSch(false)
+		}
+	}, [updateSch])
 	useEffect(() => {
 		if (!isGenSchCode) {
 			return
@@ -531,7 +548,11 @@ function Profile() {
 			if (view!=="theme_mode") {
 				setActiveView('profile')
 			}
+			// if (view==='edit-school') {
+			// 	setUpdateSch(true)
+			// }
 		}
+		setIsUpdating(false);
 		setLoading(false)
 	};
 
@@ -566,12 +587,14 @@ function Profile() {
 
 	const editProfilePageArgs = {
 		submitHandler, activeView, formData, handleChange,
-		image_url, loading, setUploadedProfileImg, isMobileDev900
+		image_url, loading, setUploadedProfileImg, isMobileDev900,
+		isUpdating, setIsUpdating,
 	}
 
 	const editSchoolPageArgs = {
 		submitHandler, activeView, schoolFormData, handleSchoolChange,
-		school_logo_url, loading, setUploadedSchoolImg, isMobileDev900
+		school_logo_url, loading, setUploadedSchoolImg, isMobileDev900,
+		isUpdating, setIsUpdating,
 	}
 
 	const changePasswordPageArgs = {
@@ -599,7 +622,7 @@ function Profile() {
 			<section className={`profile-page ${loadingPage?'d-none':''}`}>
 				<div className={`glass
 									${activeView==='edit'?'profile-form flex-column':
-									(activeView==='edit-school')?'edit-school-header-info':
+									(activeView==='edit-school')?'edit-school-header-info p-40px':
 									'profile-info'}`}>
 
 					{/* page header */}
@@ -670,7 +693,10 @@ function Profile() {
 								type="button"
 								onClick={(e)=>setActiveView(prev=>{
 									console.log({prev})
-									if (prev==='profile') return 'edit-school';
+									if (prev==='profile') {
+										setUpdateSch(true)
+										return 'edit-school';
+									}
 									else if (prev==='edit-school') return 'profile'
 									// else if (prev==='avatar') return 'edit-school'
 									// else if (prev==='password') return 'edit-school'
@@ -832,7 +858,7 @@ function PickAvatarPage({activeView, setSelectedAvatar, selectedAvatar, submitHa
 }
 
 function EditProfilePage({submitHandler, activeView, formData, handleChange, image_url, loading,
-							setUploadedProfileImg, isMobileDev900}) {
+							setUploadedProfileImg, isMobileDev900, isUpdating, setIsUpdating,}) {
 	return (
 		<form onSubmit={(e)=>submitHandler(e, 'edit')}
 		className={`EditProfilePage ${activeView==='edit'?`form-column profile pt-05`:'d-none'}`}>
@@ -892,7 +918,10 @@ function EditProfilePage({submitHandler, activeView, formData, handleChange, ima
 				imgType="profile" />
 
 				<button
-				onClick={(e)=>submitHandler(e, 'delete-image')}
+				onClick={(e)=>{
+					setIsUpdating(true);
+					submitHandler(e, 'delete-image');
+				}}
 				type="button"
 				disabled={loading}
 				className={`cta-button question ${isMobileDev900?'':'ml-05'} ${image_url?'':'d-none'}`}>
@@ -905,7 +934,7 @@ function EditProfilePage({submitHandler, activeView, formData, handleChange, ima
 			type="submit"
 			disabled={loading}
 			className="cta-button profile-btn">
-				{loading ?
+				{(loading&&!isUpdating) ?
 					<Spinner type={'dot'} /> :
 					'Update Profile'}
 			</button>
@@ -914,7 +943,8 @@ function EditProfilePage({submitHandler, activeView, formData, handleChange, ima
 }
 
 function EditSchoolPage({submitHandler, activeView, schoolFormData, handleSchoolChange, school_logo_url,
-							loading, setUploadedSchoolImg, isMobileDev900}) {
+							loading, setUploadedSchoolImg, isMobileDev900, isUpdating, setIsUpdating}) {
+	// const loading = false
 	return (
 		<form onSubmit={(e)=>submitHandler(e, 'edit-school')}
 		className={`EditSchoolPage ${activeView==='edit-school'?`form-column profile pt-05`:'d-none'}`}>
@@ -974,7 +1004,10 @@ function EditSchoolPage({submitHandler, activeView, schoolFormData, handleSchool
 				imgType="sch-logo" />
 
 				<button
-				onClick={(e)=>submitHandler(e, 'delete-school-logo')}
+				onClick={(e)=>{
+					setIsUpdating(true);
+					submitHandler(e, 'delete-school-logo');
+				}}
 				type="button"
 				disabled={loading}
 				className={`cta-button question ${isMobileDev900?'':'ml-05'} ${school_logo_url?'':'d-none'}`}>
@@ -987,7 +1020,7 @@ function EditSchoolPage({submitHandler, activeView, schoolFormData, handleSchool
 			type="submit"
 			disabled={loading}
 			className="cta-button profile-btn">
-			{loading ?
+			{(loading&&!isUpdating) ?
 				<Spinner type={'dot'} /> :
 				'Update School Details'}
 			</button>

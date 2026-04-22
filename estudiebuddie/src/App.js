@@ -1,13 +1,10 @@
-import { useEffect } from 'react';
 import './App.css';
 import { AppRoutes } from './routes/route';
 import { ToastContainer } from 'react-toastify';
 import './assets/css/esb-style.css';
 import './assets/css/esb-responsive.css';
-import { useCreateStorage } from './hooks/persistToStorage';
 import { useLogo } from './contexts/LogoContext';
 import { useDevice } from './contexts/deviceTypeContext';
-
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEye, faEyeSlash, faCircleCheck, faCheck, faTimes,
   faBars, faCopy, faArrowsRotate, faDownload, faGear, faCogs,
