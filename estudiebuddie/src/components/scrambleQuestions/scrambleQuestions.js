@@ -1177,6 +1177,12 @@ function ScrambleQuestionsComponent() {
 		addTheory,
 		theory,
 	})
+	console.log({
+		formhaslogo: formData.logo,
+		hasSchool,
+		schoolLogo,
+		summary: !formData.logo&&hasSchool&&schoolLogo,
+	})
 	return (
 			<>
 				{/* spinner */}
