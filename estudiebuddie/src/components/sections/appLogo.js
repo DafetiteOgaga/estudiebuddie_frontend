@@ -1,4 +1,4 @@
-
+import { useDevice } from "../../contexts/deviceTypeContext";
 
 function EStudieBuddieLogo () {
 	return (
@@ -25,9 +25,24 @@ function EStudieBuddieLogo () {
 				<path d="M186 250 A64 64 0 1 1 314 250" fill="none" stroke="#ffffff" strokeWidth="9" strokeLinecap="round" strokeDasharray="70 1000" opacity="0.55"/>
 
 				{/* <!-- Central diamond --> */}
-				<polygon points="250,176 296,250 250,324 204,250" fill="#ffffff" opacity="0.05"/>
+				{/* <polygon points="250,176 296,250 250,324 204,250" fill="#ffffff" opacity="0.05"/>
 				<polygon points="250,198 278,250 250,302 222,250" fill="#facc15" opacity="0.55"/>
-				<polygon points="250,220 264,250 250,280 236,250" fill="#ffffff" opacity="0.55"/>
+				<polygon points="250,220 264,250 250,280 236,250" fill="#ffffff" opacity="0.55"/> */}
+				{/* Central E */}
+				<text
+					x="250"
+					y="250"
+					textAnchor="middle"
+					dominantBaseline="middle"
+					fontSize="120"
+					fontWeight="700"
+					fontFamily="Arial, sans-serif"
+					fill="#facc15"
+					opacity="0.55"
+					transform="rotate(-15 250 250)"
+				>
+					e
+				</text>
 
 				{/* <!-- Mirrored outer arc (lower-right, sweep reversed) --> */}
 				{/* <path d="M360 250 A110 110 0 1 1 140 250" fill="none" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" strokeDasharray="180 1000" opacity="0.55"/> */}
@@ -62,4 +77,77 @@ function EStudieBuddieLogo () {
 		</>
 	)
 }
-export { EStudieBuddieLogo }
+
+function AppName() {
+	const { label, width } = useDevice()
+	const _900 = width <= 900
+	// const _800 = width <= 800
+	return (
+		<svg
+		width={`${
+			
+			_900?"175":
+			"225"}`}
+			height={`${
+				
+				_900?"28":
+				"45"}`}
+			viewBox="-15 0 370 60"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			{/* tilted E */}
+			<text
+				x="-13"
+				y="44"
+				fontSize="48"
+				fontWeight="700"
+				fontFamily="Poppins, sans-serif"
+				fill="#facc15"
+				transform="rotate(-15 20 35)"
+			>
+				e
+			</text>
+
+			{/* Studie */}
+			<text
+				x="12"
+				y="50"
+				fontSize="48"
+				fontWeight="600"
+				fontFamily="Poppins, sans-serif"
+				fill="#fff"
+				opacity="0.55"
+			>
+				Studie
+			</text>
+
+			{/* tilted B */}
+			<text
+				x="160"
+				y="47"
+				fontSize="48"
+				fontWeight="700"
+				fontFamily="Poppins, sans-serif"
+				fill="#facc15"
+				transform="rotate(-10 185 35)"
+				opacity="0.55"
+			>
+				B
+			</text>
+
+			{/* uddie */}
+			<text
+				x="194"
+				y="50"
+				fontSize="48"
+				fontWeight="600"
+				fontFamily="Poppins, sans-serif"
+				fill="#facc15"
+				opacity="0.55"
+			>
+				uddie
+			</text>
+		</svg>
+	);
+}
+export { EStudieBuddieLogo, AppName }
