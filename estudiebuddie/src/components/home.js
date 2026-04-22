@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { AppName } from './sections/header';
 import { useAuth } from '../contexts/authContext';
 import { useDevice } from '../contexts/deviceTypeContext';
 
@@ -52,7 +51,7 @@ function Home() {
 							<div className="hero-content">
 								<h3 className='hero-header'>Learning just got smarter, simpler, and more fun.</h3>
 								<p>
-									<AppName paragragh={true} color1='white' color2="font-gold" /> is an All-in-One
+									<AppNameOld paragragh={true} color1='white' color2="font-gold" /> is an All-in-One
 									<strong> AI-powered</strong> study and practice platform designed for students
 									from <strong>Basic 1-5, JSS 1-3, SSS 1-3</strong>, and candidates preparing for
 									<strong> WAEC</strong> and <strong>JAMB</strong>.
@@ -64,7 +63,7 @@ function Home() {
 								<p>
 									With <strong>smart AI feedback</strong>, interactive quizzes, timed practice
 									sessions, and exam-focused questions
-									, <AppName paragragh={true} color1='white' color2="font-gold" /> helps
+									, <AppNameOld paragragh={true} color1='white' color2="font-gold" /> helps
 									you <strong>learn better, track your progress intelligently, and build
 									confidence</strong>, one question at a time.
 									<span className='device-width-home'>{width}</span>
@@ -124,5 +123,19 @@ function Home() {
 
 		</>
 	);
+}
+
+function AppNameOld({paragragh=false, color1=null, color2=null}) {
+	return (
+		<span
+		className={paragragh?'':'logo-text'}>
+			<span className="font-gold skew-e">e</span>
+			<span className={`font-${color1?color1:'light-white'}`}>Studie</span>
+			<span className={`${color2?color2:'font-gold1'} text-nowrap`}>
+				<span className="skew-b">B</span>
+				<span className=''>uddie</span>
+			</span>
+		</span>
+	)
 }
 export { Home };
