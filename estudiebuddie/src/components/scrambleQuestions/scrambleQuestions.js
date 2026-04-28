@@ -1045,10 +1045,10 @@ function ScrambleQuestionsComponent() {
 			cleanedData.postQuestions = formData.questions
 			delete cleanedData.questions
 			if (!formData.logo&&hasSchool&&schoolLogo) {
-				// console.log('sch-logo', schoolLogo)
+				// console.log('✅✅✅✅✅sch-logo', schoolLogo)
 				cleanedData.logo = schoolLogo
 			} else {
-				// console.warn('no school has no uploaded logo')
+				// console.warn('❌❌❌❌❌no school has no uploaded logo')
 				delete cleanedData.logo
 			}
 			console.log({submittedFormData: cleanedData})
