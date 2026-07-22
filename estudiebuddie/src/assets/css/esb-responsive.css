@@ -9,6 +9,10 @@
     .leaderboard-page {
         margin: 0 5rem;
     }
+    .math-sym-accordion-btns-grid {
+        display: grid !important;
+        grid-template-columns: repeat(10, max-content);
+    }
 }
 
 @media (min-width: 1160px) {
@@ -32,6 +36,9 @@
 }
 
 @media (max-width: 1024px) {
+    .math-sym-accordion-btns-grid {
+        grid-template-columns: repeat(9, max-content);
+    }
     .device-width {
         margin-top: -5px;
         font-size: 6.2px;
@@ -149,6 +156,12 @@
     }
 }
 @media (max-width: 800px) {
+    .math-sym-accordion-btns-grid {
+        grid-template-columns: repeat(8, max-content);
+    }
+    .diagram-container {
+        width: 700px;
+    }
     .device-width {
         margin-top: 30px;
     }
@@ -195,6 +208,9 @@
     }
 }
 @media (max-width: 768px) {
+    .diagram-container {
+        width: 650px;
+    }
     .mt-3pcent {
         margin-top: 3% !important;
     }
@@ -615,6 +631,9 @@
     }
 }
 @media (max-width: 630px) {
+    .diagram-container {
+        width: 550px;
+    }
     /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 45% !important;
     } */
@@ -638,6 +657,9 @@
     } */
 }
 @media (max-width: 530px) {
+    .diagram-container {
+        width: 450px;
+    }
     .login-form.w33percent {
         width: 88%;
     }
@@ -654,11 +676,17 @@
     } */
 }
 @media (max-width: 430px) {
+    .diagram-container {
+        width: 400px;
+    }
     /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 58% !important;
     } */
 }
 @media (max-width: 412px) {
+    .diagram-container {
+        width: 370px;
+    }
     /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 57% !important;
     } */
@@ -678,6 +706,9 @@
 
 /* Ultra-small screens <400px */
 @media (max-width: 400px) {
+    .diagram-container {
+        width: 350px;
+    }
     /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 55% !important;
     } */
@@ -791,6 +822,9 @@
     } */
 }
 @media (max-width: 360px) {
+    .diagram-container {
+        width: 320px;
+    }
     .device-width {
         margin-top: -6px;
     }
