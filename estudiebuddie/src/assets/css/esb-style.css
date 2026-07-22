@@ -27,6 +27,9 @@
     --placeholder1: rgba(255, 255, 255, 0.7);
     --shapesBG: rgba(255, 255, 255, 0.08);
     --background: #1e3c72;
+    --optionsBG: #344f80;
+    --optionsDarkBG: #1b1919;
+    --optionsDarkBGHover: #2d2d2d;
     --scrollBG: rgb(199, 193, 180);
     --glass: rgba(255, 255, 255, 0.1);
     --glassLighter: rgba(255, 255, 255, 0.05);
@@ -40,6 +43,7 @@
     /* --accent-red: #c0392b; */
     --accent-red-soft: rgba(248, 113, 113, 0.25);
     --accent-red-dark: #c0392b;
+    --transparent: transparent;
 }
 
 /* prevents white or wrong color flicker during app mount/reloads */
@@ -241,6 +245,9 @@ h1, h2, h3, h4, h5, h6, p {
 .bg-red {
     background-color: red !important;
 }
+.transparent-bg {
+    background: var(--transparent) !important;
+}
 .font-delete {
     color: var(--accent-red-dark) !important;
 }
@@ -368,6 +375,12 @@ fieldset {
 .border-top-1 {
     border-top: 1px solid var(--shadow2) !important;
 }
+.border-line {
+    border: 1px solid var(--shadow2) !important;
+}
+.border-none {
+    border: none !important;
+}
 .d-none {
     display: none !important;
 }
@@ -379,6 +392,12 @@ fieldset {
 }
 .d-block {
     display: block !important;
+}
+.d-in-block {
+    display: inline-block !important;
+}
+.d-in-grid {
+    display: inline-grid !important;
 }
 .flex-wrap {
     flex-wrap: wrap !important;
@@ -437,6 +456,10 @@ fieldset {
 .auto-right {
     margin-right: auto;
 }
+.math-tab-symbols {
+    min-width: 32px;
+    font-size: 15px !important;
+}
 
 .p-2px {
     padding: 2px !important;
@@ -482,6 +505,9 @@ fieldset {
 .pt-01 {
     padding-top: 0.1rem !important;
 }
+.pt-2px {
+    padding-top: 2px !important;
+}
 .pt-05 {
     padding-top: 0.5rem !important;
 }
@@ -505,6 +531,12 @@ fieldset {
 }
 .pb-0 {
     padding-bottom: 0 !important;
+}
+.pb-2px {
+    padding-bottom: 2px !important;
+}
+.pb-5px {
+    padding-bottom: 5px !important;
 }
 .pb-01 {
     padding-bottom: 0.1rem !important;
@@ -530,6 +562,10 @@ fieldset {
 .px-5px {
     padding-left: 5px !important;
     padding-right: 5px !important;
+}
+.px-8px {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
 }
 .px-0 {
     padding-left: 0 !important;
@@ -796,6 +832,12 @@ fieldset {
 }
 .mb-0 {
     margin-bottom: 0 !important;
+}
+.mb-3px {
+    margin-bottom: 3px !important;
+}
+.mb-6px {
+    margin-bottom: 6px !important;
 }
 .mb-05 {
     margin-bottom: 0.5rem !important;
@@ -1102,11 +1144,32 @@ nav.sticky {
     transform: translateY(0);
     box-shadow: 0 10px 25px var(--lightDarkShadow);
 }
+.color-pickers-label {
+    font-size: 13px;
+    display: flex !important;
+    align-items: center;
+    gap: 3px;
+    /* padding-left: 10px; */
+    margin-bottom: 0 !important;
+}
+.color-pickers-label input {
+    width: 28px !important;
+    height: 24px;
+    padding: 0 !important;
+    border: none !important;
+    cursor: pointer;
+    align-self: center;
+}
+.diagram-container {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 800px;
+}
 
 /* Full hover effect only on real pointer devices */
 @media (hover: hover) and (pointer: fine) {
     .cta-button:hover {
-        background: rgba(255, 255, 255, 0.3);
+        background: rgba(34, 20, 20, 0.3);
         transform: translateY(-3px);
         box-shadow: 0 10px 25px var(--lightDarkShadow);
     }
@@ -1129,23 +1192,52 @@ nav.sticky {
 .cta-button.btn-sm.first,
 .cta-button.first,
 .dashboard-bar-text .bar-box.first {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-right: none;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-right: none !important;
 }
 .cta-button.btn-sm.middle,
 .cta-button.middle,
 .dashboard-bar-text .bar-box.middle {
-    border-right: none;
-    border-left: none;
-    border-radius: 0;
+    border-right: none !important;
+    border-left: none !important;
+    border-radius: 0 !important;
 }
 .cta-button.btn-sm.last,
 .cta-button.last,
 .dashboard-bar-text .bar-box.last {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    border-left: none;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-left: none !important;
+}
+.cta-button.btn-sm.grid-first,
+.cta-button.grid-first,
+.dashboard-bar-text .bar-box.grid-first {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-right: none !important;
+}
+.cta-button.btn-sm.grid-first-last-line,
+.cta-button.grid-first-last-line,
+.dashboard-bar-text .bar-box.grid-first-last-line {
+    border-top-right-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-right: none !important;
+}
+.cta-button.btn-sm.grid-last,
+.cta-button.grid-last,
+.dashboard-bar-text .bar-box.grid-last {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-left: none !important;
+}
+.grp {
+    font-size: 13.5px !important;
+}
+.rm-bottom-border {
+    border-bottom: none !important;
 }
 button[type="submit"] {
     font-family: inherit;
@@ -1154,6 +1246,22 @@ button[type="submit"] {
 .question-upload {
     border-radius: 10px;
 }
+
+/* .grp.first {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-right: none !important;
+}
+.grp.middle {
+    border-right: none !important;
+    border-left: none !important;
+    border-radius: 0 !important;
+}
+.grp.last {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-left: none !important;
+} */
 
 .cards {
     display: grid;
@@ -1259,6 +1367,7 @@ button[type="submit"] {
     border-radius: 50%;
     transition: all 0.3s ease;
 }
+
 
 /* About page styles */
 .about-content {
@@ -1903,9 +2012,18 @@ form .signup-btn {
 }
 /* options */
 .options {
-    background-color: rgb(52 79 128);
+    background-color: var(--optionsBG);
     font-size: 16px;
 }
+.dark-theme .options {
+    background-color: var(--optionsDarkBG) !important;
+}
+.dark-theme .options:hover,
+.dark-theme .options:checked,
+.dark-theme .options:focus {
+    background-color: var(--optionsDarkBGHover) !important;
+}
+
 /* profile */
 .profile-page {
     margin: 0 10rem;
