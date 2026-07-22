@@ -23,22 +23,33 @@ export function AuthProvider({ children }) {
 	useEffect(() => {
 		const theme = user?.theme_mode
 		const metaTheme = document.querySelector("meta[name='theme-color']");
-		console.log({theme})
+		// const optionsTheme = document.querySelectorAll("option")
+		// console.log({theme, optionsTheme})
 		console.log('changing theme')
 		const shouldUseDark = theme==="dark"
 		if (shouldUseDark) {
 			console.log('change to dark...')
 			document.documentElement.classList.add("dark-theme");
 			metaTheme.setAttribute("content", "#000000");
+			// optionsTheme.forEach((option) => {
+			// 	option.classList.add("dark-theme");
+			// });
 		} else {
 			console.log('change to blue...')
 			document.documentElement.classList.remove("dark-theme");
 			metaTheme.setAttribute("content", "#1e3c72");
+			// optionsTheme.forEach((option) => {
+			// 	option.classList.remove("dark-theme");
+			// });
 		}
 		// document.documentElement.classList.toggle(
 		// 	"dark-theme",
 		// 	theme === "dark"
 		// );
+		document.documentElement.classList.toggle(
+			"dark-theme",
+			shouldUseDark
+		);
 	}, [user])
 
 	useEffect(() => {
