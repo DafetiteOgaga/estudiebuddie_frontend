@@ -49,8 +49,17 @@ function buildFormData(formData, data, parentKey = '') {
 				}
 			}
 		}
+	// } else {
+	// 	// For primitives or File objects
+	// 	formData.append(parentKey, data ?? '');
+	// }
+	} else if (data instanceof Blob || data instanceof File) {
+		formData.append(
+			parentKey,
+			data,
+			data.name || `${parentKey}.png`
+		);
 	} else {
-		// For primitives or File objects
 		formData.append(parentKey, data ?? '');
 	}
 	return formData;
