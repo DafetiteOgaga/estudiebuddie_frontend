@@ -1186,11 +1186,11 @@ function ScrambleQuestionsComponent() {
 		if (isRemember||isSubmitToSch) {
 			// console.log('6'.repeat(10))
 			if (isRemember) {
-				// setRememberLoading(true)
+				setRememberLoading(true)
 				// console.log({isRemember})
 				shuffleEndpoint = 'school/save/true'
 			} else {
-				// setSubmittingToSchLoading(true)
+				setSubmittingToSchLoading(true)
 				// console.log({isSubmitToSch})
 				shuffleEndpoint = `${endpoint}/exam-questions`
 			}
@@ -1235,7 +1235,7 @@ function ScrambleQuestionsComponent() {
 			}
 		} else {
 			// console.log('7'.repeat(10))
-			// setScrambleLoading(true)
+			setScrambleLoading(true)
 			// cleanedData = {...formData}
 			cleanedData = structuredClone(fd);
 			cleanedData.postQuestions = formData.questions
