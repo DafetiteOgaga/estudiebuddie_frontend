@@ -105,6 +105,7 @@ function Header({isSticky, scrollY, isOver2000Width}) {
 						<div className="d-flex flex-column">
 							<span>
 								<AppName />
+								{/* <p style={{fontSize: 12}}>{width}px</p> */}
 							</span>
 							{/* {isDev? <span className='device-width'> {width}</span>: null} */}
 						</div>

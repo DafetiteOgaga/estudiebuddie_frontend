@@ -253,9 +253,9 @@ const fetchDownloadLinkss = async ({endpoint, setDownloadLink}) => {
 }
 
 function customFindLast(arr, predicate) {
-	console.log({arr_in_customFindLast_1: arr,
-				predicate_in_customFindLast_1: predicate
-	})
+	// console.log({arr_in_customFindLast_1: arr,
+	// 			predicate_in_customFindLast_1: predicate
+	// })
 	if (!Array.isArray(arr)) return undefined;
 
 	for (let i = arr.length - 1; i >= 0; i--) {
@@ -321,6 +321,70 @@ const validateFields = ({formData, formHeadState}) => {
 }
 const deptTogglerArray = ["art", "com", "sci"]
 
+// export stage as compressed blob (FAST + SMALL)
+// const exportDiagramBlob = (stage) => {
+// 	return new Promise((resolve) => {
+// 		stage.toBlob(
+// 			{
+// 				mimeType: "image/png",
+// 				pixelRatio: 1, // keeps file small for DOCX
+// 			},
+// 			(blob) => resolve(blob)
+// 		);
+// 	});
+// };
+const exportDiagramBlob = async (stage) => {
+	// console.log({
+	// 	exportStage: stage,
+	// 	hasToBlob: typeof stage.toBlob,
+	// 	hasToDataURL: typeof stage.toDataURL,
+	// });
+
+    const blob = await stage.toBlob({
+        mimeType: "image/png",
+        pixelRatio: 1, // keep small for backend processing
+    });
+
+    // console.log("BLOB RESULT", blob);
+
+	if (!blob) throw new Error("Konva returned null blob");
+
+    return blob;
+
+
+
+	// const layer = stage.getLayers()[0];
+
+	// const rect = layer.getClientRect({
+	// 	skipShadow: true,
+	// 	skipStroke: false,
+	// });
+
+	// const PADDING = 5;
+
+	// const blob = await stage.toBlob({
+	// 	x: Math.max(0, rect.x - PADDING),
+	// 	y: Math.max(0, rect.y - PADDING),
+	// 	width: rect.width + PADDING * 2,
+	// 	height: rect.height + PADDING * 2,
+	// 	mimeType: "image/png",
+	// 	pixelRatio: 1, // keep your current value
+	// });
+
+	// console.log("BLOB RESULT", blob);
+
+	// if (!blob) throw new Error("Konva returned null blob");
+
+	// return blob;
+
+};
+const blobToBase64 = (blob) =>
+	new Promise((resolve) => {
+	const reader = new FileReader();
+	reader.onloadend = () => resolve(reader.result);
+	reader.readAsDataURL(blob);
+});
+
 function ScrambleQuestionsComponent() {
 	const levelRef = useRef('')
 	const classRef = useRef('')
@@ -346,7 +410,7 @@ function ScrambleQuestionsComponent() {
 	const [tick, setTick] = useState(Date.now());
 	const [loadingPage, setLoadingPage] = useState(true);
 	const [rememberLoading, setRememberLoading] = useState(false);
-	const [submittingTToSchLoading, setSubmittingTToSchLoading] = useState(false);
+	const [submittingTToSchLoading, setSubmittingToSchLoading] = useState(false);
 	const [scrambleLoading, setScrambleLoading] = useState(false);
 	// const formDataRef = useRef(new FormData())
 	const totalNoOfQsRef = useRef(1)
@@ -373,6 +437,7 @@ function ScrambleQuestionsComponent() {
 	const triggerimageCompression = () => {
 		imageCropAndCompressRef.current.removeAction()
 	}
+	const [isExporting, setIsExporting] = useState(false);
 
 	const updateTheoryState = (data) => {
 		setTheory(data)
@@ -396,7 +461,7 @@ function ScrambleQuestionsComponent() {
 	}, [theory])
 
 	const handleDeptSet = (value='') => {
-		console.log({value})
+		// console.log({value})
 		if (value===null||value===undefined) return ''
 		setDept(value)
 		setFormData(prev => {
@@ -407,8 +472,8 @@ function ScrambleQuestionsComponent() {
 	useEffect(() => {
 		if (!isFetch) return
 		if (localSavedDetails) {
-			console.log('fetching from local storage')
-			console.log({localSavedDetails})
+			// console.log('fetching from local storage')
+			// console.log({localSavedDetails})
 			setSavedSession(localSavedDetails)
 			hasLocalSavedClassRef.current = {
 				class: true,
@@ -443,7 +508,6 @@ function ScrambleQuestionsComponent() {
 			// console.log('already ran.')
 			return
 		}
-		// console.log('running formvalues', formHeadState)
 		// console.log({userInfo})
 		setFormHeadState(prev=> prev.filter(fh => fh.name!=='school'))
 		// console.log({formHeadState})
@@ -488,7 +552,7 @@ function ScrambleQuestionsComponent() {
 			// adding objectives
 				setFormHeadState(prev=> {
 					const totalQsExists = prev.some(fh => fh.name === 'totalQs');
-					console.log({totalQsExists})
+					// console.log({totalQsExists})
 					let returnedPrev = [...prev]
 					if (!totalQsExists) {
 						returnedPrev =  [
@@ -506,8 +570,8 @@ function ScrambleQuestionsComponent() {
 					}
 					return returnedPrev
 				})
-				console.log('🏆'.repeat(10))
-				console.log({isFetch, localSavedDetails, savedSession})
+				// console.log('🏆'.repeat(10))
+				// console.log({isFetch, localSavedDetails, savedSession})
 				setTotalNoOfQs(1)
 		} else {
 			// removing objectives
@@ -654,7 +718,7 @@ function ScrambleQuestionsComponent() {
 		if (!savedSession) return
 		// console.log('updating form data')
 		const scramble_session_data = savedSession?.scramble_session_data
-		console.log({scramble_session_data, questions: scramble_session_data.questions})
+		// console.log({scramble_session_data, questions: scramble_session_data.questions})
 		let savedQuestionsArr
 		if (typeof scramble_session_data.questions === "object" &&
 			!Array.isArray(scramble_session_data.questions)) {
@@ -699,7 +763,7 @@ function ScrambleQuestionsComponent() {
 		if (typeof theoryQuestions === "object") {
 			theoryQuestions = normalizeTheory(theoryQuestions)
 		}
-		console.log({theoryQuestions})
+		// console.log({theoryQuestions})
 		if (theoryQuestions.length) {
 			theoryQuestionsRef.current = theoryQuestions
 			setAddTheory(true)
@@ -709,12 +773,12 @@ function ScrambleQuestionsComponent() {
 		// }
 		const isObj = Object.keys(scramble_session_data?.questions||{})
 		setRemoveObjectives(!isObj?.length)
-		console.log({
-			scramble_session_data,
-			isObj,
-			length: isObj?.length,
-			bool: !isObj?.length
-		})
+		// console.log({
+		// 	scramble_session_data,
+		// 	isObj,
+		// 	length: isObj?.length,
+		// 	bool: !isObj?.length
+		// })
 		// }
 		// console.log({savedQuestionsArr})
 		setFormData(prev => {
@@ -796,18 +860,18 @@ function ScrambleQuestionsComponent() {
 			}
 
 			updatedQuestions[index].question = blocks;
-		} else if (name === "question_math") {
-			// console.log('question_math'.repeat(10))
-			const blocks = updatedQuestions[index].question.map(b => ({ ...b }));
-			let mathBlock = customFindLast(blocks, b => b.type === "math");
+		// } else if (name === "question_math") {
+		// 	// console.log('question_math'.repeat(10))
+		// 	const blocks = updatedQuestions[index].question.map(b => ({ ...b }));
+		// 	let mathBlock = customFindLast(blocks, b => b.type === "math");
 
-			if (!mathBlock) {
-				blocks.push({ type: "math", value });
-			} else {
-				mathBlock.value = value;
-			}
+		// 	if (!mathBlock) {
+		// 		blocks.push({ type: "math", value });
+		// 	} else {
+		// 		mathBlock.value = value;
+		// 	}
 
-			updatedQuestions[index].question = blocks;
+		// 	updatedQuestions[index].question = blocks;
 		} else if (name === "question_diagram") {
 			// console.log('question_diagram'.repeat(10))
 			const blocks = updatedQuestions[index].question.map(b => ({ ...b }));
@@ -829,6 +893,7 @@ function ScrambleQuestionsComponent() {
 		}
 
 		else {
+			// console.log('else block')
 			updatedQuestions[index][name] = value;
 		}
 		// setQuestions(updatedQuestions)
@@ -841,13 +906,17 @@ function ScrambleQuestionsComponent() {
 					...updated[index],
 					image: null,
 				};
-			} else if (name === "question" || name === "question_text" || name === "question_math" || name === "question_diagram") {
+			} else if (name === "question" || name === "question_text"
+				// || name === "question_math"
+				|| name === "question_diagram") {
 				// blocks already updated in updatedQuestions[index].question above
+				// console.log('in setformdata')
 				updated[index] = {
 					...updated[index],
 					question: updatedQuestions[index].question,
 				};
 			} else {
+				// console.log('in else setformdata')
 				updated[index] = {
 					...updated[index],
 					[name]: file ? file : value,
@@ -867,12 +936,16 @@ function ScrambleQuestionsComponent() {
 					image: null,
 					previewImage: null,
 				};
-			} else if (name === "question" || name === "question_text" || name === "question_math" || name === "question_diagram") {
+			} else if (name === "question" || name === "question_text"
+				// || name === "question_math"
+				|| name === "question_diagram") {
+				// console.log('in setQuestionFormData')
 				updated[index] = {
 					...updated[index],
 					question: updatedQuestions[index].question,
 				};
 			} else {
+				// console.log('in else setQuestionFormData')
 				updated[index] = {
 					...updated[index],
 					[name]: file ? file : value,
@@ -951,7 +1024,7 @@ function ScrambleQuestionsComponent() {
 	};
 
 	useEffect(() => {
-		console.log('🔥 totalNoOfQs changed:', totalNoOfQs);
+		// console.log('🔥 totalNoOfQs changed:', totalNoOfQs);
 			const newQuestions = []
 			for (let i=0; i<totalNoOfQs; i++) {
 				// console.log('adding...')
@@ -969,40 +1042,161 @@ function ScrambleQuestionsComponent() {
 	const submitHandler = async (e, isRemember=false, isSubmitToSch=false) => {
 		e.preventDefault(); // prevent default page refresh
 
-		console.log('q'.repeat(15), {isRemember, isSubmitToSch})
+		// console.log('q'.repeat(15), {isRemember, isSubmitToSch})
 		// return
 		// setLoading(true)
 
-		console.log({formData})
+		// console.log({formData})
 		let cleanedData
-		let fd = {...formData}
+		// let fd = {...formData}
+		let fd = structuredClone(formData);
+		setIsExporting(true)
+		const diagramFiles = [];
 		let shuffleEndpoint
+		// console.log('0'.repeat(10))
 
 		// For each question with diagram, generate PNG
-		fd.questions.forEach((q, idx) => {
-			const stage = diagramStageRefs.current[idx];
-			if (stage) {
-			const dataURL = stage.toDataURL({ pixelRatio: 2 }); // optional: higher res
-			if (!q.question) q.question = [];
-			q.question.push({
-				type: "diagram_png",
-				value: dataURL,
-			});
-			}
-		});
-		console.log({updatedFormData: fd})
+		// fd.questions.forEach((q, idx) => {
+		// 	const stage = diagramStageRefs.current[idx];
+		// 	if (stage) {
+		// 	const dataURL = stage.toDataURL({ pixelRatio: 2 }); // optional: higher res
+		// 	if (!q.question) q.question = [];
+		// 	q.question.push({
+		// 		type: "diagram_png",
+		// 		value: dataURL,
+		// 	});
+		// 	}
+		// });
+		// await Promise.all(
+		// 	fd.questions.map(async (q, idx) => {
+		// 		const stage = diagramStageRefs.current[idx];
+		// 		if (!stage) return;
+		// 		const hasDiagram =
+		// 			q?.question_mode?.includes("diagram") ||
+		// 			(q?.question || []).some(b => b.type === "diagram");
+		// 		if (!hasDiagram) return;
+		// 		const dataURL = stage.toDataURL({
+		// 			mimeType: "image/png",
+		// 			pixelRatio: 2,
+		// 		});
+		// 		if (!q.question) q.question = [];
+		// 		q.question.push({
+		// 			type: "diagram_png",
+		// 			value: dataURL,
+		// 		});
+		// 	})
+		// );
+		// await Promise.all(
+		// 	fd.questions.map(async (q, idx) => {
+		// 		const stage = diagramStageRefs.current[idx];
+		// 		if (!stage) return;
+			
+		// 		const hasDiagram =
+		// 			q?.question_mode?.includes("diagram") ||
+		// 			(q?.question || []).some(b => b.type === "diagram");
+			
+		// 		if (!hasDiagram) return;
+			
+		// 		const blob = await new Promise((resolve) => {
+		// 			stage.toBlob(
+		// 				{
+		// 					mimeType: "image/png",
+		// 					pixelRatio: 1, // 👈 SMALL + FAST (DOCX friendly)
+		// 				},
+		// 				(b) => resolve(b)
+		// 			);
+		// 		});
+			
+		// 		const base64 = await blobToBase64(blob);
+			
+		// 		if (!q.question) q.question = [];
+			
+		// 		q.question.push({
+		// 			type: "diagram_png",
+		// 			value: base64, // 👈 stays inside payload
+		// 		});
+		// 	})
+		// );
+		await Promise.all(
+			fd.questions.map(async (q, idx) => {
+				// console.log('1'.repeat(10), {q})
+				const stage = diagramStageRefs.current[q.uniqueId];
+				// console.log('😜'.repeat(7),
+				// 	{stage_diagram_images: stage,
+				// 		diagramStageRefs: diagramStageRefs.current,
+				// 	})
+				if (!stage) return;
+			
+				// console.log('2'.repeat(10))
+				const hasDiagram =
+					q?.question_mode?.includes("diagram") ||
+					(q?.question || []).some(b => b.type === "diagram");
+			
+				if (!hasDiagram) return;
+			
+				// console.log('3'.repeat(10))
+				// stage.draw();
+				stage.batchDraw();
+				await new Promise(requestAnimationFrame);
+				await new Promise(requestAnimationFrame);
+				const blob = await exportDiagramBlob(stage);
+			
+				// console.log({
+				// 	idx,
+				// 	uniqueId: q.uniqueId,
+				// 	blob,
+				// 	size: blob?.size,
+				// 	type: blob?.type,
+				// });
+
+
+				// const url = URL.createObjectURL(blob);
+				// window.open(url, "_blank");
+
+				// // Optional: free memory after a while
+				// setTimeout(() => URL.revokeObjectURL(url), 60000);
+
+
+				// store file with index mapping
+				// diagramFiles.push({
+				// 	index: q.uniqueId,
+				// 	file: blob,
+				// });
+			
+				// console.log('4'.repeat(10))
+				// optional marker (NOT image data)
+				// if (!q.question) q.question = [];
+				// console.log('5'.repeat(10))
+				if (blob instanceof Blob && blob.size > 0) {
+					// console.log('initial diagramFiles:', diagramFiles)
+					diagramFiles.push({ index: q.uniqueId, file: blob });
+					if (!q.question) q.question = [];
+					q.question.push({
+						type: "diagram_png",
+						value: "__FILE_ATTACHMENT__",
+					});
+				}
+			})
+		);
+		// console.log({updatedFormData: fd,
+		// 	isRemember, isSubmitToSch,
+		// 	diagramFiles,
+		// })
 
 		if (isRemember||isSubmitToSch) {
+			// console.log('6'.repeat(10))
 			if (isRemember) {
-				setRememberLoading(true)
+				// setRememberLoading(true)
+				// console.log({isRemember})
 				shuffleEndpoint = 'school/save/true'
 			} else {
-				setSubmittingTToSchLoading(true)
+				// setSubmittingToSchLoading(true)
+				// console.log({isSubmitToSch})
 				shuffleEndpoint = `${endpoint}/exam-questions`
 			}
 			fd = structuredClone(formData);
 
-			console.log({fd})
+			// console.log({fd})
 			// map each question to a promise, keeping track of its index
 			const uploadPromises = fd.questions.map((question, index) => {
 				if (question?.image) {
@@ -1021,7 +1215,7 @@ function ScrambleQuestionsComponent() {
 
 			// wait for all uploads in parallel
 			const results = await Promise.all(uploadPromises);
-			console.log({results})
+			// console.log({results})
 
 			// update cleanedData after all uploads
 			results.forEach(({ index, uploadResult }) => {
@@ -1040,29 +1234,92 @@ function ScrambleQuestionsComponent() {
 				fd.savedID = savedSession?.id
 			}
 		} else {
-			setScrambleLoading(true)
-			cleanedData = {...formData}
+			// console.log('7'.repeat(10))
+			// setScrambleLoading(true)
+			// cleanedData = {...formData}
+			cleanedData = structuredClone(fd);
 			cleanedData.postQuestions = formData.questions
 			delete cleanedData.questions
 			if (!formData.logo&&hasSchool&&schoolLogo) {
 				// console.log('✅✅✅✅✅sch-logo', schoolLogo)
 				cleanedData.logo = schoolLogo
 			} else {
-				// console.warn('❌❌❌❌❌no school has no uploaded logo')
+				console.warn('❌❌❌❌❌no school has no uploaded logo')
 				delete cleanedData.logo
 			}
-			console.log({submittedFormData: cleanedData})
-			fd = buildFormData(new FormData(), cleanedData)
+			// console.log({submittedFormData: cleanedData})
+			// console.log('8'.repeat(10))
+			// diagramFiles.forEach((item) => {
+			// 	const question = cleanedData.postQuestions.find(
+			// 		q => q.uniqueId === item.index
+			// 	);
+			
+			// 	if (question) {
+			// 		question.diagram_png = item.file;   // or whatever property your backend expects
+			// 	}
+			// });
+			diagramFiles.forEach((item) => {
+				const question = cleanedData.postQuestions.find(
+					q => q.uniqueId === item.index
+				);
+			
+				if (question) {
+					question.diagram_png = new File(
+						[item.file],
+						`diagram-${question.uniqueId}.png`,
+						{
+							type: item.file.type,
+							lastModified: Date.now(),
+						}
+					);
+				}
+			});
+			const form = buildFormData(new FormData(), cleanedData);
+			// diagramFiles.forEach((item) => {
+			// 	console.log('9'.repeat(10))
+			// 	cleanedData.append(
+			// 		`diagram_${item.index}`,
+			// 		item.file,
+			// 		`diagram-${item.index}.png`
+			// 	);
+			// });
+			// diagramFiles.forEach((item) => {
+			// 	form.append(
+			// 		`diagram_${item.index}`,
+			// 		item.file,
+			// 		`diagram-${item.index}.png`
+			// 	);
+			// });
+			
+			fd = form;
+			// console.log({submittedFormData: cleanedData})
+			// fd = buildFormData(new FormData(), cleanedData)
 			shuffleEndpoint = `${endpoint}/shuffle`
 		}
 
-		console.log({fd})
-		console.log({shuffleEndpoint})
+		// console.log('10'.repeat(10))
+		// console.log({fd})
+		// console.log({shuffleEndpoint})
+
+		for (const [key, value] of fd.entries()) {
+			// console.log(key, value);
+		
+			if (value instanceof Blob) {
+				// console.log('FOUND BLOB!!!'.repeat(7),
+				// 	"\nBlob:",
+				// 	value.size,
+				// 	value.type
+				// );
+			}
+		}
+
 		// return
 		const res = await FetchFromServer(`${shuffleEndpoint}`, 'POST', fd)
-		console.log('Form submitted with data:');
+		// console.log('Form submitted with data:');
 		// const alert1 = `\nResponse: \n ${JSON.stringify(res, null, 2)}`
-		
+
+		setIsExporting(false)
+
 		if (res.ok) {
 			const resData = res?.data
 			let extraMessage = ""
@@ -1072,7 +1329,7 @@ function ScrambleQuestionsComponent() {
 			} else if (isRemember) {
 				extraMessage = "";
 			}
-			console.log({resData, extraMessage})
+			// console.log({resData, extraMessage})
 			if (!isRemember) {
 				if (isSubmitToSch) {
 					setHasSubmitted({[fetchID]: resData?.has_submitted})
@@ -1094,7 +1351,7 @@ function ScrambleQuestionsComponent() {
 		}
 		setRememberLoading(false)
 		setScrambleLoading(false)
-		setSubmittingTToSchLoading(false)
+		setSubmittingToSchLoading(false)
 	};
 
 	const args = {
@@ -1110,6 +1367,8 @@ function ScrambleQuestionsComponent() {
 		setQuestionFormData,
 		diagramStageRefs,
 		// isDuplicate,
+		isExporting,
+		setIsExporting,
 	}
 
 	const hasLinks = Array.isArray(downloadLink) && downloadLink.length > 0;
@@ -1159,13 +1418,12 @@ function ScrambleQuestionsComponent() {
 		// formHeadState,
 		// uploadedSchLogo,
 		// isClearUploadedLogo,
-		savedSession,
+		// savedSession,
 		// hasSubmitted,
 		// questionObject,
-		questionFormData,
-		canRememberOrSubmit,
-		// formValues,
-		dept,
+		// questionFormData,
+		// canRememberOrSubmit,
+		// dept,
 		// categoryFilled: formHead.every(field=>field.required&&formData[field.name]!==''),
 		// questionsAvailable: !!formData?.questions?.length,
 		// questionsFilled: Object.keys(questionObject)?.every(field=> {
@@ -1174,15 +1432,16 @@ function ScrambleQuestionsComponent() {
 		// 	}
 		// 	return formData?.questions?.every(question=> question[field]!=='')
 		// })
-		addTheory,
-		theory,
+		// addTheory,
+		// theory,
+		diagramStageRefs: diagramStageRefs.current
 	})
-	console.log({
-		formhaslogo: formData.logo,
-		hasSchool,
-		schoolLogo,
-		summary: !formData.logo&&hasSchool&&schoolLogo,
-	})
+	// console.log({
+	// 	formhaslogo: formData.logo,
+	// 	hasSchool,
+	// 	schoolLogo,
+	// 	summary: !formData.logo&&hasSchool&&schoolLogo,
+	// })
 	return (
 			<>
 				{/* spinner */}
@@ -1448,7 +1707,7 @@ function DownloadBtn({item, tick, single=false}) {
 	const uKey = (itemName[4]??itemName[3]).slice(4)
 	// console.log({itemName, subject, uKey})
 	const fileName = `${subject}_${uKey}`
-	console.log({serverOrigin, link: item.link, completeLink: `${serverOrigin}${item.link}`})
+	// console.log({serverOrigin, link: item.link, completeLink: `${serverOrigin}${item.link}`})
 	const normalisedDownloadLink = serverOrigin.replace(/\/$/, "")+item.link
 	// cleanedDownloadLink.includes("//public")
 	// console.log({cleanedDownloadLink, incl: cleanedDownloadLink.includes("//public")})
@@ -1499,7 +1758,10 @@ function timeAgo(isoString) {
 	return `${diffDays}d ${ago}`;
 }
 
-function ItemsToggler ({togglerArray, btnItem, stateSetter, isMobileDev768, toggleStyle=null, pageName=null}) {
+function ItemsToggler ({togglerArray, btnItem,
+			stateSetter, isMobileDev768,
+			toggleStyle=null, pageName=null,
+			isConsecutive,}) {
 	// const isMobile = deviceInfo?.width <= 768
 	return (
 		<div className={`${toggleStyle?toggleStyle:''}
@@ -1510,36 +1772,19 @@ function ItemsToggler ({togglerArray, btnItem, stateSetter, isMobileDev768, togg
 					<button key={`${btn}-${idb}`}
 					type="button"
 					onClick={()=>{
-						console.log('clicked', {btn});
+						// console.log('clicked', {btn});
 						stateSetter(btn)
 					}}
+					disabled={isConsecutive&&idb}
 					className={`cta-button btn-sm
-								${idb===0?'first':
-								(idb===togglerArray.length-1)?'last':'middle'}
-								${btnItem===btn?'active':''}
+								${togglerArray.length===1?'':(idb===0?'first':
+								(idb===togglerArray.length-1)?'last':'middle')}
+								${(btnItem===btn)?'active':''}
 								${isMobileDev768?'px-1':''}`}>
 						{titleCase(btn)}
 					</button>
 				)
 			})}
-			{/* <button
-			type="button"
-			onClick={()=>handleDeptSet('art')}
-			className={`cta-button btn-sm first ${dept==='art'?'active':''} ${isMobileDev768?'px-1':''}`}>
-				Art
-			</button>
-			<button
-			type="button"
-			onClick={()=>handleDeptSet('commercial')}
-			className={`cta-button btn-sm middle ${dept==='commercial'?'active':''} ${isMobileDev768?'px-1':''}`}>
-				Com
-			</button>
-			<button
-			type="button"
-			onClick={()=>handleDeptSet('science')}
-			className={`cta-button btn-sm last ${dept==='science'?'active':''} ${isMobileDev768?'px-1':''}`}>
-				Sci
-			</button> */}
 		</div>
 	)
 }

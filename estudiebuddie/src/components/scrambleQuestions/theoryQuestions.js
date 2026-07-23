@@ -104,7 +104,7 @@ function QuestionNode({ node, depth, index, path, updateNode, addChild, deleteNo
 				className="theory-questions"
 				placeholder=" "
 				value={node.text||""}
-				rows={1}
+				rows={3}
 				onChange={(e) =>{
 					updateNode(node.id, e.target.value);;
 				}}

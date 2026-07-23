@@ -8,7 +8,7 @@ import { AuthProvider } from './contexts/authContext';
 import { ConfirmProvider } from './contexts/overlayContext';
 import { DeviceProvider } from './contexts/deviceTypeContext';
 import { LogoProvider } from './contexts/LogoContext';
-import 'mathlive';
+// import 'mathlive';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
