@@ -1,7 +1,7 @@
 /* ################################################# */
 /* ================== RESPONSIVE STYLES ================== */
 
-@media (max-width: 1200px) {
+@media (max-width: 1201px) {
     .page {
         padding: 0 15px;
     }
@@ -20,7 +20,7 @@
         font-size: 27px;
     }
 }
-@media (max-width: 1160px) {
+@media (max-width: 1161px) {
     .cta-button:active {
         /* background: rgba(255, 255, 255, 0.3); */
         transform: translateY(-3px);
@@ -35,7 +35,7 @@
     }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1025px) {
     .math-sym-accordion-btns-grid {
         grid-template-columns: repeat(9, max-content);
     }
@@ -87,7 +87,7 @@
     }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 901px) {
     .device-width {
         align-self: auto;
     }
@@ -155,7 +155,7 @@
         width: 85%;
     }
 }
-@media (max-width: 800px) {
+@media (max-width: 801px) {
     .math-sym-accordion-btns-grid {
         grid-template-columns: repeat(8, max-content);
     }
@@ -207,7 +207,7 @@
         font-size: 25px;
     }
 }
-@media (max-width: 768px) {
+@media (max-width: 769px) {
     .diagram-container {
         width: 650px;
     }
@@ -617,12 +617,12 @@
     }
 }
 
-@media (max-width: 696px) {
+@media (max-width: 697px) {
     /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 51% !important;
     } */
 }
-@media (max-width: 680px) {
+@media (max-width: 681px) {
     .login-form.w33percent {
         width: 65%;
     }
@@ -630,7 +630,7 @@
         width: 55%;
     }
 }
-@media (max-width: 630px) {
+@media (max-width: 631px) {
     .diagram-container {
         width: 550px;
     }
@@ -638,17 +638,17 @@
         left: 45% !important;
     } */
 }
-@media (max-width: 600px) {
+@media (max-width: 601px) {
     .login-form.w33percent {
         width: 70%;
     }
 }
-@media (max-width: 590px) {
+@media (max-width: 591px) {
     /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 40% !important;
     } */
 }
-@media (max-width: 578px) {
+@media (max-width: 579px) {
     .login-form.w33percent {
         width: 75%;
     }
@@ -656,7 +656,7 @@
         left: 70% !important;
     } */
 }
-@media (max-width: 530px) {
+@media (max-width: 531px) {
     .diagram-container {
         width: 450px;
     }
@@ -667,7 +667,7 @@
         left: 67% !important;
     } */
 }
-@media (max-width: 480px) {
+@media (max-width: 481px) {
     .login-form.w33percent {
         width: 100%;
     }
@@ -675,7 +675,7 @@
         left: 63% !important;
     } */
 }
-@media (max-width: 430px) {
+@media (max-width: 431px) {
     .diagram-container {
         width: 400px;
     }
@@ -683,7 +683,7 @@
         left: 58% !important;
     } */
 }
-@media (max-width: 412px) {
+@media (max-width: 413px) {
     .diagram-container {
         width: 370px;
     }
@@ -705,7 +705,7 @@
 }
 
 /* Ultra-small screens <400px */
-@media (max-width: 400px) {
+@media (max-width: 401px) {
     .diagram-container {
         width: 350px;
     }
@@ -808,12 +808,12 @@
     }
 }
 
-@media (max-width: 390px) {
+@media (max-width: 391px) {
     /* .floating-field input:focus + label, .floating-field input:not(:placeholder-shown) + label, .floating-field textarea:focus + label, .floating-field textarea:not(:placeholder-shown) + label, .floating-field select:focus + label, .floating-field select:not([value=""]) + label {
         left: 54% !important;
     } */
 }
-@media (max-width: 380px) {
+@media (max-width: 381px) {
     .no-list-style span, .no-list-style a {
         padding: 5px 3px 5px 3px;
     }
@@ -821,7 +821,7 @@
         left: 50% !important;
     } */
 }
-@media (max-width: 360px) {
+@media (max-width: 361px) {
     .diagram-container {
         width: 320px;
     }
