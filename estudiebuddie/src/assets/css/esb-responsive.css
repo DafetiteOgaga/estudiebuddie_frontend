@@ -692,6 +692,11 @@
         left: 63% !important;
     } */
 }
+@media (max-width: 450px) {
+    .diagram-container {
+        width: 405px;
+    }
+}
 @media (max-width: 430px) {
     .diagram-container {
         width: 390px;
