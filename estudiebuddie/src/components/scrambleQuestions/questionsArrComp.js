@@ -683,9 +683,12 @@ function SymbolToolbar({ textareaRef }) {
 	const _1024 = width <= 1024
 	const _800 = width <= 800
 	const _600 = width <= 600
+	const _540 = width <= 540
 	const _530 = width <= 530
+	const _480 = width <= 480
 	const _450 = width <= 450
 	const _430 = width <= 430
+	const _375 = width <= 375
 	const _360 = width <= 360
 	let rowItems = _360?3:
 					_450?4:
@@ -746,8 +749,9 @@ function SymbolToolbar({ textareaRef }) {
 	]
 	const charTabRows = [];
 	rowItems = _360?4:
-				_450?5:
-				_530?6:
+				_375?3:
+				(_450||_480)?5:
+				(_530||_540)?6:
 				_800?8:
 				// _1024?9:
 				// _1200?10:
