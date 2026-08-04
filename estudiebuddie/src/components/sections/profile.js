@@ -3,7 +3,7 @@ import { FetchFromServer } from "../../hooks/FetchFromServer";
 import { toast } from 'react-toastify'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { justNumbers, removeWhiteSpace, getAuthorizedCodes } from "../../hooks/formHooks";
-import { formatPhoneNumber, sentenceCase, titleCase } from "../../hooks/changeCase";
+import { formatPhoneNumber, sentenceCase, titleCase, normalizeStringLength } from "../../hooks/changeCase";
 import { ImageCropAndCompress } from "../../hooks/imgCompressAndCrop/ImageCropAndCompress";
 import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit";
 import { useCreateStorage } from "../../hooks/persistToStorage";
@@ -174,31 +174,7 @@ const handleCopy = async (content, isCopied) => {
 	}
 };
 const copyDelayDuration = 800
-const normalizeStringLength = (str, isMobileDev900, len=null, extra=null, fieldName=null) => {
-	if (!str) return ''
-	// console.log({len, extra})
-	let addExtra = 10
-	if (extra) {
-		addExtra = extra
-	}
-	let nameField = isMobileDev900?8:13
-	if (fieldName) {
-		nameField = isMobileDev900?5:10
-	}
-	if (len) {
-		// console.log('using len', {
-		// 	strLen: str.length,
-		// 	len,
-		// 	gt: str.length>len,
-		// 	extra,
-		// })
-		return str.length<len?str:
-				`${isMobileDev900?str.slice(0, len):
-				str.slice(0, len+addExtra)}...`
-	}
-	return str.length<=10?str:
-			`${str.slice(0, nameField)}...` // desktop
-}
+
 const themeTogglerArray = ["blue", "dark"]
 
 function Profile() {
@@ -1232,4 +1208,4 @@ function usePasswordCheck () {
 	}
 	return passwordCheck
 }
-export { Profile, handleCopy, notAvailable, copyDelayDuration, normalizeStringLength };
+export { Profile, handleCopy, notAvailable, copyDelayDuration };
