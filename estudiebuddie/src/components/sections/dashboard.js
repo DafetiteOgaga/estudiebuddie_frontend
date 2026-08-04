@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { titleCase, sentenceCase, formatPhoneNumber } from "../../hooks/changeCase";
+import { titleCase, sentenceCase, formatPhoneNumber, normalizeStringLength } from "../../hooks/changeCase";
 import { FetchFromServer, serverOrigin } from "../../hooks/FetchFromServer";
 import { shuffleArray, getAuthorizedCodes, justNumbers, removeWhiteSpace } from "../../hooks/formHooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,7 +9,7 @@ import { useDevice } from "../../contexts/deviceTypeContext";
 import { toast } from 'react-toastify';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { roleArray, genderArray, checkIcons, isValidEmail } from "./signUp";
-import { handleCopy,notAvailable, copyDelayDuration, normalizeStringLength } from "./profile";
+import { handleCopy,notAvailable, copyDelayDuration } from "./profile";
 import { DownloadBtn, timeAgo } from "../scrambleQuestions/scrambleQuestions";
 import { useConfirm } from "../../contexts/overlayContext";
 
