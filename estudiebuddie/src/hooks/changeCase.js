@@ -1,10 +1,10 @@
 
 
 const NAToUpper = (str) => {
-	console.log('chk str'.repeat(5), str)
+	// console.log('chk str'.repeat(5), str)
 	if (str.toUpperCase()==="N/A") {
 		const uppercase = str.toUpperCase()
-		console.log('NAToUpper'.repeat(5), uppercase)
+		// console.log('NAToUpper'.repeat(5), uppercase)
 		return uppercase
 	}
 }
@@ -21,7 +21,7 @@ const normalizeStringLength = (str, isMobileDev900, len=null, extra=null, fieldN
 		nameField = isMobileDev900?5:10
 	}
 
-	console.log('normalizeStringLength'.repeat(5))
+	// console.log('normalizeStringLength'.repeat(5))
 	if (str.toUpperCase()==="N/A") {
 		return NAToUpper(str)
 	}
@@ -48,7 +48,7 @@ function titleCase(str) {
 	const slash = str.includes('/')
 	// Insert space before all caps (handles camel and pascal cases)
 	str = str.replace(/([a-z])([A-Z])/g, '$1 $2');
-	console.log('titleCase'.repeat(5))
+	// console.log('titleCase'.repeat(5))
 	if (str.toUpperCase()==="N/A") {
 		return NAToUpper(str)
 	}
@@ -105,7 +105,7 @@ function sentenceCase(str) {
 	// Replace underscores and hyphens with spaces, then lowercase everything
 	str = str.replace(/[_-]/g, ' ').toLowerCase().trim();
 
-	console.log('sentenceCase'.repeat(5))
+	// console.log('sentenceCase'.repeat(5))
 	if (str.toUpperCase()==="N/A") {
 		return NAToUpper(str)
 	}
