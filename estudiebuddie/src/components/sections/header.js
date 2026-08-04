@@ -7,8 +7,8 @@ import { useAuth } from "../../contexts/authContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDevice } from "../../contexts/deviceTypeContext";
 import { serverOrigin } from "../../hooks/FetchFromServer";
-import { normalizeStringLength } from "./profile";
-import { titleCase } from "../../hooks/changeCase";
+// import { normalizeStringLength } from "./profile";
+import { titleCase, normalizeStringLength } from "../../hooks/changeCase";
 
 const moveByIndex = (arr, fromIndex, toIndex) => {
 	const copy = [...arr];                // do not mutate original
