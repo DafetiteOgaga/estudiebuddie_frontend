@@ -321,18 +321,6 @@ const validateFields = ({formData, formHeadState}) => {
 }
 const deptTogglerArray = ["art", "com", "sci"]
 
-// export stage as compressed blob (FAST + SMALL)
-// const exportDiagramBlob = (stage) => {
-// 	return new Promise((resolve) => {
-// 		stage.toBlob(
-// 			{
-// 				mimeType: "image/png",
-// 				pixelRatio: 1, // keeps file small for DOCX
-// 			},
-// 			(blob) => resolve(blob)
-// 		);
-// 	});
-// };
 const exportDiagramBlob = async (stage) => {
 	// console.log({
 	// 	exportStage: stage,
@@ -350,32 +338,6 @@ const exportDiagramBlob = async (stage) => {
 	if (!blob) throw new Error("Konva returned null blob");
 
     return blob;
-
-
-
-	// const layer = stage.getLayers()[0];
-
-	// const rect = layer.getClientRect({
-	// 	skipShadow: true,
-	// 	skipStroke: false,
-	// });
-
-	// const PADDING = 5;
-
-	// const blob = await stage.toBlob({
-	// 	x: Math.max(0, rect.x - PADDING),
-	// 	y: Math.max(0, rect.y - PADDING),
-	// 	width: rect.width + PADDING * 2,
-	// 	height: rect.height + PADDING * 2,
-	// 	mimeType: "image/png",
-	// 	pixelRatio: 1, // keep your current value
-	// });
-
-	// console.log("BLOB RESULT", blob);
-
-	// if (!blob) throw new Error("Konva returned null blob");
-
-	// return blob;
 
 };
 const blobToBase64 = (blob) =>
@@ -1055,68 +1017,6 @@ function ScrambleQuestionsComponent() {
 		let shuffleEndpoint
 		// console.log('0'.repeat(10))
 
-		// For each question with diagram, generate PNG
-		// fd.questions.forEach((q, idx) => {
-		// 	const stage = diagramStageRefs.current[idx];
-		// 	if (stage) {
-		// 	const dataURL = stage.toDataURL({ pixelRatio: 2 }); // optional: higher res
-		// 	if (!q.question) q.question = [];
-		// 	q.question.push({
-		// 		type: "diagram_png",
-		// 		value: dataURL,
-		// 	});
-		// 	}
-		// });
-		// await Promise.all(
-		// 	fd.questions.map(async (q, idx) => {
-		// 		const stage = diagramStageRefs.current[idx];
-		// 		if (!stage) return;
-		// 		const hasDiagram =
-		// 			q?.question_mode?.includes("diagram") ||
-		// 			(q?.question || []).some(b => b.type === "diagram");
-		// 		if (!hasDiagram) return;
-		// 		const dataURL = stage.toDataURL({
-		// 			mimeType: "image/png",
-		// 			pixelRatio: 2,
-		// 		});
-		// 		if (!q.question) q.question = [];
-		// 		q.question.push({
-		// 			type: "diagram_png",
-		// 			value: dataURL,
-		// 		});
-		// 	})
-		// );
-		// await Promise.all(
-		// 	fd.questions.map(async (q, idx) => {
-		// 		const stage = diagramStageRefs.current[idx];
-		// 		if (!stage) return;
-			
-		// 		const hasDiagram =
-		// 			q?.question_mode?.includes("diagram") ||
-		// 			(q?.question || []).some(b => b.type === "diagram");
-			
-		// 		if (!hasDiagram) return;
-			
-		// 		const blob = await new Promise((resolve) => {
-		// 			stage.toBlob(
-		// 				{
-		// 					mimeType: "image/png",
-		// 					pixelRatio: 1, // 👈 SMALL + FAST (DOCX friendly)
-		// 				},
-		// 				(b) => resolve(b)
-		// 			);
-		// 		});
-			
-		// 		const base64 = await blobToBase64(blob);
-			
-		// 		if (!q.question) q.question = [];
-			
-		// 		q.question.push({
-		// 			type: "diagram_png",
-		// 			value: base64, // 👈 stays inside payload
-		// 		});
-		// 	})
-		// );
 		await Promise.all(
 			fd.questions.map(async (q, idx) => {
 				// console.log('1'.repeat(10), {q})
@@ -1247,17 +1147,7 @@ function ScrambleQuestionsComponent() {
 				console.warn('❌❌❌❌❌no school has no uploaded logo')
 				delete cleanedData.logo
 			}
-			// console.log({submittedFormData: cleanedData})
-			// console.log('8'.repeat(10))
-			// diagramFiles.forEach((item) => {
-			// 	const question = cleanedData.postQuestions.find(
-			// 		q => q.uniqueId === item.index
-			// 	);
-			
-			// 	if (question) {
-			// 		question.diagram_png = item.file;   // or whatever property your backend expects
-			// 	}
-			// });
+
 			diagramFiles.forEach((item) => {
 				const question = cleanedData.postQuestions.find(
 					q => q.uniqueId === item.index
@@ -1275,22 +1165,7 @@ function ScrambleQuestionsComponent() {
 				}
 			});
 			const form = buildFormData(new FormData(), cleanedData);
-			// diagramFiles.forEach((item) => {
-			// 	console.log('9'.repeat(10))
-			// 	cleanedData.append(
-			// 		`diagram_${item.index}`,
-			// 		item.file,
-			// 		`diagram-${item.index}.png`
-			// 	);
-			// });
-			// diagramFiles.forEach((item) => {
-			// 	form.append(
-			// 		`diagram_${item.index}`,
-			// 		item.file,
-			// 		`diagram-${item.index}.png`
-			// 	);
-			// });
-			
+
 			fd = form;
 			// console.log({submittedFormData: cleanedData})
 			// fd = buildFormData(new FormData(), cleanedData)

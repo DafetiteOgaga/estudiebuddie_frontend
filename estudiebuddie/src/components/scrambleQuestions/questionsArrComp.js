@@ -892,6 +892,7 @@ function DiagramField({ value, onChange, getStageRef, isMobileDev768, width, qId
     const [editingText, setEditingText] = useState(null); // { id, x, y, width, text }
     const [isDrawing, setIsDrawing] = useState(false);
     const [strokeColor, setStrokeColor] = useState("#ffffff");
+	const blackColor = '#000000'
     const [fillColor, setFillColor] = useState("transparent");
     const hydratedRef = useRef(false);
     const shapeRefs = useRef({});
@@ -1189,70 +1190,9 @@ function DiagramField({ value, onChange, getStageRef, isMobileDev768, width, qId
         onTransformEnd: () => handleTransformEnd(shape),
     });
 
-	// export to png handler
-	// const handleExportDiagram = () => {
-	// 	if (!stageRef.current) return;
-	
-	// 	setIsExporting(true);
-	
-	// 	requestAnimationFrame(() => {
-	// 		const uri = stageRef.current.toDataURL({
-	// 			mimeType: "image/png",
-	// 			pixelRatio: 2,
-	// 		});
-	
-	// 		const link = document.createElement("a");
-	// 		link.download = "diagram.png";
-	// 		link.href = uri;
-	// 		link.click();
-	
-	// 		setIsExporting(false);
-	// 	});
-	// };
-	// const handleExportDiagram = async (qIdx) => {
-	// 	setIsExporting(true);
-	
-	// 	requestAnimationFrame(async () => {
-	// 		stageRef.current.toBlob({
-	// 			mimeType: "image/png",
-	// 			callback: async (blob) => {
-	// 				const formData = new FormData();
-	
-	// 				formData.append(
-	// 					"diagram",
-	// 					blob,
-	// 					`diagram-${Date.now()}.png`
-	// 				);
-	
-	// 				setQuestionFormData(prev => {
-	// 					const updated = [...prev];
-	// 					if (updatedAmount > 0) {
-	// 						updated[qIdx] = {
-	// 							...updated[qIdx],
-	// 							diagramImage: updatedAmount
-	// 						};
-	// 					} else {
-	// 						const { diagramImage, ...questionWithoutConsecutive } =
-	// 							updated[qIdx];
-	// 						updated[qIdx] = questionWithoutConsecutive;
-	// 					}
-	// 					return updated;
-	// 				});
-					
-	// 				await fetch("/api/upload-diagram/", {
-	// 					method: "POST",
-	// 					body: formData,
-	// 				});
-	
-	// 				setIsExporting(false);
-	// 			},
-	// 		});
-	// 	});
-	// };
-
     // const shapeStroke = strokeColor;
 	const shapeStroke = isExporting
-		? "#000000"
+		? blackColor
 		: strokeColor;
 
     return (
@@ -1394,7 +1334,7 @@ function DiagramField({ value, onChange, getStageRef, isMobileDev768, width, qId
                                     ref={(node) => (shapeRefs.current[shape.id] = node)}
                                     points={shape.points}
                                     // stroke={shape.stroke || shapeStroke}
-									stroke={isExporting ? "#000000" : (shape.stroke || shapeStroke)}
+									stroke={isExporting ? blackColor : (shape.stroke || shapeStroke)}
                                     strokeWidth={2}
                                     tension={0.4}
                                     lineCap="round"
@@ -1412,7 +1352,7 @@ function DiagramField({ value, onChange, getStageRef, isMobileDev768, width, qId
                                     text={shape.text}
                                     fontSize={shape.fontSize}
                                     // fill={shapeStroke}
-									fill={isExporting ? "#000000" : shapeStroke}
+									fill={isExporting ? blackColor : shapeStroke}
                                     // onDblClick={() => startEditingText(shape)}
 									onDblClick={(e) => {
 										e.evt.preventDefault();
@@ -1523,23 +1463,3 @@ function DiagramButton ({toggleMode, within60Questions, isDiagramActive, isImage
 
 export { QuestionsArrComp };
 
-const compStyles = {
-	label: {
-		top: "0.5rem",
-		left: "0.8rem",
-		transform: "translateY(-50%)",
-		fontSize: "0.65rem",
-		color: "rgba(255, 255, 255, 0.9)",
-		padding: "1rem 0.25rem",
-
-		position: "absolute",
-		whiteSpace: "nowrap",
-		pointerEvents: "none",
-		transition: "all 0.2s ease",
-		background: "transparent",
-
-		display: "block",
-		marginBottom: "8px",
-		fontWeight: "500",
-	}
-}
