@@ -1,5 +1,46 @@
 
 
+const NAToUpper = (str) => {
+	console.log('chk str'.repeat(5), str)
+	if (str.toUpperCase()==="N/A") {
+		const uppercase = str.toUpperCase()
+		console.log('NAToUpper'.repeat(5), uppercase)
+		return uppercase
+	}
+}
+
+const normalizeStringLength = (str, isMobileDev900, len=null, extra=null, fieldName=null) => {
+	if (!str) return ''
+	// console.log({len, extra})
+	let addExtra = 10
+	if (extra) {
+		addExtra = extra
+	}
+	let nameField = isMobileDev900?8:13
+	if (fieldName) {
+		nameField = isMobileDev900?5:10
+	}
+
+	console.log('normalizeStringLength'.repeat(5))
+	if (str.toUpperCase()==="N/A") {
+		return NAToUpper(str)
+	}
+
+	if (len) {
+		// console.log('using len', {
+		// 	strLen: str.length,
+		// 	len,
+		// 	gt: str.length>len,
+		// 	extra,
+		// })
+		return str.length<len?str:
+				`${isMobileDev900?str.slice(0, len):
+				str.slice(0, len+addExtra)}...`
+	}
+	return str.length<=10?str:
+			`${str.slice(0, nameField)}...` // desktop
+}
+
 function titleCase(str) {
 	if (typeof str!=='string'||str==='') return
 
@@ -7,6 +48,10 @@ function titleCase(str) {
 	const slash = str.includes('/')
 	// Insert space before all caps (handles camel and pascal cases)
 	str = str.replace(/([a-z])([A-Z])/g, '$1 $2');
+	console.log('titleCase'.repeat(5))
+	if (str.toUpperCase()==="N/A") {
+		return NAToUpper(str)
+	}
 	return str
 		.toLowerCase()
 		.split(/[\s_\-/]+/)
@@ -60,8 +105,12 @@ function sentenceCase(str) {
 	// Replace underscores and hyphens with spaces, then lowercase everything
 	str = str.replace(/[_-]/g, ' ').toLowerCase().trim();
 
+	console.log('sentenceCase'.repeat(5))
+	if (str.toUpperCase()==="N/A") {
+		return NAToUpper(str)
+	}
 	// Capitalize the first letter at the start or after a period, exclamation, or question mark
 	return str.replace(/(^\s*\w|[.!?]\s*\w)/g, match => match.toUpperCase());
 }
 
-export { digitSeparator, titleCase, formatPhoneNumber, sentenceCase };
+export { digitSeparator, titleCase, formatPhoneNumber, sentenceCase, normalizeStringLength };
