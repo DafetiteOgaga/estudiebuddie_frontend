@@ -12,15 +12,15 @@ function ProtectedRoute({ children, requireMatch = false }) {
 
 	// Retrieve user info
 	const currentUser = lStorage.getItem('user');
-	console.log(protectedroute, "currentUser =", currentUser);
-	console.log(protectedroute, "params =", params);
-	console.log(protectedroute, "requireMatch =", requireMatch);
-	console.log(protectedroute, "location =", location.pathname);
-	console.log(protectedroute, "children =", children);
-	console.log(protectedroute, "currentUser.id =", currentUser?.id);
-	console.log(protectedroute, "type of currentUser.id =", typeof currentUser?.id);
-	console.log(protectedroute, "params.id =", params.id)
-	console.log(protectedroute, "type of params.id =", typeof params?.id)
+	// console.log(protectedroute, "currentUser =", currentUser);
+	// console.log(protectedroute, "params =", params);
+	// console.log(protectedroute, "requireMatch =", requireMatch);
+	// console.log(protectedroute, "location =", location.pathname);
+	// console.log(protectedroute, "children =", children);
+	// console.log(protectedroute, "currentUser.id =", currentUser?.id);
+	// console.log(protectedroute, "type of currentUser.id =", typeof currentUser?.id);
+	// console.log(protectedroute, "params.id =", params.id)
+	// console.log(protectedroute, "type of params.id =", typeof params?.id)
 
 	// Not logged in — redirect to login
 	if (!currentUser) {
@@ -36,16 +36,16 @@ function ProtectedRoute({ children, requireMatch = false }) {
 
 	// Masking protection — if route contains a userID param
 	if (requireMatch && Object.keys(params).length > 0) {
-		console.log(protectedroute, "requireMatch is true, checking userID match");
+		// console.log(protectedroute, "requireMatch is true, checking userID match");
 		const loggedUserId = String(currentUser.id);
 		const routeUserId = String(params.id);
 
 		if (loggedUserId !== routeUserId) {
-			console.log(protectedroute, "User ID mismatch, redirecting");
+			// console.log(protectedroute, "User ID mismatch, redirecting");
 			const routeKey = location?.pathname?.split?.('/')[1]
 			const contribute = location?.pathname?.split?.('/')[3]
 			const [_empty, dashboard, _userid, toScramble, scrambleID] = location?.pathname?.split?.('/')
-			console.log({dashboard})
+			// console.log({dashboard})
 			// console.log({scramble})
 			if (routeKey === 'scramble-questions'||routeKey === 'profile'||
 				routeKey === 'dashboard') {
@@ -104,11 +104,11 @@ function PublicRoute({ children }) {
 
 	// Retrieve user and location info
 	const currentUser = lStorage.getItem('user');
-	console.log(publicroute, "location =", location);
-	console.log(publicroute, "currentUser", currentUser);
-	console.log(publicroute, "currentUser.id =", currentUser?.id);
-	console.log(publicroute, "children =", children);
-	console.log({pathname})
+	// console.log(publicroute, "location =", location);
+	// console.log(publicroute, "currentUser", currentUser);
+	// console.log(publicroute, "currentUser.id =", currentUser?.id);
+	// console.log(publicroute, "children =", children);
+	// console.log({pathname})
 
 	// to force password change
 	useEffect(() => {
