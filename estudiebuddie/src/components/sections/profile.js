@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { FetchFromServer } from "../../hooks/FetchFromServer";
 import { toast } from 'react-toastify'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { justNumbers, removeWhiteSpace, getAuthorizedCodes } from "../../hooks/formHooks";
+import { justNumbers, removeWhiteSpace, getAuthorizedCodes, ItemsToggler } from "../../hooks/formHooks";
 import { formatPhoneNumber, sentenceCase, titleCase, normalizeStringLength } from "../../hooks/changeCase";
 import { ImageCropAndCompress } from "../../hooks/imgCompressAndCrop/ImageCropAndCompress";
 import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit";
@@ -11,7 +11,6 @@ import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
 import { useNavigate } from "react-router-dom"
 import { useDevice } from "../../contexts/deviceTypeContext";
 import { useLogo } from "../../contexts/LogoContext";
-import { ItemsToggler } from "../scrambleQuestions/scrambleQuestions";
 import { useAuth } from "../../contexts/authContext";
 
 // const roleArray = [
