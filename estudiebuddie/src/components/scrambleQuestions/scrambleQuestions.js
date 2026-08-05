@@ -2,7 +2,7 @@ import { Fragment, useState, useEffect, useRef, useMemo } from "react";
 import { QuestionsArrComp } from "./questionsArrComp";
 import { FetchFromServer, buildFormData, serverOrigin } from "../../hooks/FetchFromServer";
 import { titleCase, sentenceCase, formatPhoneNumber } from "../../hooks/changeCase";
-import { justNumbers, generateUniqueId, spaceToHyphen } from "../../hooks/formHooks";
+import { justNumbers, generateUniqueId, spaceToHyphen, ItemsToggler, customFindLast } from "../../hooks/formHooks";
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
 import { ImageCropAndCompress } from "../../hooks/imgCompressAndCrop/ImageCropAndCompress";
 import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit";
@@ -250,20 +250,6 @@ const fetchDownloadLinkss = async ({endpoint, setDownloadLink}) => {
 		// console.log({data: downloadLinks?.data})
 		setDownloadLink(downloadLinks?.data)
 	}
-}
-
-function customFindLast(arr, predicate) {
-	// console.log({arr_in_customFindLast_1: arr,
-	// 			predicate_in_customFindLast_1: predicate
-	// })
-	if (!Array.isArray(arr)) return undefined;
-
-	for (let i = arr.length - 1; i >= 0; i--) {
-		if (predicate(arr[i], i, arr)) {
-			return arr[i];
-		}
-	}
-	return undefined;
 }
 
 function normalizeTheory(data) {
@@ -1633,35 +1619,4 @@ function timeAgo(isoString) {
 	return `${diffDays}d ${ago}`;
 }
 
-function ItemsToggler ({togglerArray, btnItem,
-			stateSetter, isMobileDev768,
-			toggleStyle=null, pageName=null,
-			isConsecutive,}) {
-	// const isMobile = deviceInfo?.width <= 768
-	return (
-		<div className={`${toggleStyle?toggleStyle:''}
-							${isMobileDev768?'':'align-self-end pb-05'}
-							${pageName==='scramble'?'pr-1':''}`}>
-			{togglerArray.map((btn, idb) => {
-				return (
-					<button key={`${btn}-${idb}`}
-					type="button"
-					onClick={()=>{
-						// console.log('clicked', {btn});
-						stateSetter(btn)
-					}}
-					disabled={isConsecutive&&idb}
-					className={`cta-button btn-sm
-								${togglerArray.length===1?'':(idb===0?'first':
-								(idb===togglerArray.length-1)?'last':'middle')}
-								${(btnItem===btn)?'active':''}
-								${isMobileDev768?'px-1':''}`}>
-						{titleCase(btn)}
-					</button>
-				)
-			})}
-		</div>
-	)
-}
-
-export { ScrambleQuestionsComponent, DownloadBtn, timeAgo, customFindLast, ItemsToggler };
+export { ScrambleQuestionsComponent, DownloadBtn, timeAgo };
