@@ -399,21 +399,15 @@ function Quiz() {
 		}
 		console.log({cleanedData})
 
-		endpoint = 'take-quiz/pre-quiz'
-		res = await FetchFromServer(endpoint, 'POST', cleanedData)
-		// console.log('Form submitted with data:', {cleanedData});
-		// console.log('responded with', {res})
+		// endpoint = 'take-quiz/pre-quiz'
+		// res = await FetchFromServer(endpoint, 'POST', cleanedData)
 
-
-		if (res.ok) {
-			// console.log(
-			// 	'\ngoto:', res.data.goto,
-			// 	'\ninfo:', res.data.info
-			// )
-
+		// if (res.ok) {
+		endpoint = 'take-quiz/take-quiz'
 			setLoading(true)
 			// fetching quiz to be taken
-			const getQuestions = await FetchFromServer(res.data.goto, 'POST', res.data.info)
+			// const getQuestions = await FetchFromServer(res.data.goto, 'POST', res.data.info)
+			const getQuestions = await FetchFromServer(endpoint, 'POST', cleanedData)
 			// console.log('getQuestions:', getQuestions)
 			if (getQuestions.ok) {
 				// alert("Quiz questions are ready!\nClick 'ok' to start.");
@@ -458,7 +452,7 @@ function Quiz() {
 			else if (getQuestions?.error) {
 				setIsNotQuiz(getQuestions.error)
 			}
-		}
+		// }
 		setLoading(false)
 	};
 
