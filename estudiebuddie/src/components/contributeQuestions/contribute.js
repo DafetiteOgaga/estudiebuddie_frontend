@@ -2,43 +2,512 @@ import { Fragment, useState, useEffect, useRef, useMemo } from "react";
 import { QuestionsArrComp } from "./contributedQuestionsArr";
 import { FetchFromServer, buildFormData, serverOrigin } from "../../hooks/FetchFromServer";
 import { titleCase, sentenceCase, formatPhoneNumber } from "../../hooks/changeCase";
-import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit";
+import { justNumbers, generateUniqueId, spaceToHyphen, ItemsToggler, customFindLast } from "../../hooks/formHooks";
 import { Spinner, SpinnerBarForPage } from "../../hooks/spinner/spinner";
+import { ImageCropAndCompress } from "../../hooks/imgCompressAndCrop/ImageCropAndCompress";
+import { useUploadToImagekit } from "../../hooks/imagekit/uploadToImageKit";
+import { imageCompression } from 'browser-image-compression';
 import { useDevice } from "../../contexts/deviceTypeContext";
+import { useCreateStorage } from "../../hooks/persistToStorage";
+import { toast } from 'react-toastify'
+import { useLocation } from 'react-router-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { CheckBoxBtnUI } from "../sections/signUp";
+import { TheoryBuilder } from "../scrambleQuestions/theoryQuestions";
+import { useConfirm } from "../../contexts/overlayContext";
+import { useLogo } from "../../contexts/LogoContext";
 
-const formValues = {
-	type: "",
+// function ContributeQuestionsComponent() {
+// 	const { label, width } = useDevice();
+// 	// console.log({deviceInfo})
+// 	const [loadingPage, setLoadingPage] = useState(true);
+// 	const [loading, setLoading] = useState(false);
+// 	const formDataRef = useRef(new FormData())
+// 	const totalNoOfQsRef = useRef(1)
+// 	const [totalNoOfQs, setTotalNoOfQs] = useState(Number.isNaN(formValues.totalQs) ? 1 : formValues.totalQs)
+// 	const [questionFormData, setQuestionFormData] = useState(null)
+	
+// 	const [showSubmitArray, setShowSubmitArray] = useState([false, false]);
+// 	const [downloadLink, setDownloadLink] = useState(null);
+// 	const [totalNumberOfQuestions, setTotalNumberOfQuestions] = useState(0)
+// 	const [questions, setQuestions] = useState([questionObject]);
+// 	const [fileUploadQuestions, setFileUploadQuestions] = useState([questionObject]);
+// 	const [newFileUploadQuestions, setNewFileUploadQuestions] = useState(null);
+// 	const [schoolData, setSchoolData] = useState(null);
+// 	const [formData, setFormData] = useState(formValues);
+// 	const [totalFileUploadQuestions, setTotalFileUploadQuestions] = useState(0)
+// 	const [isImageVisible, setIsImageVisible] = useState([Array(totalFileUploadQuestions?totalFileUploadQuestions:totalNumberOfQuestions).fill(false)]);
+// 	const [isFile, setIsFile] = useState(false)
+// 	const uploadToCloud = useUploadToImagekit()
+
+// 	useEffect(() => {
+// 		setLoadingPage(false)
+// 	}, []);
+
+// 	if (label === "smallLaptop") {
+// 		console.log('smallLaptop'.repeat(5))
+// 		dyName.forEach(obj => {
+// 			let objItem = formHead.find(item => item.name === obj)
+// 			if (objItem) objItem.width = '17%'
+// 		})
+// 	} else if (label === "tablet") {
+// 		console.log('tablet'.repeat(5))
+// 		dyName.forEach(obj => {
+// 			let objItem = formHead.find(item => item.name === obj)
+// 			if (objItem) {
+// 				if (width > 800) {
+// 					objItem.width = '19%'
+// 				} else {
+// 					objItem.width = '22%'
+// 				}
+// 			}
+// 		})
+// 	} else if (label === "mobile") {
+// 		console.log('mobile'.repeat(5))
+// 		formHead.forEach(obj => {
+// 			// let objItem = formHead.find(item => item.name === obj)
+// 			if (obj.name) {
+// 				// if (deviceInfo.width > 800) {
+// 				obj.width = '47%'
+// 				// }
+// 				// else {
+// 				// 	objItem.width = '22%'
+// 				// }
+// 			}
+// 		})
+// 	}
+
+// 	const handleQuestionChange = (e=null, data=null, index, mode='+') => {
+// 		console.log('in handle question change fxn...', {data})
+// 		if (!e && !data?.files?.[0]) return
+// 		const { name, value, files, type } = e ? e.target : data
+// 		console.log({name, value, files, type, index, questionFormData, mode})
+// 		let updatedQuestions = [...questionFormData];
+// 		// if (totalFileUploadQuestions) updatedQuestions = [...fileUploadQuestions]
+// 		updatedQuestions[index]["number"] = index + 1; // auto-add/update question number
+// 		let file;
+// 		if (name === "image") {
+// 			file = files[0];
+// 			updatedQuestions[index].image = file; // assign image file object
+// 			updatedQuestions[index].previewImage = URL.createObjectURL(file); // assign preview URL for the image
+// 		} else {
+// 			updatedQuestions[index][name] = value;
+// 		}
+// 		// setQuestions(updatedQuestions)
+// 		// console.log({file})
+// 		setFormData((prev) => {
+// 			if (mode === '-') {
+// 				updatedQuestions[index] = {
+// 					...updatedQuestions[index],
+// 					image: null,
+// 				};
+// 			} else {
+// 				updatedQuestions[index] = {
+// 					...updatedQuestions[index],
+// 					...(file?
+// 						{[name]: file}:
+// 						{[name]: value}),
+// 				};
+// 			}
+// 			return {
+// 				...prev,
+// 				questions: updatedQuestions,
+// 				// totalQs: updatedQuestions.length
+// 			}}
+// 		)
+// 		setQuestionFormData(prev => {
+// 			const updated = [...prev]
+// 			// console.log({
+// 			// 	updated,
+// 			// 	index,
+// 			// 	atIndex: updated[index],
+// 			// 	name, value
+// 			// })
+// 			if (mode === '-') {
+// 				// removes uploaded image
+// 				updated[index] = {
+// 					...updated[index],
+// 					image: null,
+// 					previewImage: null,
+// 				};
+// 			} else {
+// 				updated[index] = {
+// 					...updated[index],
+// 					...(file?
+// 						{[name]: file}:
+// 						{[name]: value})}
+// 			}
+// 			return updated
+// 		})
+
+// 		if (mode === '-') {
+// 			const input = document.getElementById(`image-upload-${index}`);
+// 			if (input) input.value = '';
+// 		}
+// 	};
+
+// 	const handleChange = (e) => {
+// 		let { name, value } = e.target;
+// 		if (name === 'totalQs') {
+// 			value = justNumbers(value)
+// 			let numericValue = value === "" ? 0 : Number(value);
+// 			if (numericValue > 10) {
+// 				numericValue = 10;
+// 			}
+// 			setTotalNoOfQs(numericValue);
+// 			totalNoOfQsRef.current = numericValue;
+// 			value = numericValue.toString();
+// 			// if (!Number.isNaN(value)&&Number(value)<11) {
+// 			// 	setTotalNoOfQs(Number.isNaN(value) ? 0 : value)
+// 			// 	totalNoOfQsRef.current = Number.isNaN(value) ? 0 : value
+// 			// }
+// 		}
+
+// 		setFormData((prev) => ({
+// 			...prev,
+// 			[name]: value,
+// 		}))
+// 	};
+
+// 	useEffect(() => {
+// 		const newQuestions = []
+// 		for (let i=0; i<totalNoOfQs; i++) {
+// 			// console.log('adding...')
+// 			const uniqueId = generateUniqueId()
+// 			// console.log({uniqueId})
+// 			newQuestions.push({...questionObject, uniqueId})
+// 		}
+// 		// console.log({newQuestions})
+// 		setQuestionFormData(newQuestions);
+// 	}, [totalNoOfQs]);
+
+// 	// // let cleanedData;
+// 	const submitHandler = async (e) => {
+// 		e.preventDefault(); // prevent default page refresh
+// 		setLoading(true)
+// 		const cleanedData = structuredClone(formData);
+// 		console.log({formData})
+
+// 		// map each question to a promise, keeping track of its index
+// 		const uploadPromises = cleanedData.questions.map((question, index) => {
+// 			if (question?.image) {
+// 				return uploadToCloud({
+// 						selectedFile: question.image,
+// 						fileName: 'test-question',
+// 						folder: 'questions',
+// 					}).then(uploadResult => ({
+// 						index,
+// 						uploadResult,
+// 				}));
+// 			}
+// 			// If no image, resolve immediately with null
+// 			return Promise.resolve({ index, uploadResult: null });
+// 		});
+		
+// 		// wait for all uploads in parallel
+// 		const results = await Promise.all(uploadPromises);
+		
+// 		// update cleanedData after all uploads
+// 		results.forEach(({ index, uploadResult }) => {
+// 			const question = cleanedData.questions[index];
+		
+// 			if (uploadResult) {
+// 				question.fileId = uploadResult.fileId;
+// 				question.image_url = uploadResult.url;
+// 			}
+		
+// 			// group options together
+// 			question.options = [
+// 			question.correct_answer,
+// 			question.wrong_answer1,
+// 			question.wrong_answer2,
+// 			question.wrong_answer3,
+// 			];
+		
+// 			// clean up unused fields
+// 			delete question.image;
+// 			delete question.previewImage;
+// 			delete question.wrong_answer1;
+// 			delete question.wrong_answer2;
+// 			delete question.wrong_answer3;
+// 		});
+// 		cleanedData.type_category = cleanedData.type
+// 		cleanedData.class_category = cleanedData.class
+// 		cleanedData.subject_category = cleanedData.subject
+// 		delete cleanedData.type
+// 		delete cleanedData.class
+// 		delete cleanedData.subject
+
+// 		const endpoint = 'contribute'
+// 		const res = await FetchFromServer(endpoint, 'POST', cleanedData, true)
+// 		console.log('Form submitted with data:', {cleanedData, res});
+// 		// const alert1 = `\nResponse: \n ${JSON.stringify(res, null, 2)}`
+// 		alert("Thank you!\nThe questions will be reviewed and updated to the db accordingly.");
+// 		setLoading(false)
+// 	};
+
+// 	const args = {
+// 		setFormData,
+// 		questionObject,
+// 		generateUniqueId,
+// 		handleQuestionChange,
+// 		questionFormData,
+// 		setQuestionFormData,
+// 	}
+
+// 	const lengthOfQs = formData.questions.length
+// 	console.log({
+// 		formData,
+// 		formDataQuestions: formData.questions,
+// 	})
+// 	return (
+// 			<>
+// 				{/* spinner */}
+// 				{loadingPage && <SpinnerBarForPage />}
+
+// 				<form
+// 				onSubmit={submitHandler}
+// 				className={`form-head scramble-question-text glass ${loadingPage?'d-none':''}`}>
+// 					<h1 className="shuffle-question-head1">Contribute Questions</h1>
+// 					<fieldset className="questions-header">
+// 						{formHead.map((input, inpIdx) => {
+// 							console.log({
+// 								field: input.name,
+// 								value: formData[input.name]
+// 							})
+// 							const isClass = input.name.toLowerCase()==="class"
+// 							const isSubject = input.name.toLowerCase()==="subject"
+// 							let options = input.options;
+
+// 							if (isClass) {
+// 								if (formData.type?.toLowerCase() === "basic") {
+// 									options = basicClassArray;
+// 								} else if (formData.type?.toLowerCase() === "jss") {
+// 									options = jssArray;
+// 								} else if (formData.type?.toLowerCase() === "sss") {
+// 									options = sssArray;
+// 								} else {
+// 									options = [noType];
+// 								}
+// 							} else if (isSubject) {
+// 								if (formData.type?.toLowerCase() === "basic") {
+// 									options = basicSubjectArray;
+// 								} else if (formData.type?.toLowerCase() === "jss") {
+// 									options = jssSubjectArrar;
+// 								} else if (formData.type?.toLowerCase() === "sss") {
+// 									options = sssSubjectArray;
+// 								} else {
+// 									options = [noType];
+// 								}
+// 							}
+// 							return (
+// 								<div key={input.name+inpIdx}
+// 								style={{width: input.width}}
+// 								className="form-group floating-field mb-0">
+// 									{/* term */}
+// 									{input.type==='select' ?
+// 									<>
+// 										<select
+// 										// style={{width: input.width}}
+// 										// className="text-center"
+// 										value={formData[input.name]}
+// 										onChange={handleChange}
+// 										name={input.name}
+// 										required={input.required}>
+// 											<option value="" disabled hidden>-- {titleCase(input.name)} --</option>
+// 											{options.map((opt, index) => (
+// 												<option key={index} value={titleCase(opt)}
+// 												disabled={opt.toLowerCase()===noType}
+// 												className="options">
+// 													{titleCase(opt)}
+// 												</option>
+// 											))}
+// 										</select>
+// 										<label>{input.placeholder}{input.required?<sup>*</sup>:null}</label>
+// 									</>
+// 									:
+// 									// other inputs
+// 									<>
+// 										<input
+// 										className="text-center"
+// 										// style={{width: input.width}}
+// 										placeholder=" "
+// 										value={
+// 											(input.name.toLowerCase()==='totalqs'&&
+// 											Number(formData[input.name])===0)
+// 											? ''
+// 											: displayValue(formData[input.name], input.case) ?? ''
+// 										}
+// 										onChange={handleChange}
+// 										required={input.required}
+// 										disabled={input.disabled}
+// 										type={input.type}
+// 										name={input.name} />
+// 										<label>{input.placeholder}{input.required?<sup>*</sup>:null}</label>
+// 									</>}
+// 								</div>
+// 							)
+// 						})}
+// 					</fieldset>
+
+// 					<QuestionsArrComp args={args} />
+
+// 					<div className="">
+// 						<div className="">
+// 							<button
+// 							style={{margin: '0 5rem'}}
+// 							className="cta-button mb-xs q-mx"
+// 							type="button"
+// 							disabled={true}
+// 							onClick={() => null}>
+// 								Upload File
+// 							</button>
+// 						</div>
+// 					</div>
+// 					{/* submit button */}
+// 					{lengthOfQs > 0 ?
+// 					<div className="d-flex justify-content-center">
+// 						<button
+// 						style={{margin: '0 5rem'}}
+// 						type="submit"
+// 						disabled={loading}
+// 						className="cta-button contribute-submit-mobile">
+// 							{loading ?
+// 								<Spinner type={'dot'} /> :
+// 								`Submit Question${lengthOfQs===1?'':'s'}`}
+// 						</button>
+// 					</div> : null}
+// 				</form>
+// 			</>
+// 	)
+// }
+// export { ContributeQuestionsComponent };
+
+let formValues = {
+	// school: "",
+	// email: "",
+	level: "",
 	subject: "",
+	// phone: "",
 	class: "",
+	term: "",
+	duration: "",
 	totalQs: "",
+	department: "",
+	// session: "",
+	instruction: "",
+	noOfTypes: "",
 	questions: [],
 }
 
-const generateUniqueId = () => crypto.randomUUID();
-// console.log({id: generateUniqueId()})
 const questionObject = {
 	number: '',
-	question: '',
+	// question: '',
+	question_mode: [],
+	question: [
+		{ type: "text", value: "" } // default block
+	],
 	correct_answer: '',
 	wrong_answer1: '',
 	wrong_answer2: '',
 	wrong_answer3: '',
 	image: null,
-	explanation: '',
 }
 
-const termArray = ['first', 'second', 'third']
-const typeArray = ["basic", "jss", "sss"]
+const levelArray = ['basic', 'jss', 'sss']
 const basicClassArray = [
-	"basic-1", "basic-2",
-	"basic-3", "basic-4",
-	"basic-5",]
-const jssArray = ["jss-1", "jss-2", "jss-3"]
-const sssArray = ["sss-1", "sss-2", "sss-3"]
+	"basic1",
+	"basic2",
+	"basic3",
+	"basic4",
+	"basic5",
+];
+const jssClassArray = [
+	"jss1",
+	"jss2",
+	"jss3",
+];
+const sssClassArray = [
+	"sss1",
+	"sss2",
+	"sss3",
+];
+const termArray = ['first', 'second', 'third']
+const secondarySubjects = [
+	"english language",
+	"mathematics",
+	"civic education",
+];
 
-const basicSubjectArray = ["mathematics", "english"]
-const jssSubjectArrar = ["science", "computer"]
-const sssSubjectArray = ["physics", "chemistry"]
+const basicClassSubjects = [
+	...secondarySubjects,
+	'basic science',
+	'social studies',
+	'crs',
+	'irs',
+	'history',
+	'cultural & creative arts',
+	'computer studies',
+	'home economics',
+]
+const juniorSecondarySubjects = [
+	...secondarySubjects,
+	"one nigerian language",
+	"integrated science",
+	"physical & health education",
+	"digital technologies",
+	"crs / irs",
+	"nigerian history",
+	"social & citizenship studies",
+	"cultural & creative arts",
+
+	"business studies",
+	"french studies",
+	"arabic studies",
+];
+const scienceSubjects = [
+	...secondarySubjects,
+	"biology",
+	"chemistry",
+	"physics",
+	"further mathematics",
+	"agricultural science",
+	"technical drawing",
+	"geography",
+	"computer studies / ict",
+	"physical / health education",
+	"foods & nutrition / home economics",
+];
+const artsSubjects = [
+	...secondarySubjects,
+	"literature in english",
+	"government",
+	"history",
+	"crs",
+	"irs",
+	"french / other foreign languages",
+	"nigerian language(s)",
+	"visual / fine arts",
+	"music",
+	"geography",
+	"economics",
+];
+const commercialSubjects = [
+	...secondarySubjects,
+	"economics",
+	"commerce",
+	"financial accounting",
+	"business studies",
+	"marketing",
+	"accounting",
+	"office practice",
+	"bookkeeping",
+	"data processing / computer studies",
+	"government",
+];
+const noLevel = "no level selected"
+const noClass = "no class selected"
+const selectDept = "Select a department"
 let formHead = [
 	{
 		name: "totalQs",
@@ -46,18 +515,27 @@ let formHead = [
 		disabled: false,
 		type: "text",
 		placeholder: "No. of Questions",
-		width: "15%",
+		width: "20%",
 		case: null,
 	},
 	{
-		name: "type",
+		name: "school",
+		required: true,
+		disabled: false,
+		type: "text",
+		placeholder: "School Name",
+		width: "50%",
+		case: 'upper',
+	},
+	{
+		name: "level",
 		required: true,
 		disabled: false,
 		type: "select",
-		placeholder: "Type",
+		placeholder: "Level",
 		width: "20%",
-		options: typeArray,
-		case: null,
+		options: levelArray,
+		case: "upper",
 	},
 	{
 		name: "class",
@@ -66,24 +544,61 @@ let formHead = [
 		type: "select",
 		placeholder: "Class",
 		width: "20%",
-		options: [],
-		case: "upper",
+		options: [noLevel],
+		case: "sentence",
 	},
 	{
 		name: "subject",
 		required: true,
 		disabled: false,
 		type: "select",
-		placeholder: "Subject",
-		width: "30%",
-		options: [],
-		case: 'title',
+		placeholder: "Select Subject",
+		width: "25%",
+		options: [noClass],
+		case: 'sentence',
+	},
+	{
+		name: "noOfTypes",
+		required: true,
+		disabled: false,
+		type: "text",
+		placeholder: "No. of Types",
+		width: "20%",
+		case: null,
+	},
+	{
+		name: "term",
+		required: true,
+		disabled: false,
+		type: "select",
+		placeholder: "Term",
+		width: "15%",
+		options: termArray,
+		case: "title",
+	},
+	{
+		name: "duration",
+		required: true,
+		disabled: false,
+		type: "text",
+		placeholder: "Duration (hour)",
+		width: "20%",
+		case: null,
+	},
+	{
+		name: "instruction",
+		required: true,
+		disabled: false,
+		type: "text",
+		placeholder: "Instruction",
+		width: "40%",
+		case: "title",
 	},
 ]
 const dyName = ['totalQs']
-// const dyNameMobile = ['totalQs']
-const noType = "no type selected"
 const displayValue = (val, strCase) => {
+	// console.log({val, strCase})
+	if (!val) return
 	if (strCase === "upper") return val.toUpperCase();
 	if (strCase === "lower") return val.toLowerCase();
 	if (strCase === "title") return titleCase(val);
@@ -91,117 +606,643 @@ const displayValue = (val, strCase) => {
 	if (strCase === "phone") return formatPhoneNumber(val);
 	return val;
 };
-const justNumbers = (str) => {
-	if (!str) return '';
-	return str.replace(/\D+/g, '');
+
+let endpoint = 'shufflequestions'
+
+const fetchDownloadLinkss = async ({endpoint, setDownloadLink}) => {
+	const subpoint = 'get-links'
+	const downloadLinks = await FetchFromServer(`${endpoint}/${subpoint}`)
+	if (downloadLinks.ok) {
+		// console.log({data: downloadLinks?.data})
+		setDownloadLink(downloadLinks?.data)
+	}
+}
+
+function normalizeTheory(data) {
+	// Step 1: convert object with numeric keys to array
+	const arr = Array.isArray(data)
+		? data
+		: Object.keys(data)
+			.sort((a, b) => a - b)
+			.map(key => data[key][0]); // because each key holds an array
+
+	// Step 2: recursively fix children
+	return arr.map(node => ({
+		...node,
+		children: node.children
+			? normalizeTheory(node.children)
+			: []
+	}));
+}
+
+const validateFields = ({formData, formHeadState}) => {
+	const hasObjectives = Array.isArray(formData?.questions) && formData.questions.length > 0;
+	const hasTheory = Array.isArray(formData?.theory) && formData.theory.length > 0;
+	// Validate required fields
+	const headFieldsValid = formHeadState?.every(field => !field.required || formData[field.name] !== '');
+	// Validate objectives
+	const areObjectiveQuestionsValid = hasObjectives && formData.questions.every(q => {
+		const textObj = q?.question?.find(qt => qt.type === "text");
+		return (
+			textObj?.value?.trim() !== '' &&
+			q?.correct_answer?.trim() !== '' &&
+			q?.wrong_answer1?.trim() !== '' &&
+			q?.wrong_answer2?.trim() !== '' &&
+			q?.wrong_answer3?.trim() !== ''
+		);
+	});
+	// Validate theory (recursive)
+	const isTheoryValid = (nodes) => {
+		if (!Array.isArray(nodes) || nodes.length === 0) return false;
+		return nodes.every(node => {
+			const hasText = node?.text?.trim() !== '';
+			const childrenValid = node?.children?.length
+				? isTheoryValid(node.children)
+				: true;
+			return hasText && childrenValid;
+		});
+	};
+	const areTheoryValid = hasTheory && isTheoryValid(formData?.theory);
+
+	// outcome
+	return headFieldsValid &&
+			(
+				(hasObjectives && areObjectiveQuestionsValid) ||
+				(hasTheory && areTheoryValid)
+			);
+}
+const deptTogglerArray = ["art", "com", "sci"]
+
+const exportDiagramBlob = async (stage) => {
+	// console.log({
+	// 	exportStage: stage,
+	// 	hasToBlob: typeof stage.toBlob,
+	// 	hasToDataURL: typeof stage.toDataURL,
+	// });
+
+    const blob = await stage.toBlob({
+        mimeType: "image/png",
+        pixelRatio: 1, // keep small for backend processing
+    });
+
+    // console.log("BLOB RESULT", blob);
+
+	if (!blob) throw new Error("Konva returned null blob");
+
+    return blob;
+
 };
+const blobToBase64 = (blob) =>
+	new Promise((resolve) => {
+	const reader = new FileReader();
+	reader.onloadend = () => resolve(reader.result);
+	reader.readAsDataURL(blob);
+});
 
 function ContributeQuestionsComponent() {
-	const { label, width } = useDevice();
-	// console.log({deviceInfo})
+	const levelRef = useRef('')
+	const classRef = useRef('')
+	const deviceTypeCheckRef = useRef(false)
+	const [dept, setDept] = useState('')
+	const [formHeadState, setFormHeadState] = useState(formHead);
+	const [hasDiffSchool, setHasDiffSchool] = useState(false);
+	// console.log({hasDiffSchool})
+	const firstRenderFromSavedRef = useRef(true)
+	const location = useLocation()
+	const isFetch = !!location?.state?.fetchID
+	const fetchID = location?.state?.fetchID
+	const { lStorage, sStorage } = useCreateStorage()
+	const userInfo = lStorage.getItem('user')
+	const hasSchool = userInfo?.school
+	const localSavedDetails = lStorage.getItem(`saved-detail-${fetchID}`)
+	const hasLocalSavedClassRef = useRef({
+		class: false,
+		subject: false
+	})
+	const { label, width, isMobileDev768 } = useDevice();
+	// const isMobileDev768 = deviceInfo.width<=768
+	const [tick, setTick] = useState(Date.now());
 	const [loadingPage, setLoadingPage] = useState(true);
-	const [loading, setLoading] = useState(false);
-	const formDataRef = useRef(new FormData())
+	const [rememberLoading, setRememberLoading] = useState(false);
+	const [submittingTToSchLoading, setSubmittingToSchLoading] = useState(false);
+	const [scrambleLoading, setScrambleLoading] = useState(false);
+	// const formDataRef = useRef(new FormData())
 	const totalNoOfQsRef = useRef(1)
 	const [totalNoOfQs, setTotalNoOfQs] = useState(Number.isNaN(formValues.totalQs) ? 1 : formValues.totalQs)
-	const [questionFormData, setQuestionFormData] = useState(null)
-	
-	const [showSubmitArray, setShowSubmitArray] = useState([false, false]);
-	const [downloadLink, setDownloadLink] = useState(null);
-	const [totalNumberOfQuestions, setTotalNumberOfQuestions] = useState(0)
-	const [questions, setQuestions] = useState([questionObject]);
-	const [fileUploadQuestions, setFileUploadQuestions] = useState([questionObject]);
-	const [newFileUploadQuestions, setNewFileUploadQuestions] = useState(null);
-	const [schoolData, setSchoolData] = useState(null);
-	const [formData, setFormData] = useState(formValues);
-	const [totalFileUploadQuestions, setTotalFileUploadQuestions] = useState(0)
-	const [isImageVisible, setIsImageVisible] = useState([Array(totalFileUploadQuestions?totalFileUploadQuestions:totalNumberOfQuestions).fill(false)]);
-	const [isFile, setIsFile] = useState(false)
+	const [questionFormData, setQuestionFormData] = useState([])
 	const uploadToCloud = useUploadToImagekit()
+	// const [showSubmitArray, setShowSubmitArray] = useState([false, false]);
+	const [downloadLink, setDownloadLink] = useState(null);
+	const [formData, setFormData] = useState(formValues);
+	const hasFetched = useRef(false)
+	const [isNewDownload, setIsNewDownload] = useState(false)
+	const [uploadedSchLogo, setUploadedSchLogo] = useState(null)
+	const [isClearUploadedLogo, setIsClearUploadedLogo] = useState(false)
+	const [savedSession, setSavedSession] = useState(null)
+	const [hasSubmitted, setHasSubmitted] = useState({})
+	const diagramStageRefs = useRef({});
+	const [removeObjectives, setRemoveObjectives] = useState(false)
+	const [theory, setTheory] = useState([])
+	const [addTheory, setAddTheory] = useState(false)
+	const theoryQuestionsRef = useRef(null)
+	const { confirm } = useConfirm();
+	const { logo:schoolLogo } = useLogo();
+	const imageCropAndCompressRef = useRef()
+	const triggerimageCompression = () => {
+		imageCropAndCompressRef.current.removeAction()
+	}
+	const [isExporting, setIsExporting] = useState(false);
+
+	const updateTheoryState = (data) => {
+		setTheory(data)
+	}
+	useEffect(() => {
+		if (!addTheory) {
+			setTheory([])
+			setFormData(prev => {
+				const {theory, ...rest} = prev
+				return rest
+			})
+		}
+	}, [addTheory])
 
 	useEffect(() => {
-		setLoadingPage(false)
-	}, []);
+			if (addTheory) {
+				setFormData(prev => {
+					return { ...prev, theory: theory }
+				})
+			}
+	}, [theory])
 
-	if (label === "smallLaptop") {
-		console.log('smallLaptop'.repeat(5))
-		dyName.forEach(obj => {
-			let objItem = formHead.find(item => item.name === obj)
-			if (objItem) objItem.width = '17%'
-		})
-	} else if (label === "tablet") {
-		console.log('tablet'.repeat(5))
-		dyName.forEach(obj => {
-			let objItem = formHead.find(item => item.name === obj)
-			if (objItem) {
-				if (width > 800) {
-					objItem.width = '19%'
-				} else {
-					objItem.width = '22%'
-				}
-			}
-		})
-	} else if (label === "mobile") {
-		console.log('mobile'.repeat(5))
-		formHead.forEach(obj => {
-			// let objItem = formHead.find(item => item.name === obj)
-			if (obj.name) {
-				// if (deviceInfo.width > 800) {
-				obj.width = '47%'
-				// }
-				// else {
-				// 	objItem.width = '22%'
-				// }
-			}
+	const handleDeptSet = (value='') => {
+		// console.log({value})
+		if (value===null||value===undefined) return ''
+		setDept(value)
+		setFormData(prev => {
+			return {...prev, department: value}
 		})
 	}
 
+	useEffect(() => {
+		if (!isFetch) return
+		if (localSavedDetails) {
+			// console.log('fetching from local storage')
+			// console.log({localSavedDetails})
+			setSavedSession(localSavedDetails)
+			hasLocalSavedClassRef.current = {
+				class: true,
+				subject: true
+			}
+			// console.log('setting has submitted...')
+			// setHasSubmitted({[fetchID]: localSavedDetails?.has_submitted})
+		} else {
+			// console.log('fetching from server')
+			const fetchSavedScramble = async () => {
+				const response = await FetchFromServer(`school/save/${fetchID}`)
+				// console.log({response})
+				const data = response?.data
+				if (response?.ok) {
+					lStorage.setItem(`saved-detail-${fetchID}`, data)
+					setSavedSession(data)
+					hasLocalSavedClassRef.current = {
+						class: true,
+						subject: true
+					}
+					// console.log('setting has submitted...')
+					// setHasSubmitted({[fetchID]: data?.has_submitted})
+				}
+			}
+			fetchSavedScramble()
+		}
+	}, [])
+
+	useEffect(() => {
+		// console.log({userInfoRef: userInfoRef.current})
+		if (!hasSchool?.name) {
+			// console.log('already ran.')
+			return
+		}
+		// console.log({userInfo})
+		setFormHeadState(prev=> prev.filter(fh => fh.name!=='school'))
+		// console.log({formHeadState})
+	}, [hasSchool?.name])
+
+	useEffect(() => {
+		// console.log({formHeadState})
+		if (hasDiffSchool) {
+			setFormHeadState(prev=> [
+				...prev.slice(0, 1),
+				{
+					name: "school",
+					required: true,
+					disabled: false,
+					type: "text",
+					placeholder: "School Name",
+					width: "50%",
+					case: "upper",
+				},
+				...prev.slice(1),
+			])
+		} else {
+			setFormHeadState(prev => prev.filter(fh => fh.name !== 'school'));
+			setFormData(prev => {
+				return {
+					...prev,
+					school: '',
+				}
+			})
+			triggerimageCompression()
+		}
+		// console.log({formHeadState})
+	}, [hasDiffSchool])
+
+	useEffect(() => {
+		if (isFetch && firstRenderFromSavedRef.current) {
+			firstRenderFromSavedRef.current = false
+			return
+		}
+		// console.log({formHeadState})
+		if (!removeObjectives) {
+			// adding objectives
+				setFormHeadState(prev=> {
+					const totalQsExists = prev.some(fh => fh.name === 'totalQs');
+					// console.log({totalQsExists})
+					let returnedPrev = [...prev]
+					if (!totalQsExists) {
+						returnedPrev =  [
+							{
+								name: "totalQs",
+								required: true,
+								disabled: false,
+								type: "text",
+								placeholder: "No. of Questions",
+								width: label === "mobile"?"40%":"20%",
+								case: null,
+							},
+							...returnedPrev,
+						]
+					}
+					return returnedPrev
+				})
+				// console.log('🏆'.repeat(10))
+				// console.log({isFetch, localSavedDetails, savedSession})
+				setTotalNoOfQs(1)
+		} else {
+			// removing objectives
+			setFormHeadState(prev => prev.filter(fh => fh.name !== 'totalQs'));
+			setQuestionFormData([])
+			setFormData(prev => ({
+				...prev,
+				totalQs: '',
+				questions: []
+			}))
+			setTotalNoOfQs(0)
+		}
+		// console.log({formHeadState})
+	}, [removeObjectives])
+
+	useEffect(() => {
+		// console.log('effecting')
+		setFormHeadState(prev => {
+			// console.log('setting fh state')
+			return prev.map(obj => {
+				// console.log('mapping')
+				if (obj.name.toLowerCase() === "class" && levelRef.current!==formData.level) {
+					// console.log("class obj found");
+					// console.log({level: formData.level})
+			
+					let options = obj.options;
+					let lcase = obj.case
+			
+					if (formData.level.toLowerCase() === "basic") {
+						// console.log("running for basic class");
+						options = basicClassArray;
+						lcase = 'upper'
+					} else if (formData.level.toLowerCase() === "jss") {
+						// console.log("running for jss class");
+						options = jssClassArray;
+						lcase = 'upper'
+					} else if (formData.level.toLowerCase() === "sss") {
+						// console.log("running for sss class");
+						options = sssClassArray;
+						lcase = 'upper'
+					}
+					
+					if (!hasLocalSavedClassRef.current.class) {
+						// console.log('clearing class and subject')
+						setFormData(prev=>({
+							...prev,
+							class: '',
+							subject: ''
+						}))
+						hasLocalSavedClassRef.current.class = false
+					}
+					levelRef.current = formData.level
+					return { ...obj, options, case: lcase };
+				} else if (obj.name.toLowerCase() === "subject"
+				// && classRef.current!==formData.class
+				) {
+					// console.log("subject obj found");
+					// console.log({classobj: formData.class})
+			
+					let options = obj.options;
+					let lcase = obj.case
+			
+					if (formData.class.toLowerCase().includes("basic")) {
+						// console.log("running for basic subjects");
+						options = basicClassSubjects;
+						lcase = 'title'
+					} else if (formData.level.toLowerCase().includes("jss")) {
+						// console.log("running for jss subjects");
+						options = juniorSecondarySubjects;
+						lcase = 'title'
+					} else if (formData.level.toLowerCase().includes("sss")) {
+						// console.log("running for sss class");
+						if (!dept) {
+							// console.log('no dept')
+							options = [selectDept]
+							lcase = 'sentence'
+						} else {
+							// console.log('dept valid')
+							if (dept==='art') {
+								// console.log({dept})
+								options = artsSubjects;
+							} else if (dept==='com') {
+								// console.log({dept})
+								options = commercialSubjects
+							} else if (dept==='sci') {
+								// console.log({dept})
+								options = scienceSubjects
+							}
+							lcase = 'title'
+						}
+					}
+					if (!hasLocalSavedClassRef.current.subject) {
+						// console.log('clearing subject only')
+						setFormData(prev=>({...prev, subject: ''}))
+						hasLocalSavedClassRef.current.subject = false
+					}
+					classRef.current = formData.class
+					return { ...obj, options, case: lcase };
+				}
+				return obj;
+			})
+		});
+		if (!formData.class.toLowerCase().includes('sss')) {
+			handleDeptSet()
+		}
+	}, [formData.level, formData.class, dept]);
+
+	useEffect(() => {
+		if (deviceTypeCheckRef.current) return
+		if (label === "mobile") {
+			// console.log('mobile'.repeat(5), formHeadState)
+			setFormHeadState(prev =>
+				prev.map(obj => {
+					  // create a shallow copy of obj
+					const updatedObj = { ...obj };
+
+					if (obj.name === "totalQs") {
+						updatedObj.width = "40%";
+					} else if (obj.name === "level") {
+						updatedObj.width = "28%";
+					} else if (obj.name === "school") {
+						updatedObj.width = "100%";
+					} else if (obj.name === "subject") {
+						updatedObj.width = "65%";
+					} else if (obj.name === "noOfTypes") {
+						updatedObj.width = "30%";
+					} else if (obj.name === "class") {
+						updatedObj.width = "29%";
+					} else if (obj.name === "term" || obj.name === "duration") {
+						updatedObj.width = "37%";
+					} else if (obj.name === "instruction") {
+						updatedObj.width = "100%";
+					}
+				
+					return updatedObj;
+				})
+			);
+			deviceTypeCheckRef.current = true
+			// console.log({formHeadState})
+		}
+	}, [width, label])
+
+	useEffect(() => {
+		if (!savedSession) return
+		// console.log('updating form data')
+		const scramble_session_data = savedSession?.scramble_session_data
+		// console.log({scramble_session_data, questions: scramble_session_data.questions})
+		let savedQuestionsArr
+		if (typeof scramble_session_data.questions === "object" &&
+			!Array.isArray(scramble_session_data.questions)) {
+				// console.log('converting from obj to arr')
+				// ? Object.values(scramble_session_data.questions).flat() // flatten arrays
+				savedQuestionsArr = Object.values(scramble_session_data.questions).flat()
+				.map(item=>{
+					if (item?.question) {
+						// console.log('found: question', {question: item.question})
+						item.question = Object.values(item?.question).flat()
+						// console.log({typeOfItem: typeof (item.question)})
+						const hasDiagram = item.question.some(dia=>dia.type==="diagram")
+						// console.log({hasDiagram})
+						if (hasDiagram) {
+							// handle group and ungrouping here too
+							const diagramIndex = item.question.findIndex(q => q.type === "diagram")
+							// const diagramObject = Object.values(item.question.find(item=>item.type==="diagram")?.value.diagramShapes).flat()
+							const diagramObject = Object
+												.values(item.question[diagramIndex].value.diagramShapes)
+												.flat()
+							// console.log('found diagram', {diagramObject})
+							item.question[diagramIndex].value.diagramShapes = diagramObject
+							// const dObject = Object.values(diagramObject).flat()
+							// console.log({dObject})
+						}
+						// console.log({question: item?.question})
+					}
+					if (item?.question_mode) {
+						// console.log('found: mode')
+						item.question_mode = Object.values(item?.question_mode).flat()
+						// console.log({mode: item?.question_mode})
+					}
+					return item
+				})
+				// console.log({converted_savedQuestionsArr: savedQuestionsArr})
+		} else {
+			savedQuestionsArr = scramble_session_data.questions;
+			// console.log({not_converted_savedQuestionsArr: savedQuestionsArr})
+		}
+		// if (scramble_session_data) {
+		let theoryQuestions = scramble_session_data?.theory||[]
+		if (typeof theoryQuestions === "object") {
+			theoryQuestions = normalizeTheory(theoryQuestions)
+		}
+		// console.log({theoryQuestions})
+		if (theoryQuestions.length) {
+			theoryQuestionsRef.current = theoryQuestions
+			setAddTheory(true)
+		}
+		// if (scramble_session_data?.questions) {
+		// 	setRemoveObjectives(false)
+		// }
+		const isObj = Object.keys(scramble_session_data?.questions||{})
+		setRemoveObjectives(!isObj?.length)
+		// console.log({
+		// 	scramble_session_data,
+		// 	isObj,
+		// 	length: isObj?.length,
+		// 	bool: !isObj?.length
+		// })
+		// }
+		// console.log({savedQuestionsArr})
+		setFormData(prev => {
+			// console.log({prev})
+			const updatedFormData = {
+				...prev,
+				...{
+					...scramble_session_data,
+					questions: savedQuestionsArr,
+					theory: theoryQuestions,
+				}
+			}
+			// console.log({updatedFormData})
+			return updatedFormData
+		})
+		handleDeptSet(scramble_session_data?.department)
+		setQuestionFormData(savedQuestionsArr||[])
+		// console.log('setting has submitted...')
+		setHasSubmitted({[fetchID]: savedSession?.has_submitted})
+	}, [savedSession])
+
+	useEffect(() => {
+		setLoadingPage(false)
+		if (!hasFetched.current) {
+			// fetchDownloadLinkss({endpoint, setDownloadLink})
+			hasFetched.current = true
+		}
+	}, []);
+	useEffect(() => {
+		const i = setInterval(() => setTick(Date.now()), 30_000);
+		return () => clearInterval(i);
+	}, []);
+
 	const handleQuestionChange = (e=null, data=null, index, mode='+') => {
-		console.log('in handle question change fxn...', {data})
-		if (!e && !data?.files?.[0]) return
-		const { name, value, files, type } = e ? e.target : data
-		console.log({name, value, files, type, index, questionFormData, mode})
+		// console.log('question refs:', questionFormData.map(q => q.question))
+		// console.log('in handle question change fxn...', {data, index})
+		// if (!e && !data?.files?.[0]) return
+		if (!e && data?.name!=='image') return
+		let { name, value, files, type } = (e&&e?.target) ? e.target : data
+		// console.log({name, value, files, type, index, questionFormData, mode})
+		// let updatedQuestions = [...questionFormData];
 		let updatedQuestions = [...questionFormData];
+		let currentQuestion = structuredClone(updatedQuestions[index]); // deep copy THIS question
+		if (!currentQuestion) return
+		// console.log({updatedQuestions, questionFormData, currentQuestion})
+		updatedQuestions[index] = currentQuestion;
+		// updatedQuestions[index] = currentQuestion;
 		// if (totalFileUploadQuestions) updatedQuestions = [...fileUploadQuestions]
 		updatedQuestions[index]["number"] = index + 1; // auto-add/update question number
 		let file;
+		// console.log({name})
 		if (name === "image") {
+			// console.log('in image mod')
 			file = files[0];
-			updatedQuestions[index].image = file; // assign image file object
-			updatedQuestions[index].previewImage = URL.createObjectURL(file); // assign preview URL for the image
-		} else {
+			// console.log({file})
+			if (!file) {
+				updatedQuestions[index].image = null; // assign image file object
+				updatedQuestions[index].previewImage = null; // assign preview URL for the image
+			} else {
+				updatedQuestions[index].image = file; // assign image file object
+				updatedQuestions[index].previewImage = URL.createObjectURL(file); // assign preview URL for the image
+			}
+			// console.log({updatedQuestions: updatedQuestions[index]})
+		} else if (name === "question_text") {
+			const textBlock = customFindLast(updatedQuestions[index].question, b => b.type === "text");
+			if (textBlock) {
+				name = "question"
+				textBlock.value = value;
+			}
+		} else if (name === "question_text") {
+			// console.log('question_text'.repeat(10))
+			const blocks = updatedQuestions[index].question.map(b => ({ ...b }));
+			let textBlock = customFindLast(blocks, b => b.type === "text");
+
+			if (!textBlock) {
+				blocks.push({ type: "text", value });
+			} else {
+				textBlock.value = value;
+			}
+
+			updatedQuestions[index].question = blocks;
+		// } else if (name === "question_math") {
+		// 	// console.log('question_math'.repeat(10))
+		// 	const blocks = updatedQuestions[index].question.map(b => ({ ...b }));
+		// 	let mathBlock = customFindLast(blocks, b => b.type === "math");
+
+		// 	if (!mathBlock) {
+		// 		blocks.push({ type: "math", value });
+		// 	} else {
+		// 		mathBlock.value = value;
+		// 	}
+
+		// 	updatedQuestions[index].question = blocks;
+		} else if (name === "question_diagram") {
+			// console.log('question_diagram'.repeat(10))
+			const blocks = updatedQuestions[index].question.map(b => ({ ...b }));
+
+			let diagramBlock = customFindLast(blocks, b => b.type === "diagram");
+
+			if (!diagramBlock) {
+				blocks.push({
+					type: "diagram",
+					value: structuredClone(value),
+					// diagramInstance: value.diagramInstance,
+				});
+			} else {
+				diagramBlock.value = structuredClone(value);
+				// diagramBlock.diagramInstance = value.diagramInstance;
+			}
+
+			updatedQuestions[index].question = blocks;
+		}
+
+		else {
+			// console.log('else block')
 			updatedQuestions[index][name] = value;
 		}
 		// setQuestions(updatedQuestions)
 		// console.log({file})
 		setFormData((prev) => {
+			const updated = [...updatedQuestions];
+			// const updated = prev.questions.map((q, i) => i === index ? {...q} : q);
 			if (mode === '-') {
-				updatedQuestions[index] = {
-					...updatedQuestions[index],
+				updated[index] = {
+					...updated[index],
 					image: null,
 				};
+			} else if (name === "question" || name === "question_text"
+				// || name === "question_math"
+				|| name === "question_diagram") {
+				// blocks already updated in updatedQuestions[index].question above
+				// console.log('in setformdata')
+				updated[index] = {
+					...updated[index],
+					question: updatedQuestions[index].question,
+				};
 			} else {
-				updatedQuestions[index] = {
-					...updatedQuestions[index],
-					...(file?
-						{[name]: file}:
-						{[name]: value}),
+				// console.log('in else setformdata')
+				updated[index] = {
+					...updated[index],
+					[name]: file ? file : value,
 				};
 			}
 			return {
 				...prev,
-				questions: updatedQuestions,
-				// totalQs: updatedQuestions.length
-			}}
-		)
+				questions: updated,
+			}
+		})
 		setQuestionFormData(prev => {
 			const updated = [...prev]
-			// console.log({
-			// 	updated,
-			// 	index,
-			// 	atIndex: updated[index],
-			// 	name, value
-			// })
 			if (mode === '-') {
 				// removes uploaded image
 				updated[index] = {
@@ -209,136 +1250,425 @@ function ContributeQuestionsComponent() {
 					image: null,
 					previewImage: null,
 				};
-			} else {
+			} else if (name === "question" || name === "question_text"
+				// || name === "question_math"
+				|| name === "question_diagram") {
+				// console.log('in setQuestionFormData')
 				updated[index] = {
 					...updated[index],
-					...(file?
-						{[name]: file}:
-						{[name]: value})}
+					question: updatedQuestions[index].question,
+				};
+			} else {
+				// console.log('in else setQuestionFormData')
+				updated[index] = {
+					...updated[index],
+					[name]: file ? file : value,
+				};
 			}
 			return updated
 		})
-
 		if (mode === '-') {
 			const input = document.getElementById(`image-upload-${index}`);
 			if (input) input.value = '';
 		}
 	};
 
-	const handleChange = (e) => {
-		let { name, value } = e.target;
-		if (name === 'totalQs') {
-			value = justNumbers(value)
-			let numericValue = value === "" ? 0 : Number(value);
-			if (numericValue > 10) {
-				numericValue = 10;
+	useEffect(() => {
+		// console.log({uploadedSchLogo, isClearUploadedLogo})
+		// const handleImages = (file, index) => [
+		handleChange(
+			null,
+			{
+				name: 'logo',
+				value: isClearUploadedLogo?'':uploadedSchLogo?.imgPreview,
+				files: isClearUploadedLogo?['clear']:[uploadedSchLogo?.compressedFile],
+				type: 'file'
+			},
+			isClearUploadedLogo ? '-' : '+'
+		)
+	}, [uploadedSchLogo, isClearUploadedLogo])
+
+	const handleChange = (e=null, data=null, mode='+') => {
+		if (!e && !data?.files?.[0]) return
+		let { name, value, files, type } = e ? e.target : data
+		// console.log({name, value, files, type, mode})
+		let file
+		let previewLogo
+		if (name === "logo") {
+			file = files[0];
+			previewLogo = value
+			// previewLogo = URL.createObjectURL(file); // assign preview URL for the image
+		} else {
+			if (name === 'totalQs'||name === 'phone'||
+				name === 'noOfTypes'||name === 'duration') {
+				value = justNumbers(value)
+				if (name === 'totalQs') {
+					setTotalNoOfQs(Number.isNaN(value) ? 0 : value)
+					totalNoOfQsRef.current = Number.isNaN(value) ? 0 : value
+				}
 			}
-			setTotalNoOfQs(numericValue);
-			totalNoOfQsRef.current = numericValue;
-			value = numericValue.toString();
-			// if (!Number.isNaN(value)&&Number(value)<11) {
-			// 	setTotalNoOfQs(Number.isNaN(value) ? 0 : value)
-			// 	totalNoOfQsRef.current = Number.isNaN(value) ? 0 : value
-			// }
+			if (name==='subject') {
+				value = spaceToHyphen(value)
+			}
 		}
 
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}))
+		setFormData((prev) => {
+			// console.log({name, value, file})
+			if (mode === '-') {
+				return {
+					...prev,
+					logo: null,
+					previewLogo: '',
+				}
+			} else {
+				const updteImage = {
+					[name]: file,
+					previewLogo,
+				}
+				return {
+					...prev,
+					...(file ?
+						updteImage:
+						{[name]: value.toLowerCase()}
+					)
+				}
+			}
+		})
+		setIsClearUploadedLogo(false)
 	};
 
 	useEffect(() => {
-		const newQuestions = []
-		for (let i=0; i<totalNoOfQs; i++) {
-			// console.log('adding...')
-			const uniqueId = generateUniqueId()
-			// console.log({uniqueId})
-			newQuestions.push({...questionObject, uniqueId})
-		}
-		// console.log({newQuestions})
-		setQuestionFormData(newQuestions);
+		// console.log('🔥 totalNoOfQs changed:', totalNoOfQs);
+			const newQuestions = []
+			for (let i=0; i<totalNoOfQs; i++) {
+				// console.log('adding...')
+				const uniqueId = generateUniqueId()
+				// console.log({uniqueId})
+				// const newClonedQuestion = structuredClone(questionObject)
+				// newQuestions.push({...questionObject, uniqueId, question_mode: 'text'})
+				newQuestions.push({...questionObject, uniqueId, question_mode: ['text'], question: questionObject.question.map(b => ({...b}))})
+			}
+			// console.log({newQuestions})
+			setQuestionFormData(newQuestions);
+		// }
 	}, [totalNoOfQs]);
 
-	// // let cleanedData;
-	const submitHandler = async (e) => {
+	const submitHandler = async (e, isRemember=false, isSubmitToSch=false) => {
 		e.preventDefault(); // prevent default page refresh
-		setLoading(true)
-		const cleanedData = structuredClone(formData);
-		console.log({formData})
 
-		// map each question to a promise, keeping track of its index
-		const uploadPromises = cleanedData.questions.map((question, index) => {
-			if (question?.image) {
-				return uploadToCloud({
-						selectedFile: question.image,
-						fileName: 'test-question',
-						folder: 'questions',
-					}).then(uploadResult => ({
-						index,
-						uploadResult,
-				}));
-			}
-			// If no image, resolve immediately with null
-			return Promise.resolve({ index, uploadResult: null });
-		});
-		
-		// wait for all uploads in parallel
-		const results = await Promise.all(uploadPromises);
-		
-		// update cleanedData after all uploads
-		results.forEach(({ index, uploadResult }) => {
-			const question = cleanedData.questions[index];
-		
-			if (uploadResult) {
-				question.fileId = uploadResult.fileId;
-				question.image_url = uploadResult.url;
-			}
-		
-			// group options together
-			question.options = [
-			question.correct_answer,
-			question.wrong_answer1,
-			question.wrong_answer2,
-			question.wrong_answer3,
-			];
-		
-			// clean up unused fields
-			delete question.image;
-			delete question.previewImage;
-			delete question.wrong_answer1;
-			delete question.wrong_answer2;
-			delete question.wrong_answer3;
-		});
-		cleanedData.type_category = cleanedData.type
-		cleanedData.class_category = cleanedData.class
-		cleanedData.subject_category = cleanedData.subject
-		delete cleanedData.type
-		delete cleanedData.class
-		delete cleanedData.subject
+		// console.log('q'.repeat(15), {isRemember, isSubmitToSch})
+		// return
+		// setLoading(true)
 
-		const endpoint = 'contribute'
-		const res = await FetchFromServer(endpoint, 'POST', cleanedData, true)
-		console.log('Form submitted with data:', {cleanedData, res});
+		// console.log({formData})
+		let cleanedData
+		// let fd = {...formData}
+		let fd = structuredClone(formData);
+		setIsExporting(true)
+		const diagramFiles = [];
+		let shuffleEndpoint = 'contribute'
+		// console.log('0'.repeat(10))
+
+		await Promise.all(
+			fd.questions.map(async (q, idx) => {
+				// console.log('1'.repeat(10), {q})
+				const stage = diagramStageRefs.current[q.uniqueId];
+				// console.log('😜'.repeat(7),
+				// 	{stage_diagram_images: stage,
+				// 		diagramStageRefs: diagramStageRefs.current,
+				// 	})
+				if (!stage) return;
+			
+				// console.log('2'.repeat(10))
+				const hasDiagram =
+					q?.question_mode?.includes("diagram") ||
+					(q?.question || []).some(b => b.type === "diagram");
+			
+				if (!hasDiagram) return;
+			
+				// console.log('3'.repeat(10))
+				// stage.draw();
+				stage.batchDraw();
+				await new Promise(requestAnimationFrame);
+				await new Promise(requestAnimationFrame);
+				const blob = await exportDiagramBlob(stage);
+			
+				// console.log({
+				// 	idx,
+				// 	uniqueId: q.uniqueId,
+				// 	blob,
+				// 	size: blob?.size,
+				// 	type: blob?.type,
+				// });
+
+
+				// const url = URL.createObjectURL(blob);
+				// window.open(url, "_blank");
+
+				// // Optional: free memory after a while
+				// setTimeout(() => URL.revokeObjectURL(url), 60000);
+
+
+				// store file with index mapping
+				// diagramFiles.push({
+				// 	index: q.uniqueId,
+				// 	file: blob,
+				// });
+			
+				// console.log('4'.repeat(10))
+				// optional marker (NOT image data)
+				// if (!q.question) q.question = [];
+				// console.log('5'.repeat(10))
+				if (blob instanceof Blob && blob.size > 0) {
+					// console.log('initial diagramFiles:', diagramFiles)
+					diagramFiles.push({ index: q.uniqueId, file: blob });
+					if (!q.question) q.question = [];
+					q.question.push({
+						type: "diagram_png",
+						value: "__FILE_ATTACHMENT__",
+					});
+				}
+			})
+		);
+		// console.log({updatedFormData: fd,
+		// 	isRemember, isSubmitToSch,
+		// 	diagramFiles,
+		// })
+
+		if (isRemember||isSubmitToSch) {
+			// console.log('6'.repeat(10))
+			if (isRemember) {
+				setRememberLoading(true)
+				// console.log({isRemember})
+				// shuffleEndpoint = 'school/save/true'
+			} else {
+				setSubmittingToSchLoading(true)
+				// console.log({isSubmitToSch})
+				// shuffleEndpoint = `${endpoint}/exam-questions`
+			}
+			fd = structuredClone(formData);
+
+			// console.log({fd})
+			// map each question to a promise, keeping track of its index
+			const uploadPromises = fd.questions.map((question, index) => {
+				if (question?.image) {
+					return uploadToCloud({
+							selectedFile: question.image,
+							fileName: 'test-question',
+							folder: 'questions',
+						}).then(uploadResult => ({
+							index,
+							uploadResult,
+					}));
+				}
+				// If no image, resolve immediately with null
+				return Promise.resolve({ index, uploadResult: null });
+			});
+
+			// wait for all uploads in parallel
+			const results = await Promise.all(uploadPromises);
+			// console.log({results})
+
+			// update cleanedData after all uploads
+			results.forEach(({ index, uploadResult }) => {
+				const question = fd.questions[index];
+
+				if (uploadResult) {
+					question.fileId = uploadResult.fileId;
+					question.image_url = uploadResult.url;
+				}
+
+				// clean up unused fields
+				delete question.image;
+				delete question.previewImage;
+			});
+			if (savedSession) {
+				fd.savedID = savedSession?.id
+			}
+		} else {
+			// console.log('7'.repeat(10))
+			setScrambleLoading(true)
+			// cleanedData = {...formData}
+			cleanedData = structuredClone(fd);
+			cleanedData.postQuestions = formData.questions
+			delete cleanedData.questions
+			if (!formData.logo&&hasSchool&&schoolLogo) {
+				// console.log('✅✅✅✅✅sch-logo', schoolLogo)
+				cleanedData.logo = schoolLogo
+			} else {
+				console.warn('❌❌❌❌❌no school has no uploaded logo')
+				delete cleanedData.logo
+			}
+
+			diagramFiles.forEach((item) => {
+				const question = cleanedData.postQuestions.find(
+					q => q.uniqueId === item.index
+				);
+			
+				if (question) {
+					question.diagram_png = new File(
+						[item.file],
+						`diagram-${question.uniqueId}.png`,
+						{
+							type: item.file.type,
+							lastModified: Date.now(),
+						}
+					);
+				}
+			});
+			const form = buildFormData(new FormData(), cleanedData);
+
+			fd = form;
+			// console.log({submittedFormData: cleanedData})
+			// fd = buildFormData(new FormData(), cleanedData)
+			// shuffleEndpoint = `${endpoint}/shuffle`
+		}
+
+		// console.log('10'.repeat(10))
+		// console.log({fd})
+		// console.log({shuffleEndpoint})
+
+		for (const [key, value] of fd.entries()) {
+			// console.log(key, value);
+		
+			if (value instanceof Blob) {
+				// console.log('FOUND BLOB!!!'.repeat(7),
+				// 	"\nBlob:",
+				// 	value.size,
+				// 	value.type
+				// );
+			}
+		}
+
+		// return
+		const res = await FetchFromServer(`${shuffleEndpoint}`, 'POST', fd)
+		// console.log('Form submitted with data:');
 		// const alert1 = `\nResponse: \n ${JSON.stringify(res, null, 2)}`
-		alert("Thank you!\nThe questions will be reviewed and updated to the db accordingly.");
-		setLoading(false)
+
+		setIsExporting(false)
+
+		if (res.ok) {
+			const resData = res?.data
+			let extraMessage = ""
+			// let extraMessage = "Use the download button to get your questions.";;
+			if (isSubmitToSch) {
+				extraMessage = "Questions have been sent to the admin.";
+			} else if (isRemember) {
+				extraMessage = "";
+			}
+			// console.log({resData, extraMessage})
+			if (!isRemember) {
+				if (isSubmitToSch) {
+					setHasSubmitted({[fetchID]: resData?.has_submitted})
+				}
+				// fetchDownloadLinkss({endpoint, setDownloadLink})
+				setIsNewDownload(true)
+			} else {
+				lStorage.removeItem('saved-questions')
+				lStorage.removeItem(`saved-detail-${fetchID}`)
+			}
+			toast.success(
+				<div>
+					<div>{res?.data?.success||'Success'}!</div>
+					<div style={{ marginTop: "6px" }}>
+						{extraMessage}
+					</div>
+				</div>
+			);
+		}
+		setRememberLoading(false)
+		setScrambleLoading(false)
+		setSubmittingToSchLoading(false)
 	};
 
 	const args = {
+		// handleChange,
+		confirm,
+		addTheory,
+		formData,
 		setFormData,
 		questionObject,
 		generateUniqueId,
 		handleQuestionChange,
 		questionFormData,
 		setQuestionFormData,
+		diagramStageRefs,
+		// isDuplicate,
+		isExporting,
+		setIsExporting,
 	}
 
-	const lengthOfQs = formData.questions.length
+	const hasLinks = Array.isArray(downloadLink) && downloadLink.length > 0;
+	const hasMultipleLinks = hasLinks && downloadLink.length > 1;
+	const hasSingleLink = hasLinks && downloadLink.length === 1;
+
+	// const hasObjectives = Array.isArray(formData?.questions) && formData.questions.length > 0;
+	// const hasTheory = Array.isArray(formData?.theory) && formData.theory.length > 0;
+	// const headFieldsValid = formHeadState?.every(field => !field.required || formData[field.name] !== '');
+	// const areObjectiveQuestionsValid = hasObjectives && formData.questions.every(q => {
+	// 	const textObj = q?.question?.find(qt => qt.type === "text");
+	// 	return (
+	// 		textObj?.value?.trim() !== '' &&
+	// 		q?.correct_answer?.trim() !== '' &&
+	// 		q?.wrong_answer1?.trim() !== '' &&
+	// 		q?.wrong_answer2?.trim() !== '' &&
+	// 		q?.wrong_answer3?.trim() !== ''
+	// 	);
+	// });
+	// const isTheoryValid = (nodes) => {
+	// 	if (!Array.isArray(nodes) || nodes.length === 0) return false;
+	// 	return nodes.every(node => {
+	// 		const hasText = node?.text?.trim() !== '';
+	// 		const childrenValid = node?.children?.length
+	// 			? isTheoryValid(node.children)
+	// 			: true;
+	// 		return hasText && childrenValid;
+	// 	});
+	// };
+	// const areTheoryValid = hasTheory && isTheoryValid(formData?.theory);
+	const canRememberOrSubmit = validateFields({formData, formHeadState})
+	// headFieldsValid &&
+	// (
+	// 	(hasObjectives && areObjectiveQuestionsValid) ||
+	// 	(hasTheory && areTheoryValid)
+	// );
+
 	console.log({
+		// areObjectiveQuestionsValid,
+		// areTheoryValid,
+		// deviceInfo,
+		// userInfo,
+		// location,
+		// isFetch,
+		// fetchID,
 		formData,
-		formDataQuestions: formData.questions,
+		// formHeadState,
+		// uploadedSchLogo,
+		// isClearUploadedLogo,
+		// savedSession,
+		// hasSubmitted,
+		// questionObject,
+		// questionFormData,
+		// canRememberOrSubmit,
+		// dept,
+		// categoryFilled: formHead.every(field=>field.required&&formData[field.name]!==''),
+		// questionsAvailable: !!formData?.questions?.length,
+		// questionsFilled: Object.keys(questionObject)?.every(field=> {
+		// 	if (!["image", "uniqueId"].includes(field)) {
+		// 		return true // skip image and uniqueid field checks
+		// 	}
+		// 	return formData?.questions?.every(question=> question[field]!=='')
+		// })
+		// addTheory,
+		// theory,
+		diagramStageRefs: diagramStageRefs.current
 	})
+	// console.log({
+	// 	formhaslogo: formData.logo,
+	// 	hasSchool,
+	// 	schoolLogo,
+	// 	summary: !formData.logo&&hasSchool&&schoolLogo,
+	// })
 	return (
 			<>
 				{/* spinner */}
@@ -347,38 +1677,59 @@ function ContributeQuestionsComponent() {
 				<form
 				onSubmit={submitHandler}
 				className={`form-head scramble-question-text glass ${loadingPage?'d-none':''}`}>
-					<h1 className="shuffle-question-head1">Contribute Questions</h1>
-					<fieldset className="questions-header">
-						{formHead.map((input, inpIdx) => {
-							console.log({
-								field: input.name,
-								value: formData[input.name]
-							})
-							const isClass = input.name.toLowerCase()==="class"
-							const isSubject = input.name.toLowerCase()==="subject"
-							let options = input.options;
+					<div className="d-flex justify-content-between align-items-center">
+						<div>
+							<h1 className="shuffle-question-head1">Contribute Questions</h1>
+							{/* mobile */}
+							{(formData.level.toLowerCase().includes('sss')&&
+								formData.class.toLowerCase().includes('sss') &&
+								width <= 768) &&
+								<div className="d-flex justify-self-start">
+									<ItemsToggler
+									togglerArray={deptTogglerArray}
+									toggleStyle={'d-flex pb-01'}
+									isMobileDev768={isMobileDev768}
+									btnItem={dept} stateSetter={handleDeptSet} />
+								</div>}
+						</div>
+						<div className="d-flex flex-row align-items-center gap-1 chk-box-pad-r">
+							{/* desktop */}
+							{(formData.level.toLowerCase().includes('sss')&&
+								formData.class.toLowerCase().includes('sss') &&
+								width > 768) &&
+									<ItemsToggler
+									togglerArray={deptTogglerArray}
+									btnItem={dept} stateSetter={handleDeptSet}
+									pageName={'scramble'} />}
+							<div className="d-flex flex-column">
+								<CheckBoxBtnUI
+								chkText="New School?"
+								spanClass='pl-color got-a-code align-self-end'
+								checkState={hasDiffSchool}
+								setCheckState={setHasDiffSchool} />
 
-							if (isClass) {
-								if (formData.type?.toLowerCase() === "basic") {
-									options = basicClassArray;
-								} else if (formData.type?.toLowerCase() === "jss") {
-									options = jssArray;
-								} else if (formData.type?.toLowerCase() === "sss") {
-									options = sssArray;
-								} else {
-									options = [noType];
-								}
-							} else if (isSubject) {
-								if (formData.type?.toLowerCase() === "basic") {
-									options = basicSubjectArray;
-								} else if (formData.type?.toLowerCase() === "jss") {
-									options = jssSubjectArrar;
-								} else if (formData.type?.toLowerCase() === "sss") {
-									options = sssSubjectArray;
-								} else {
-									options = [noType];
-								}
-							}
+								<CheckBoxBtnUI
+								chkText="Remove Obj?"
+								spanClass='pl-color got-a-code align-self-end'
+								checkState={removeObjectives}
+								setCheckState={setRemoveObjectives} />
+
+								<CheckBoxBtnUI
+								chkText="Add Theory?"
+								spanClass='pl-color got-a-code align-self-end'
+								checkState={addTheory}
+								setCheckState={setAddTheory} />
+							</div>
+						</div>
+					</div>
+
+					<fieldset className="questions-header">
+						{formHeadState?.map((input, inpIdx) => {
+							if (!input.name) return
+							// console.log({
+							// 	name: input.name,
+							// 	value: formData[input.name]
+							// })
 							return (
 								<div key={input.name+inpIdx}
 								style={{width: input.width}}
@@ -389,16 +1740,20 @@ function ContributeQuestionsComponent() {
 										<select
 										// style={{width: input.width}}
 										// className="text-center"
-										value={formData[input.name]}
+										value={titleCase(formData[input.name])||''}
 										onChange={handleChange}
 										name={input.name}
 										required={input.required}>
-											<option value="" disabled hidden>-- {titleCase(input.name)} --</option>
-											{options.map((opt, index) => (
-												<option key={index} value={titleCase(opt)}
-												disabled={opt.toLowerCase()===noType}
+											<option value="" disabled hidden>{input.placeholder}</option>
+											{input.options.map((option, index) => (
+												<option key={index} value={titleCase(option)}
+												disabled={
+													(input.name==='class'&&option===noLevel)?true:
+													(input.name==='subject'&&(option===noClass||option===selectDept))?true:
+													false
+												}
 												className="options">
-													{titleCase(opt)}
+													{displayValue(option, input.case)}
 												</option>
 											))}
 										</select>
@@ -411,12 +1766,9 @@ function ContributeQuestionsComponent() {
 										className="text-center"
 										// style={{width: input.width}}
 										placeholder=" "
-										value={
-											(input.name.toLowerCase()==='totalqs'&&
-											Number(formData[input.name])===0)
-											? ''
-											: displayValue(formData[input.name], input.case) ?? ''
-										}
+										value={(input.name.toLowerCase()==='totalqs'&&
+											Number(formData[input.name])===0)?
+												'':displayValue(formData[input.name], input.case)||''}
 										onChange={handleChange}
 										required={input.required}
 										disabled={input.disabled}
@@ -427,37 +1779,210 @@ function ContributeQuestionsComponent() {
 								</div>
 							)
 						})}
+						{/* <div className=''>
+							<div className="d-flex gap-1">
+								<ImageCropAndCompress
+								onComplete={setUploadedSchLogo}
+								onClearSelection={setIsClearUploadedLogo}
+								imageId={'logo'}
+								imgType="sch-logo"
+								disableBtn={!hasDiffSchool}
+								btnStyle="d-inline"
+								/>
+
+							</div>
+						</div> */}
 					</fieldset>
+					<div className='d-flex justify-content-center'>
+						<div className="d-flex gap-1">
+							<ImageCropAndCompress
+							ref={imageCropAndCompressRef}
+							onComplete={setUploadedSchLogo}
+							onClearSelection={setIsClearUploadedLogo}
+							imageId={'logo'}
+							imgType="sch-logo"
+							disableBtn={!hasDiffSchool}
+							btnStyle="d-inline"
+							/>
 
-					<QuestionsArrComp args={args} />
-
-					<div className="">
-						<div className="">
-							<button
-							style={{margin: '0 5rem'}}
-							className="cta-button mb-xs q-mx"
-							type="button"
-							disabled={true}
-							onClick={() => null}>
-								Upload File
-							</button>
 						</div>
 					</div>
+
+					{/* {(totalNumberOfQuestions&&!isFile) ? */}
+					{/* <div> */}
+					<QuestionsArrComp args={args} />
+					{(addTheory&&!removeObjectives)?
+						<>
+							<br/><br/><br/>
+						</>:''}
+					{addTheory ?
+						<TheoryBuilder
+						confirm={confirm}
+						updateState={updateTheoryState}
+						updateFromSavedTheory={theoryQuestionsRef.current} />: null}
+					{/* </div> */}
+						{/* : */}
+						{/* <div className="">
+							<div className={`${deviceInfo.width<=768?'d-flex justify-content-center':''}`}> */}
+
+									{/* <button
+									style={{margin: '0 5rem'}}
+									className={`cta-button mb-xs q-mx fit ${''}`}
+									type="button"
+									disabled={true}
+									onClick={() => null}>
+										Upload File
+									</button> */}
+
+							{/* </div>
+						</div> */}
+					{/* download file button */}
+					{/* <div className=""> */}
+					{hasSingleLink ?
+						<div className={`download-btn-not-dropdown mt-1`}>
+							<DownloadBtn tick={tick}
+							item={downloadLink?.[0]}
+							single={true} />
+						</div>
+						:
+						hasMultipleLinks ?
+						(<div
+							onMouseEnter={(e)=>setIsNewDownload(false)}
+							// style={{margin: '0 5rem',}}
+							className={`download-btn-dropdown mt-1
+										${width>1024?'mx-5':
+										width>900?'mx-3':'mx-1'}`}>
+							<button
+							type="button"
+							className="cta-button fit no-cursor">
+								<FontAwesomeIcon icon="download" />
+								Download files ({downloadLink.length}) <sup
+								className={`download-notification-dot ${isNewDownload?'':'d-none'}`}
+								/>
+							</button>
+						
+							<div className="download-btn-dropdown-menu">
+								{downloadLink.map((item, idx) => {
+									return (
+										<Fragment key={idx}>
+											<DownloadBtn
+											tick={tick}
+											item={item} />
+										</Fragment>
+									)
+								})}
+							</div>
+						</div>)
+					: null}
+
 					{/* submit button */}
-					{lengthOfQs > 0 ?
-					<div className="d-flex justify-content-center">
+					<div className={`d-flex justify-content-center pt-1p5 ${isMobileDev768?'scramble-btns-pt-05':'pt-05'}`}>
+						{hasSchool ?
+						<>
+							<button
+							// style={isMobileDev768?{}:{margin: '0 0.5rem'}}
+							onClick={(e)=>submitHandler(e, false, true)}
+							type="button"
+							disabled={submittingTToSchLoading
+								||!canRememberOrSubmit
+							}
+							className={`cta-button scramble-submit-mobile font-gold
+										${(questionFormData?.length||addTheory)?'':'d-none'}
+										${hasSchool?'first':''}`}>
+								{submittingTToSchLoading ?
+									<Spinner type={'dot'} /> :
+									(hasSubmitted?.[fetchID])?'Update Submission':`Submit to ${hasSchool?.acronym}`}
+							</button>
+							<button
+							// style={isMobileDev768?{}:{margin: '0 0.5rem'}}
+							onClick={(e)=>submitHandler(e, true)}
+							type="button"
+							disabled={rememberLoading
+								||!canRememberOrSubmit
+							}
+							className={`cta-button scramble-submit-mobile
+										${(questionFormData?.length||addTheory)?'':'d-none'}
+										${hasSchool?'middle':''}`}>
+								{rememberLoading ?
+									<Spinner type={'dot'} /> :
+									isFetch?'Update Saved':'Remember'}
+							</button>
+						</>:null}
 						<button
-						style={{margin: '0 5rem'}}
+						// style={isMobileDev768?{}:{margin: '0 0.5rem'}}
 						type="submit"
-						disabled={loading}
-						className="cta-button contribute-submit-mobile">
-							{loading ?
+						disabled={scrambleLoading
+							||!canRememberOrSubmit
+						}
+						className={`cta-button scramble-submit-mobile
+									${(questionFormData?.length||addTheory)?'':'d-none'}
+									${hasSchool?'last':''}`}>
+							{scrambleLoading ?
 								<Spinner type={'dot'} /> :
-								`Submit Question${lengthOfQs===1?'':'s'}`}
+								`Scramble${width>768?' Questions':''}`}
 						</button>
-					</div> : null}
+					</div>
 				</form>
 			</>
 	)
 }
-export { ContributeQuestionsComponent };
+
+function DownloadBtn({item, tick, single=false}) {
+	// console.log({item, link: item.link})
+	const itemName = item.link.split('/')[2].split('_')
+	const subject = itemName[1].slice(0, 9)+'...'
+	const uKey = (itemName[4]??itemName[3]).slice(4)
+	// console.log({itemName, subject, uKey})
+	const fileName = `${subject}_${uKey}`
+	// console.log({serverOrigin, link: item.link, completeLink: `${serverOrigin}${item.link}`})
+	const normalisedDownloadLink = serverOrigin.replace(/\/$/, "")+item.link
+	// cleanedDownloadLink.includes("//public")
+	// console.log({cleanedDownloadLink, incl: cleanedDownloadLink.includes("//public")})
+	return (
+		<a
+			style={{...single?{margin: '0 5rem'}:{}}}
+			role="button"
+
+			href={normalisedDownloadLink}
+			download
+			className={single?'cta-button fit':'download-btn-dropdown-item'}
+		>
+			{single ?
+			<FontAwesomeIcon icon="download" />:null}
+			{titleCase(fileName)} <span className="time-ago">({timeAgo(item.created_at)})</span>
+		</a>
+	)
+}
+
+function timeAgo(isoString) {
+	if (!isoString) return '';
+
+	const now = Date.now();
+	const then = new Date(isoString).getTime();
+
+	if (isNaN(then)) return '';
+
+	const ago = 'ago'
+	const diffSeconds = Math.floor((now - then) / 1000);
+
+	if (diffSeconds < 0) return 'now';
+
+	if (diffSeconds < 60) {
+		return `${diffSeconds}s ${ago}`;
+	}
+
+	const diffMinutes = Math.floor(diffSeconds / 60);
+	if (diffMinutes < 60) {
+		return `${diffMinutes}m ${ago}`;
+	}
+
+	const diffHours = Math.floor(diffMinutes / 60);
+	if (diffHours < 24) {
+		return `${diffHours}h ${ago}`;
+	}
+
+	const diffDays = Math.floor(diffHours / 24);
+	return `${diffDays}d ${ago}`;
+}
+
+export { ContributeQuestionsComponent, DownloadBtn, timeAgo };
