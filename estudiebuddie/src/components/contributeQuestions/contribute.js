@@ -391,12 +391,12 @@ let formValues = {
 	// phone: "",
 	class: "",
 	term: "",
-	duration: "",
+	// duration: "",
 	totalQs: "",
 	department: "",
 	// session: "",
-	instruction: "",
-	noOfTypes: "",
+	// instruction: "",
+	// noOfTypes: "",
 	questions: [],
 }
 
@@ -518,15 +518,15 @@ let formHead = [
 		width: "20%",
 		case: null,
 	},
-	{
-		name: "school",
-		required: true,
-		disabled: false,
-		type: "text",
-		placeholder: "School Name",
-		width: "50%",
-		case: 'upper',
-	},
+	// {
+	// 	name: "school",
+	// 	required: true,
+	// 	disabled: false,
+	// 	type: "text",
+	// 	placeholder: "School Name",
+	// 	width: "50%",
+	// 	case: 'upper',
+	// },
 	{
 		name: "level",
 		required: true,
@@ -557,15 +557,15 @@ let formHead = [
 		options: [noClass],
 		case: 'sentence',
 	},
-	{
-		name: "noOfTypes",
-		required: true,
-		disabled: false,
-		type: "text",
-		placeholder: "No. of Types",
-		width: "20%",
-		case: null,
-	},
+	// {
+	// 	name: "noOfTypes",
+	// 	required: true,
+	// 	disabled: false,
+	// 	type: "text",
+	// 	placeholder: "No. of Types",
+	// 	width: "20%",
+	// 	case: null,
+	// },
 	{
 		name: "term",
 		required: true,
@@ -576,24 +576,24 @@ let formHead = [
 		options: termArray,
 		case: "title",
 	},
-	{
-		name: "duration",
-		required: true,
-		disabled: false,
-		type: "text",
-		placeholder: "Duration (hour)",
-		width: "20%",
-		case: null,
-	},
-	{
-		name: "instruction",
-		required: true,
-		disabled: false,
-		type: "text",
-		placeholder: "Instruction",
-		width: "40%",
-		case: "title",
-	},
+	// {
+	// 	name: "duration",
+	// 	required: true,
+	// 	disabled: false,
+	// 	type: "text",
+	// 	placeholder: "Duration (hour)",
+	// 	width: "20%",
+	// 	case: null,
+	// },
+	// {
+	// 	name: "instruction",
+	// 	required: true,
+	// 	disabled: false,
+	// 	type: "text",
+	// 	placeholder: "Instruction",
+	// 	width: "40%",
+	// 	case: "title",
+	// },
 ]
 const dyName = ['totalQs']
 const displayValue = (val, strCase) => {
@@ -815,16 +815,16 @@ function ContributeQuestionsComponent() {
 		}
 	}, [])
 
-	useEffect(() => {
-		// console.log({userInfoRef: userInfoRef.current})
-		if (!hasSchool?.name) {
-			// console.log('already ran.')
-			return
-		}
-		// console.log({userInfo})
-		setFormHeadState(prev=> prev.filter(fh => fh.name!=='school'))
-		// console.log({formHeadState})
-	}, [hasSchool?.name])
+	// useEffect(() => {
+	// 	// console.log({userInfoRef: userInfoRef.current})
+	// 	if (!hasSchool?.name) {
+	// 		// console.log('already ran.')
+	// 		return
+	// 	}
+	// 	// console.log({userInfo})
+	// 	setFormHeadState(prev=> prev.filter(fh => fh.name!=='school'))
+	// 	// console.log({formHeadState})
+	// }, [hasSchool?.name])
 
 	// useEffect(() => {
 	// 	if (hasDiffSchool) {
@@ -1003,19 +1003,24 @@ function ContributeQuestionsComponent() {
 						updatedObj.width = "40%";
 					} else if (obj.name === "level") {
 						updatedObj.width = "28%";
-					} else if (obj.name === "school") {
-						updatedObj.width = "100%";
-					} else if (obj.name === "subject") {
+					}
+					// else if (obj.name === "school") {
+					// 	updatedObj.width = "100%";
+					// }
+					else if (obj.name === "subject") {
 						updatedObj.width = "65%";
-					} else if (obj.name === "noOfTypes") {
-						updatedObj.width = "30%";
-					} else if (obj.name === "class") {
+					}
+					// else if (obj.name === "noOfTypes") {
+					// 	updatedObj.width = "30%";
+					// }
+					else if (obj.name === "class") {
 						updatedObj.width = "29%";
 					} else if (obj.name === "term" || obj.name === "duration") {
 						updatedObj.width = "37%";
-					} else if (obj.name === "instruction") {
-						updatedObj.width = "100%";
 					}
+					// else if (obj.name === "instruction") {
+					// 	updatedObj.width = "100%";
+					// }
 				
 					return updatedObj;
 				})
