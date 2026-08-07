@@ -705,8 +705,7 @@ function ContributeQuestionsComponent() {
 	const deviceTypeCheckRef = useRef(false)
 	const [dept, setDept] = useState('')
 	const [formHeadState, setFormHeadState] = useState(formHead);
-	const [hasDiffSchool, setHasDiffSchool] = useState(false);
-	// console.log({hasDiffSchool})
+	// const [hasDiffSchool, setHasDiffSchool] = useState(false);
 	const firstRenderFromSavedRef = useRef(true)
 	const location = useLocation()
 	const isFetch = !!location?.state?.fetchID
@@ -827,34 +826,32 @@ function ContributeQuestionsComponent() {
 		// console.log({formHeadState})
 	}, [hasSchool?.name])
 
-	useEffect(() => {
-		// console.log({formHeadState})
-		if (hasDiffSchool) {
-			setFormHeadState(prev=> [
-				...prev.slice(0, 1),
-				{
-					name: "school",
-					required: true,
-					disabled: false,
-					type: "text",
-					placeholder: "School Name",
-					width: "50%",
-					case: "upper",
-				},
-				...prev.slice(1),
-			])
-		} else {
-			setFormHeadState(prev => prev.filter(fh => fh.name !== 'school'));
-			setFormData(prev => {
-				return {
-					...prev,
-					school: '',
-				}
-			})
-			triggerimageCompression()
-		}
-		// console.log({formHeadState})
-	}, [hasDiffSchool])
+	// useEffect(() => {
+	// 	if (hasDiffSchool) {
+	// 		setFormHeadState(prev=> [
+	// 			...prev.slice(0, 1),
+	// 			{
+	// 				name: "school",
+	// 				required: true,
+	// 				disabled: false,
+	// 				type: "text",
+	// 				placeholder: "School Name",
+	// 				width: "50%",
+	// 				case: "upper",
+	// 			},
+	// 			...prev.slice(1),
+	// 		])
+	// 	} else {
+	// 		setFormHeadState(prev => prev.filter(fh => fh.name !== 'school'));
+	// 		setFormData(prev => {
+	// 			return {
+	// 				...prev,
+	// 				school: '',
+	// 			}
+	// 		})
+	// 		triggerimageCompression()
+	// 	}
+	// }, [hasDiffSchool])
 
 	useEffect(() => {
 		if (isFetch && firstRenderFromSavedRef.current) {
@@ -1702,11 +1699,11 @@ function ContributeQuestionsComponent() {
 									btnItem={dept} stateSetter={handleDeptSet}
 									pageName={'scramble'} />}
 							<div className="d-flex flex-column">
-								<CheckBoxBtnUI
+								{/* <CheckBoxBtnUI
 								chkText="New School?"
 								spanClass='pl-color got-a-code align-self-end'
 								checkState={hasDiffSchool}
-								setCheckState={setHasDiffSchool} />
+								setCheckState={setHasDiffSchool} /> */}
 
 								<CheckBoxBtnUI
 								chkText="Remove Obj?"
@@ -1779,21 +1776,8 @@ function ContributeQuestionsComponent() {
 								</div>
 							)
 						})}
-						{/* <div className=''>
-							<div className="d-flex gap-1">
-								<ImageCropAndCompress
-								onComplete={setUploadedSchLogo}
-								onClearSelection={setIsClearUploadedLogo}
-								imageId={'logo'}
-								imgType="sch-logo"
-								disableBtn={!hasDiffSchool}
-								btnStyle="d-inline"
-								/>
-
-							</div>
-						</div> */}
 					</fieldset>
-					<div className='d-flex justify-content-center'>
+					{/* <div className='d-flex justify-content-center'>
 						<div className="d-flex gap-1">
 							<ImageCropAndCompress
 							ref={imageCropAndCompressRef}
@@ -1806,7 +1790,7 @@ function ContributeQuestionsComponent() {
 							/>
 
 						</div>
-					</div>
+					</div> */}
 
 					{/* {(totalNumberOfQuestions&&!isFile) ? */}
 					{/* <div> */}
