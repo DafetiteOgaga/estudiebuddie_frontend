@@ -499,8 +499,9 @@ function QuestionBlock ({diagramStageRefs,
 									imageId={qIdx}
 									btnStyle='rm-fuc'
 									imgType="question"
-									// disableBtn={isDiagramActive}
-									disableBtn={true} />
+									disableBtn={isDiagramActive}
+									// disableBtn={true}
+									/>
 								</div>
 
 								<div className='d-flex'>
